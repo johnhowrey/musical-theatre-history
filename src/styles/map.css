@@ -311,11 +311,11 @@
 }
 
 .detail-panel-wrapper.open {
-  width: 550px;
+  width: 400px;
 }
 
 .detail-panel {
-  width: 550px;
+  width: 400px;
   height: 100%;
   background: #000;
   display: flex;
@@ -324,7 +324,7 @@
 }
 
 .detail-panel-header {
-  padding: 24px 34px 0;
+  padding: 20px 24px 0;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -333,7 +333,7 @@
 }
 
 .detail-panel-header h2 {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 400;
   line-height: 1.2;
   color: #fff;
@@ -372,15 +372,15 @@
 .detail-panel-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 34px 34px;
+  padding: 16px 24px 24px;
 }
 
 .detail-section {
-  margin-bottom: 31px;
+  margin-bottom: 20px;
 }
 
 .detail-section h3 {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -390,7 +390,7 @@
 }
 
 .detail-section p {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.5;
   color: #fff;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
@@ -410,7 +410,7 @@
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 38px 58px;
+  gap: 20px 32px;
 }
 
 .detail-grid .detail-section {
@@ -418,7 +418,7 @@
 }
 
 .detail-grid .detail-section p {
-  font-size: 24px;
+  font-size: 16px;
   line-height: 1.3;
 }
 
@@ -506,7 +506,7 @@
   display: inline;
   color: #fff;
   text-decoration: underline;
-  font-size: 24px;
+  font-size: 16px;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   transition: color 0.15s;
   padding: 0;
@@ -527,7 +527,7 @@
   display: inline;
   color: #fff;
   text-decoration: underline;
-  font-size: 24px;
+  font-size: 16px;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   transition: color 0.15s;
 }
@@ -566,7 +566,7 @@
   border: none;
   border-bottom: 1px solid #333;
   color: #fff;
-  font-size: 20px;
+  font-size: 16px;
   text-align: left;
   cursor: pointer;
   text-decoration: underline;
@@ -697,7 +697,7 @@
   }
 
   .detail-panel-header h2 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .detail-panel-content {
@@ -710,7 +710,7 @@
   }
 
   .detail-grid .detail-section p {
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .detail-images-grid img {
