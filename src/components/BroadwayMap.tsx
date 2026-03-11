@@ -2,11 +2,12 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import MapViewer from './map/MapViewer';
 import DetailPanel from './map/DetailPanel';
 import CreatorPanel from './map/CreatorPanel';
+import PeopleDirectory from './map/PeopleDirectory';
 import SearchBar from './map/SearchBar';
 import { mapShows, mapCreators } from '../data';
 import type { MapShow } from '../data';
 
-type PanelMode = 'none' | 'show' | 'creator';
+type PanelMode = 'none' | 'show' | 'creator' | 'people';
 
 // Pick a random show to start zoomed into
 function getRandomStartShow(): MapShow {
@@ -82,6 +83,12 @@ export default function BroadwayMap() {
     setPanelMode('creator');
   }, []);
 
+  const handlePeopleClick = useCallback(() => {
+    setSelectedShow(null);
+    setSelectedCreator(null);
+    setPanelMode('people');
+  }, []);
+
   const handleNavigationComplete = useCallback(() => {
     setNavigateToShow(null);
   }, []);
@@ -122,6 +129,7 @@ export default function BroadwayMap() {
           onSelectCreator={handleCreatorSearchSelect}
         />
         <div className="header-spacer" />
+        <button className="people-btn" onClick={handlePeopleClick}>People</button>
         <div className="header-hint">
           <kbd>Ctrl</kbd>+<kbd>K</kbd> to search
         </div>
@@ -161,6 +169,12 @@ export default function BroadwayMap() {
               creatorName={selectedCreator}
               onClose={handleClosePanel}
               onShowClick={handleShowClick}
+            />
+          )}
+          {panelMode === 'people' && (
+            <PeopleDirectory
+              onCreatorClick={handleCreatorClick}
+              onClose={handleClosePanel}
             />
           )}
         </div>

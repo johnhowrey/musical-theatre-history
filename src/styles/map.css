@@ -614,6 +614,52 @@
   color: #fff !important;
 }
 
+/* People directory */
+.people-directory {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.people-directory-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid #1a1a1a;
+  background: none;
+  color: #fff;
+  font-size: 14px;
+  font-family: 'ff-tisa-sans-web-pro', sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s;
+}
+
+.people-directory-item:hover {
+  color: #ffe816;
+}
+
+/* People button in header */
+.people-btn {
+  background: none;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #999;
+  font-size: 12px;
+  font-family: 'ff-tisa-sans-web-pro', sans-serif;
+  padding: 3px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.people-btn:hover {
+  color: #ffe816;
+  border-color: #ffe816;
+}
+
 /* Creator name with line color dot (in show detail panel) */
 .creator-name-link {
   display: inline-flex;
