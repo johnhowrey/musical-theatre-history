@@ -3,20 +3,37 @@ import MapViewer from './map/MapViewer';
 import DetailPanel from './map/DetailPanel';
 import CreatorPanel from './map/CreatorPanel';
 import PeopleDirectory from './map/PeopleDirectory';
+import StatsOverlay from './map/StatsOverlay';
 import SearchBar from './map/SearchBar';
 import { mapShows, mapCreators } from '../data';
 import type { MapShow } from '../data';
 
-type PanelMode = 'none' | 'show' | 'creator' | 'people';
+type PanelMode = 'none' | 'show' | 'creator' | 'people' | 'stats';
 
-// Pick a random show to start zoomed into
-function getRandomStartShow(): MapShow {
-  // Prefer shows in the middle of the map (more interesting clusters)
+function getRandomShow(): MapShow {
   const interesting = mapShows.filter(s =>
     s.x > 400 && s.x < 2000 && s.y > 300 && s.y < 1400
   );
   const pool = interesting.length > 10 ? interesting : mapShows;
   return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// Read ?show= or ?creator= from URL
+function getUrlState(): { show?: string; creator?: string } {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    show: params.get('show') || undefined,
+    creator: params.get('creator') || undefined,
+  };
+}
+
+function setUrlState(show: string | null, creator: string | null) {
+  const params = new URLSearchParams();
+  if (show) params.set('show', show);
+  if (creator) params.set('creator', creator);
+  const qs = params.toString();
+  const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+  window.history.replaceState(null, '', url);
 }
 
 export default function BroadwayMap() {
@@ -26,9 +43,51 @@ export default function BroadwayMap() {
   const [navigateToShow, setNavigateToShow] = useState<MapShow | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);
-  const startShowRef = useRef<MapShow>(getRandomStartShow());
+  const [favorites, setFavorites] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('mth-favorites');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
+  const startShowRef = useRef<MapShow>(getRandomShow());
 
-  // Safety: dismiss loading overlay after 3s even if onMapReady doesn't fire
+  // Persist favorites
+  useEffect(() => {
+    localStorage.setItem('mth-favorites', JSON.stringify([...favorites]));
+  }, [favorites]);
+
+  // Deep-link: read URL params on mount
+  useEffect(() => {
+    const { show, creator } = getUrlState();
+    if (show) {
+      const match = mapShows.find(s => s.name.toLowerCase() === show.toLowerCase());
+      if (match) {
+        setSelectedShow(match.name);
+        setPanelMode('show');
+        setNavigateToShow(match);
+        startShowRef.current = match;
+      }
+    } else if (creator) {
+      const match = mapCreators.find(c => c.name.toLowerCase() === creator.toLowerCase());
+      if (match) {
+        setSelectedCreator(match.name);
+        setPanelMode('creator');
+      }
+    }
+  }, []);
+
+  // Update URL when selection changes
+  useEffect(() => {
+    if (panelMode === 'show' && selectedShow) {
+      setUrlState(selectedShow, null);
+    } else if (panelMode === 'creator' && selectedCreator) {
+      setUrlState(null, selectedCreator);
+    } else {
+      setUrlState(null, null);
+    }
+  }, [panelMode, selectedShow, selectedCreator]);
+
+  // Safety: dismiss loading overlay after 3s
   useEffect(() => {
     const timer = setTimeout(() => setIsReady(true), 3000);
     return () => clearTimeout(timer);
@@ -89,6 +148,29 @@ export default function BroadwayMap() {
     setPanelMode('people');
   }, []);
 
+  const handleStatsClick = useCallback(() => {
+    setSelectedShow(null);
+    setSelectedCreator(null);
+    setPanelMode('stats');
+  }, []);
+
+  const handleRandomShow = useCallback(() => {
+    const show = getRandomShow();
+    setSelectedShow(show.name);
+    setSelectedCreator(null);
+    setPanelMode('show');
+    setNavigateToShow(show);
+  }, []);
+
+  const handleToggleFavorite = useCallback((showName: string) => {
+    setFavorites(prev => {
+      const next = new Set(prev);
+      if (next.has(showName)) next.delete(showName);
+      else next.add(showName);
+      return next;
+    });
+  }, []);
+
   const handleNavigationComplete = useCallback(() => {
     setNavigateToShow(null);
   }, []);
@@ -97,7 +179,6 @@ export default function BroadwayMap() {
     setIsReady(true);
   }, []);
 
-  // Click on map background closes panel
   const handleMapBackgroundClick = useCallback(() => {
     if (panelMode !== 'none') {
       setPanelMode('none');
@@ -129,7 +210,11 @@ export default function BroadwayMap() {
           onSelectCreator={handleCreatorSearchSelect}
         />
         <div className="header-spacer" />
+        <button className="header-action-btn" onClick={handleRandomShow} title="Random show">
+          &#x2728;
+        </button>
         <button className="people-btn" onClick={handlePeopleClick}>People</button>
+        <button className="people-btn" onClick={handleStatsClick}>Stats</button>
         <div className="header-hint">
           <kbd>Ctrl</kbd>+<kbd>K</kbd> to search
         </div>
@@ -162,6 +247,8 @@ export default function BroadwayMap() {
               onClose={handleClosePanel}
               onToggleExpand={handleToggleExpand}
               onCreatorClick={handleCreatorClick}
+              isFavorite={favorites.has(selectedShow)}
+              onToggleFavorite={() => handleToggleFavorite(selectedShow)}
             />
           )}
           {panelMode === 'creator' && selectedCreator && (
@@ -175,6 +262,13 @@ export default function BroadwayMap() {
             <PeopleDirectory
               onCreatorClick={handleCreatorClick}
               onClose={handleClosePanel}
+            />
+          )}
+          {panelMode === 'stats' && (
+            <StatsOverlay
+              onClose={handleClosePanel}
+              onShowClick={handleShowClick}
+              favorites={favorites}
             />
           )}
         </div>

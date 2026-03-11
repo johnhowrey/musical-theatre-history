@@ -7,6 +7,8 @@ interface DetailPanelProps {
   onClose: () => void;
   onToggleExpand?: () => void;
   onCreatorClick?: (creatorName: string) => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 interface ShowInfo {
@@ -66,7 +68,7 @@ function CreatorNameDisplay({ name, onCreatorClick }: { name: string; onCreatorC
   return <>{name}</>;
 }
 
-export default function DetailPanel({ showName, onClose, onToggleExpand, onCreatorClick }: DetailPanelProps) {
+export default function DetailPanel({ showName, onClose, onToggleExpand, onCreatorClick, isFavorite, onToggleFavorite }: DetailPanelProps) {
   const [showInfo, setShowInfo] = useState<ShowInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [wikiImages, setWikiImages] = useState<string[]>([]);
@@ -171,7 +173,30 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
             <span className="status-badge running">Currently Running</span>
           )}
         </div>
-        <button className="close-btn" onClick={onClose} aria-label="Close panel">&#x2715;</button>
+        <div className="detail-panel-actions">
+          {onToggleFavorite && (
+            <button
+              className={`fav-btn ${isFavorite ? 'active' : ''}`}
+              onClick={onToggleFavorite}
+              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              {isFavorite ? '\u2605' : '\u2606'}
+            </button>
+          )}
+          <button
+            className="share-btn"
+            onClick={() => {
+              const url = `${window.location.origin}?show=${encodeURIComponent(showName)}`;
+              navigator.clipboard.writeText(url).catch(() => {});
+            }}
+            aria-label="Copy share link"
+            title="Copy link"
+          >
+            &#x1F517;
+          </button>
+          <button className="close-btn" onClick={onClose} aria-label="Close panel">&#x2715;</button>
+        </div>
       </div>
 
       <div className="detail-panel-content">

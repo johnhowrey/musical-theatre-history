@@ -641,6 +641,55 @@
   color: #ffe816;
 }
 
+/* Header action buttons */
+.header-action-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.15s;
+  line-height: 1;
+}
+
+.header-action-btn:hover {
+  color: #ffe816;
+}
+
+/* Panel header actions (fav, share, close) */
+.detail-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.fav-btn,
+.share-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+  padding: 0;
+}
+
+.fav-btn:hover,
+.share-btn:hover {
+  color: #ffe816;
+}
+
+.fav-btn.active {
+  color: #ffe816;
+}
+
 /* People button in header */
 .people-btn {
   background: none;
