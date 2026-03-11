@@ -11,3 +11,6 @@ export type { AffiliateLink } from '../services/affiliateLinks';
 export { getLicensingUrl } from '../services/licensing';
 export { fetchShowInfo, fetchShowImages } from '../services/wikipedia';
 export type { WikiData } from '../services/wikipedia';
+
+// Creator colors
+export { creatorLineColors, getCreatorColor, getContrastTextColor } from './creatorColors';

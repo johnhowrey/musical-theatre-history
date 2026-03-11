@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { getShowLinks, getLicensingUrl, showDetails, SHOWS, searchShows, fetchShowInfo, fetchShowImages } from '../../data';
+import { getShowLinks, getLicensingUrl, showDetails, SHOWS, searchShows, fetchShowInfo, fetchShowImages, mapCreators, getCreatorColor } from '../../data';
 import type { AffiliateLink } from '../../data';
 
 interface DetailPanelProps {
   showName: string | null;
   onClose: () => void;
   onToggleExpand?: () => void;
+  onCreatorClick?: (creatorName: string) => void;
 }
 
 interface ShowInfo {
@@ -42,7 +43,30 @@ function formatDate(dateStr: string): string {
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-export default function DetailPanel({ showName, onClose, onToggleExpand }: DetailPanelProps) {
+// Check if a name matches a creator on the map (case-insensitive)
+function findMapCreator(name: string): string | null {
+  const lower = name.toLowerCase();
+  const creator = mapCreators.find(c => c.name.toLowerCase() === lower);
+  return creator ? creator.name : null;
+}
+
+// Render a person name — clickable with colored dot if they're on the map
+function CreatorNameDisplay({ name, onCreatorClick }: { name: string; onCreatorClick?: (n: string) => void }) {
+  const mapName = findMapCreator(name);
+  const color = mapName ? getCreatorColor(mapName) : null;
+
+  if (mapName && color && onCreatorClick) {
+    return (
+      <button className="creator-name-link" onClick={() => onCreatorClick(mapName)}>
+        <span className="creator-line-dot" style={{ background: color }} />
+        {name}
+      </button>
+    );
+  }
+  return <>{name}</>;
+}
+
+export default function DetailPanel({ showName, onClose, onToggleExpand, onCreatorClick }: DetailPanelProps) {
   const [showInfo, setShowInfo] = useState<ShowInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [wikiImages, setWikiImages] = useState<string[]>([]);
@@ -192,31 +216,31 @@ export default function DetailPanel({ showName, onClose, onToggleExpand }: Detai
               {showInfo.composer && (
                 <div className="detail-section">
                   <h3>Composer</h3>
-                  <p>{showInfo.composer}</p>
+                  <p><CreatorNameDisplay name={showInfo.composer} onCreatorClick={onCreatorClick} /></p>
                 </div>
               )}
               {showInfo.lyricist && (
                 <div className="detail-section">
                   <h3>Lyricist</h3>
-                  <p>{showInfo.lyricist}</p>
+                  <p><CreatorNameDisplay name={showInfo.lyricist} onCreatorClick={onCreatorClick} /></p>
                 </div>
               )}
               {showInfo.director && (
                 <div className="detail-section">
                   <h3>Director</h3>
-                  <p>{showInfo.director}</p>
+                  <p><CreatorNameDisplay name={showInfo.director} onCreatorClick={onCreatorClick} /></p>
                 </div>
               )}
               {showInfo.choreographer && (
                 <div className="detail-section">
                   <h3>Choreographer</h3>
-                  <p>{showInfo.choreographer}</p>
+                  <p><CreatorNameDisplay name={showInfo.choreographer} onCreatorClick={onCreatorClick} /></p>
                 </div>
               )}
               {showInfo.bookWriter && (
                 <div className="detail-section">
                   <h3>Book</h3>
-                  <p>{showInfo.bookWriter}</p>
+                  <p><CreatorNameDisplay name={showInfo.bookWriter} onCreatorClick={onCreatorClick} /></p>
                 </div>
               )}
               {showInfo.theatre && (

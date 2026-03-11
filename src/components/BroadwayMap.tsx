@@ -131,6 +131,7 @@ export default function BroadwayMap() {
         <MapViewer
           shows={mapShows}
           selectedShow={selectedShow}
+          selectedCreator={selectedCreator}
           onShowClick={handleShowClick}
           onCreatorClick={handleCreatorClick}
           navigateToShow={navigateToShow}
@@ -152,6 +153,7 @@ export default function BroadwayMap() {
               showName={selectedShow}
               onClose={handleClosePanel}
               onToggleExpand={handleToggleExpand}
+              onCreatorClick={handleCreatorClick}
             />
           )}
           {panelMode === 'creator' && selectedCreator && (

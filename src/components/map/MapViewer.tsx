@@ -11,6 +11,7 @@ import mapSvgRaw from '../../assets/map.svg?raw';
 interface MapViewerProps {
   shows: MapShow[];
   selectedShow: string | null;
+  selectedCreator: string | null;
   onShowClick: (showName: string) => void;
   onCreatorClick: (creatorName: string) => void;
   navigateToShow: MapShow | null;
@@ -26,6 +27,7 @@ const SVG_HEIGHT = 1666;
 export default function MapViewer({
   shows: _shows,
   selectedShow,
+  selectedCreator,
   onShowClick,
   onCreatorClick,
   navigateToShow,
@@ -101,12 +103,19 @@ export default function MapViewer({
     container.querySelectorAll('.map-highlight-active').forEach(el => {
       el.classList.remove('map-highlight-active');
     });
+    container.classList.remove('creator-focus-mode');
 
     if (selectedShow) {
       const el = container.querySelector(`[data-show="${CSS.escape(selectedShow)}"]`);
       el?.classList.add('map-highlight-active');
     }
-  }, [selectedShow]);
+
+    if (selectedCreator) {
+      container.classList.add('creator-focus-mode');
+      const el = container.querySelector(`[data-creator="${CSS.escape(selectedCreator)}"]`);
+      el?.classList.add('map-highlight-active');
+    }
+  }, [selectedShow, selectedCreator]);
 
   const handleSvgClick = useCallback(
     (e: React.MouseEvent) => {

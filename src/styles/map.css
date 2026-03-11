@@ -33,7 +33,7 @@
 }
 
 .map-loading-title {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 500;
   color: #fff;
   letter-spacing: -0.3px;
@@ -67,18 +67,18 @@
 
 /* Header */
 .map-header {
-  height: 79px;
+  height: 40px;
   background: #000;
   display: flex;
   align-items: center;
-  padding: 0 48px;
-  gap: 16px;
+  padding: 0 16px;
+  gap: 12px;
   z-index: 100;
   flex-shrink: 0;
 }
 
 .map-header h1 {
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 500;
   white-space: nowrap;
   color: #fff;
@@ -95,17 +95,17 @@
 }
 
 .header-hint {
-  font-size: 12px;
-  color: #666;
+  font-size: 11px;
+  color: #555;
   white-space: nowrap;
 }
 
 .header-hint kbd {
   display: inline-block;
-  padding: 1px 5px;
+  padding: 1px 4px;
   border: 1px solid #444;
   border-radius: 3px;
-  font-size: 11px;
+  font-size: 10px;
   color: #888;
   background: #111;
 }
@@ -113,45 +113,36 @@
 /* Search */
 .search-container {
   position: relative;
-  flex: 0 1 360px;
-  background: #ffe816;
-  margin: -24px -48px -24px 0;
-  padding: 24px 48px 24px 24px;
-  align-self: stretch;
+  flex: 0 1 220px;
+  background: transparent;
   display: flex;
   align-items: center;
 }
 
 .search-input {
   width: 100%;
-  padding: 8px 12px 8px 36px;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: #000;
-  font-size: 22px;
+  padding: 4px 10px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #111;
+  color: #fff;
+  font-size: 13px;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   outline: none;
   transition: border-color 0.2s;
 }
 
 .search-input:focus {
-  border-color: transparent;
+  border-color: #ffe816;
   box-shadow: none;
 }
 
 .search-input::placeholder {
-  color: rgba(0, 0, 0, 0.5);
+  color: #666;
 }
 
 .search-icon {
-  position: absolute;
-  left: 24px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #000;
-  font-size: 18px;
-  pointer-events: none;
+  display: none;
 }
 
 .search-results {
@@ -169,9 +160,9 @@
 }
 
 .search-result-item {
-  padding: 10px 24px;
+  padding: 8px 12px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 13px;
   border-bottom: 1px solid #222;
   color: #fff;
   transition: background 0.15s;
@@ -259,6 +250,18 @@
 .map-svg-container svg {
   display: block;
   max-width: none;
+}
+
+/* Creator focus mode — dim everything except the selected creator's line */
+.creator-focus-mode svg {
+  opacity: 0.2;
+  transition: opacity 0.3s;
+}
+
+.creator-focus-mode svg g[data-creator].map-highlight-active,
+.creator-focus-mode svg g[data-creator].map-highlight-active ~ *,
+.creator-focus-mode svg text[data-creator].map-highlight-active {
+  opacity: 1;
 }
 
 /* Zoom controls */
@@ -611,6 +614,72 @@
   color: #fff !important;
 }
 
+/* Creator name with line color dot (in show detail panel) */
+.creator-name-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.creator-name-link:hover {
+  opacity: 0.7;
+}
+
+.creator-line-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Creator panel — colored variant */
+.detail-panel.creator-panel {
+  /* background set dynamically via inline style */
+}
+
+.detail-panel.creator-panel .detail-panel-header h2 {
+  /* color set dynamically */
+}
+
+.detail-panel.creator-panel .detail-section h3 {
+  opacity: 0.6;
+  /* color set dynamically */
+}
+
+.detail-panel.creator-panel .detail-section p,
+.detail-panel.creator-panel .music-link,
+.detail-panel.creator-panel .external-link,
+.detail-panel.creator-panel .connected-show-btn {
+  /* color set dynamically */
+}
+
+.detail-panel.creator-panel .close-btn {
+  /* color set dynamically */
+}
+
+.detail-panel.creator-panel .close-btn:hover {
+  opacity: 0.6;
+}
+
+.detail-panel.creator-panel .spinner {
+  border-color: rgba(255,255,255,0.2);
+  border-top-color: currentColor;
+}
+
+.detail-panel.creator-panel .character-tag {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.2);
+}
+
 /* Drag handle for mobile bottom sheet */
 .detail-panel-drag-handle {
   display: none;
@@ -619,23 +688,21 @@
 /* Responsive — mobile bottom sheet */
 @media (max-width: 768px) {
   .map-header {
-    padding: 0 16px;
-    height: 48px;
+    padding: 0 12px;
+    height: 36px;
   }
 
   .map-header h1 {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .search-container {
-    margin: -12px -16px -12px 0;
-    padding: 12px 16px;
-    flex: 0 1 200px;
+    flex: 0 1 160px;
   }
 
   .search-input {
-    font-size: 16px;
-    padding: 6px 10px 6px 32px;
+    font-size: 12px;
+    padding: 4px 8px;
   }
 
   .header-hint {
