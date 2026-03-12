@@ -27,13 +27,12 @@ function getUrlState(): { show?: string; creator?: string } {
   };
 }
 
-function setUrlState(show: string | null, creator: string | null) {
+function buildUrl(show: string | null, creator: string | null): string {
   const params = new URLSearchParams();
   if (show) params.set('show', show);
   if (creator) params.set('creator', creator);
   const qs = params.toString();
-  const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
-  window.history.replaceState(null, '', url);
+  return qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
 }
 
 export default function BroadwayMap() {
@@ -50,16 +49,27 @@ export default function BroadwayMap() {
     } catch { return new Set(); }
   });
   const startShowRef = useRef<MapShow>(getRandomShow());
+  const isPopstateRef = useRef(false);
 
   // Persist favorites
   useEffect(() => {
     localStorage.setItem('mth-favorites', JSON.stringify([...favorites]));
   }, [favorites]);
 
-  // Deep-link: read URL params on mount
+  // Deep-link: read URL params on mount and set initial history state
   useEffect(() => {
     const { show, creator } = getUrlState();
+
+    // Replace the initial history entry with state so popstate can read it
+    window.history.replaceState(
+      { show: show || null, creator: creator || null },
+      '',
+      window.location.href
+    );
+
     if (show) {
+      // Mark as popstate-like so the URL effect doesn't push a duplicate entry
+      isPopstateRef.current = true;
       const match = mapShows.find(s => s.name.toLowerCase() === show.toLowerCase());
       if (match) {
         setSelectedShow(match.name);
@@ -68,6 +78,7 @@ export default function BroadwayMap() {
         startShowRef.current = match;
       }
     } else if (creator) {
+      isPopstateRef.current = true;
       const match = mapCreators.find(c => c.name.toLowerCase() === creator.toLowerCase());
       if (match) {
         setSelectedCreator(match.name);
@@ -76,16 +87,61 @@ export default function BroadwayMap() {
     }
   }, []);
 
-  // Update URL when selection changes
+  // Update URL when selection changes — push to history so back button works
   useEffect(() => {
-    if (panelMode === 'show' && selectedShow) {
-      setUrlState(selectedShow, null);
-    } else if (panelMode === 'creator' && selectedCreator) {
-      setUrlState(null, selectedCreator);
-    } else {
-      setUrlState(null, null);
+    const show = panelMode === 'show' ? selectedShow : null;
+    const creator = panelMode === 'creator' ? selectedCreator : null;
+    const url = buildUrl(show, creator);
+
+    // If this state change came from a popstate event, don't push again
+    if (isPopstateRef.current) {
+      isPopstateRef.current = false;
+      return;
+    }
+
+    // Only push if the URL actually changed
+    if (url !== window.location.pathname + window.location.search) {
+      window.history.pushState({ show, creator }, '', url);
     }
   }, [panelMode, selectedShow, selectedCreator]);
+
+  // Listen for back/forward navigation
+  useEffect(() => {
+    function handlePopState() {
+      isPopstateRef.current = true;
+      const { show, creator } = getUrlState();
+
+      if (show) {
+        const match = mapShows.find(s => s.name.toLowerCase() === show.toLowerCase());
+        if (match) {
+          setSelectedShow(match.name);
+          setSelectedCreator(null);
+          setPanelMode('show');
+          setNavigateToShow(match);
+          return;
+        }
+      }
+
+      if (creator) {
+        const match = mapCreators.find(c => c.name.toLowerCase() === creator.toLowerCase());
+        if (match) {
+          setSelectedCreator(match.name);
+          setSelectedShow(null);
+          setPanelMode('creator');
+          return;
+        }
+      }
+
+      // No show or creator in URL — close the panel
+      setSelectedShow(null);
+      setSelectedCreator(null);
+      setPanelMode('none');
+      setPanelExpanded(false);
+    }
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Safety: dismiss loading overlay after 3s
   useEffect(() => {
