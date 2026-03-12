@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getShowLinks, getLicensingUrl, showDetails, SHOWS, searchShows, fetchShowInfo, fetchShowImages, mapCreators, getCreatorColor } from '../../data';
 import type { AffiliateLink } from '../../data';
 
@@ -72,6 +72,26 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
   const [showInfo, setShowInfo] = useState<ShowInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [wikiImages, setWikiImages] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const prevImage = useCallback(() => {
+    setLightboxIndex(i => i !== null ? (i - 1 + wikiImages.length) % wikiImages.length : null);
+  }, [wikiImages.length]);
+  const nextImage = useCallback(() => {
+    setLightboxIndex(i => i !== null ? (i + 1) % wikiImages.length : null);
+  }, [wikiImages.length]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'ArrowRight') nextImage();
+    }
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [lightboxIndex, closeLightbox, prevImage, nextImage]);
 
   useEffect(() => {
     if (!showName) {
@@ -232,8 +252,32 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
                 <h3>Images</h3>
                 <div className="detail-images-grid">
                   {wikiImages.map((url, i) => (
-                    <img key={i} src={url} alt="" loading="lazy" />
+                    <img
+                      key={i}
+                      src={url}
+                      alt=""
+                      loading="lazy"
+                      onClick={() => setLightboxIndex(i)}
+                      style={{ cursor: 'pointer' }}
+                    />
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Lightbox modal */}
+            {lightboxIndex !== null && wikiImages[lightboxIndex] && (
+              <div className="lightbox-overlay" onClick={closeLightbox}>
+                <div className="lightbox-content" onClick={e => e.stopPropagation()}>
+                  {wikiImages.length > 1 && (
+                    <button className="lightbox-arrow lightbox-prev" onClick={prevImage} aria-label="Previous">&#8249;</button>
+                  )}
+                  <img src={wikiImages[lightboxIndex]} alt="" />
+                  {wikiImages.length > 1 && (
+                    <button className="lightbox-arrow lightbox-next" onClick={nextImage} aria-label="Next">&#8250;</button>
+                  )}
+                  <button className="lightbox-close" onClick={closeLightbox} aria-label="Close">&#x2715;</button>
+                  <div className="lightbox-counter">{lightboxIndex + 1} / {wikiImages.length}</div>
                 </div>
               </div>
             )}
