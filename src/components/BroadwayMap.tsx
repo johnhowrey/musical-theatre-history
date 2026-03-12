@@ -202,7 +202,7 @@ export default function BroadwayMap() {
       </div>
 
       <div className="map-header">
-        <h1>The Musical Theatre History <span>Subway Map</span></h1>
+        <h1>The Musical Theatre History Subway Map</h1>
         <button className="people-btn" onClick={handlePeopleClick}>People</button>
         <button className="people-btn" onClick={handleStatsClick}>Stats</button>
         <button className="header-action-btn" onClick={handleRandomShow}>Random Show</button>
