@@ -166,6 +166,14 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
   return (
     <div className="detail-panel">
       <div className="detail-panel-drag-handle" onClick={onToggleExpand} />
+
+      {/* Hero image above title */}
+      {showInfo?.thumbnail && (
+        <div className="detail-hero">
+          <img src={showInfo.thumbnail} alt={showInfo.title} loading="lazy" />
+        </div>
+      )}
+
       <div className="detail-panel-header">
         <div>
           <h2>{showInfo?.title || showName}</h2>
@@ -209,12 +217,6 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
 
         {showInfo && (
           <>
-            {/* Hero thumbnail */}
-            {showInfo.thumbnail && (
-              <div className="detail-section">
-                <img src={showInfo.thumbnail} alt={showInfo.title} loading="lazy" />
-              </div>
-            )}
 
             {/* Synopsis */}
             {(showInfo.description || showInfo.synopsis) && (
