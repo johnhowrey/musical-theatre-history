@@ -225,11 +225,11 @@ function processShowInteractivity(svgText: string): string {
       .st90, [style*="TisaSansPro"] { font-family: 'ff-tisa-sans-web-pro', sans-serif !important; font-weight: 400 !important; }
 
       g[data-show] { cursor: pointer; }
-      g[data-show] text { transition: fill 0.15s, font-size 0.15s; }
-      g[data-show]:hover text { fill: #ffe816 !important; }
+      g[data-show] text { transition: fill 0.15s, stroke 0.15s, stroke-width 0.15s; paint-order: stroke; }
+      g[data-show]:hover text { fill: #fff !important; stroke: #000 !important; stroke-width: 8px !important; stroke-linejoin: round !important; }
       g.map-highlight-active text { fill: #ffe816 !important; }
-      text[data-show] { cursor: pointer; transition: fill 0.15s; }
-      text[data-show]:hover { fill: #ffe816 !important; }
+      text[data-show] { cursor: pointer; transition: fill 0.15s, stroke 0.15s, stroke-width 0.15s; paint-order: stroke; }
+      text[data-show]:hover { fill: #fff !important; stroke: #000 !important; stroke-width: 8px !important; stroke-linejoin: round !important; }
       text[data-show].map-highlight-active { fill: #ffe816 !important; }
 
       g[data-creator] { cursor: pointer; }
