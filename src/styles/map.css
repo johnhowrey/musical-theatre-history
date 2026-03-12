@@ -67,46 +67,59 @@
 
 /* Header */
 .map-header {
-  height: 79px;
+  height: 50px;
   background: #000;
   display: flex;
   align-items: center;
-  padding: 0 48px;
-  gap: 16px;
+  padding: 0 0 0 50px;
+  gap: 84px;
   z-index: 100;
   flex-shrink: 0;
 }
 
+.header-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 70px;
+}
+
 .map-header h1 {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
   color: #fff;
   letter-spacing: 0;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
-  margin-right: auto;
 }
 
 /* Search */
 .search-container {
   position: relative;
-  flex: 0 0 550px;
+  flex: 0 0 436px;
   background: #ffe816;
-  margin: -24px -48px -24px 0;
-  padding: 24px 48px 24px 40px;
   align-self: stretch;
   display: flex;
   align-items: center;
+  padding: 0 0 0 33px;
+  gap: 15px;
 }
 
 .search-input {
   width: 100%;
-  padding: 8px 12px 8px 36px;
+  padding: 0;
   border: none;
   border-radius: 0;
   background: transparent;
   color: #000;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 400;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   outline: none;
@@ -121,13 +134,10 @@
 }
 
 .search-icon {
-  position: absolute;
-  left: 24px;
-  top: 50%;
-  transform: translateY(-50%);
   color: #000;
   font-size: 18px;
   pointer-events: none;
+  flex-shrink: 0;
 }
 
 .search-results {
@@ -658,7 +668,7 @@
   background: none;
   border: none;
   color: #fff;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 500;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   cursor: pointer;
@@ -710,7 +720,7 @@
   background: none;
   border: none;
   color: #fff;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 500;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   padding: 0 20px;
@@ -797,23 +807,32 @@
 /* Responsive — mobile bottom sheet */
 @media (max-width: 768px) {
   .map-header {
-    padding: 0 16px;
-    height: 48px;
+    padding: 0 0 0 12px;
+    height: 44px;
+    gap: 12px;
   }
 
   .map-header h1 {
-    font-size: 14px;
+    font-size: 11px;
+  }
+
+  .header-nav-links {
+    gap: 16px;
+  }
+
+  .people-btn,
+  .header-action-btn {
+    font-size: 11px;
   }
 
   .search-container {
-    margin: -12px -16px -12px 0;
-    padding: 12px 16px;
-    flex: 0 1 200px;
+    flex: 0 0 160px;
+    padding: 0 0 0 12px;
+    gap: 8px;
   }
 
   .search-input {
-    font-size: 16px;
-    padding: 6px 10px 6px 32px;
+    font-size: 11px;
   }
 
   .header-hint {
