@@ -78,22 +78,22 @@
 }
 
 .map-header h1 {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 500;
   white-space: nowrap;
   color: #fff;
-  letter-spacing: -0.3px;
-  font-family: 'ff-tisa-sans-web-pro', serif;
+  letter-spacing: 0;
+  font-family: 'ff-tisa-sans-web-pro', sans-serif;
   margin-right: auto;
 }
 
 /* Search */
 .search-container {
   position: relative;
-  flex: 0 1 360px;
+  flex: 0 0 550px;
   background: #ffe816;
   margin: -24px -48px -24px 0;
-  padding: 24px 48px 24px 24px;
+  padding: 24px 48px 24px 40px;
   align-self: stretch;
   display: flex;
   align-items: center;
@@ -106,7 +106,8 @@
   border-radius: 0;
   background: transparent;
   color: #000;
-  font-size: 22px;
+  font-size: 18px;
+  font-weight: 400;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   outline: none;
 }
@@ -630,8 +631,9 @@
 .header-action-btn {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   cursor: pointer;
   padding: 0 20px;
@@ -681,8 +683,9 @@
 .people-btn {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   padding: 0 20px;
   cursor: pointer;
