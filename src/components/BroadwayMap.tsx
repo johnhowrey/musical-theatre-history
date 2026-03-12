@@ -194,7 +194,7 @@ export default function BroadwayMap() {
       {/* Loading overlay */}
       <div className={`map-loading-overlay ${isReady ? 'fade-out' : ''}`}>
         <div className="map-loading-title">
-          The Musical Theatre History <span>Subway Map</span>
+          The Musical Theatre History Subway Map
         </div>
         <div className="map-loading-bar">
           <div className="map-loading-bar-fill" />

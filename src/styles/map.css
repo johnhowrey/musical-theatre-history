@@ -71,11 +71,10 @@
   background: #fff;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 24px;
   gap: 0;
   z-index: 100;
   flex-shrink: 0;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .map-header h1 {
@@ -122,10 +121,8 @@
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
-  color: #666;
+  color: #333;
   pointer-events: none;
-  line-height: 1;
 }
 
 .search-results {
@@ -629,11 +626,11 @@
 .header-action-btn {
   background: none;
   border: none;
-  color: #555;
+  color: #333;
   font-size: 13px;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   cursor: pointer;
-  padding: 0 14px;
+  padding: 0 20px;
   transition: color 0.15s;
   line-height: 1;
   white-space: nowrap;
@@ -680,10 +677,10 @@
 .people-btn {
   background: none;
   border: none;
-  color: #555;
+  color: #333;
   font-size: 13px;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
-  padding: 0 14px;
+  padding: 0 20px;
   cursor: pointer;
   white-space: nowrap;
   transition: color 0.15s;
