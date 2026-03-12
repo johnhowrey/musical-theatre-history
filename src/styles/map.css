@@ -310,11 +310,11 @@
 }
 
 .detail-panel-wrapper.open {
-  width: 400px;
+  width: 360px;
 }
 
 .detail-panel {
-  width: 549px;
+  width: 360px;
   height: 100%;
   background: #000;
   display: flex;
@@ -324,7 +324,7 @@
 
 .detail-hero {
   width: 100%;
-  height: 296px;
+  height: 200px;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -336,7 +336,7 @@
 }
 
 .detail-panel-header {
-  padding: 20px 24px 0;
+  padding: 16px 20px 0;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -345,7 +345,7 @@
 }
 
 .detail-panel-header h2 {
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 400;
   line-height: 1.2;
   color: #fff;
@@ -384,25 +384,25 @@
 .detail-panel-content {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 24px 24px;
+  padding: 12px 20px 20px;
 }
 
 .detail-section {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .detail-section h3 {
-  font-size: 16px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: #ffe816;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
 }
 
 .detail-section p {
-  font-size: 20px;
+  font-size: 14px;
   line-height: 1.5;
   color: #fff;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
@@ -421,7 +421,7 @@
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px 32px;
+  gap: 12px 24px;
 }
 
 .detail-grid .detail-section {
@@ -429,7 +429,7 @@
 }
 
 .detail-grid .detail-section p {
-  font-size: 24px;
+  font-size: 15px;
   line-height: 1.3;
 }
 
@@ -437,12 +437,12 @@
 .detail-images-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 8px;
 }
 
 .detail-images-grid img {
   width: 100%;
-  height: 188px;
+  height: 120px;
   object-fit: cover;
   background: #1a1a1a;
 }
