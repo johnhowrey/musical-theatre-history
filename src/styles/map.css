@@ -607,16 +607,30 @@
   gap: 0;
 }
 
+.people-section-heading {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin: 16px 0 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #333;
+}
+
+.people-section-heading:first-child {
+  margin-top: 0;
+}
+
 .people-directory-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 0;
+  gap: 6px;
+  padding: 3px 0;
   border: none;
-  border-bottom: 1px solid #1a1a1a;
   background: none;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
   cursor: pointer;
   text-align: left;
