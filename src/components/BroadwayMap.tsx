@@ -203,21 +203,15 @@ export default function BroadwayMap() {
 
       <div className="map-header">
         <h1>The Musical Theatre History <span>Subway Map</span></h1>
+        <button className="people-btn" onClick={handlePeopleClick}>People</button>
+        <button className="people-btn" onClick={handleStatsClick}>Stats</button>
+        <button className="header-action-btn" onClick={handleRandomShow}>Random Show</button>
         <SearchBar
           shows={mapShows}
           creators={mapCreators}
           onSelectShow={handleSearchSelect}
           onSelectCreator={handleCreatorSearchSelect}
         />
-        <div className="header-spacer" />
-        <button className="header-action-btn" onClick={handleRandomShow} title="Random show">
-          &#x2728;
-        </button>
-        <button className="people-btn" onClick={handlePeopleClick}>People</button>
-        <button className="people-btn" onClick={handleStatsClick}>Stats</button>
-        <div className="header-hint">
-          <kbd>Ctrl</kbd>+<kbd>K</kbd> to search
-        </div>
       </div>
 
       <div className="map-main-content">

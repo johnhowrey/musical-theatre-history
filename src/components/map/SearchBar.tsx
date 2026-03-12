@@ -83,7 +83,7 @@ export default function SearchBar({ shows, creators = [], onSelectShow, onSelect
         ref={inputRef}
         type="text"
         className="search-input"
-        placeholder="Search shows & creators..."
+        placeholder="Search shows, people... (ctrl+K)"
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);
