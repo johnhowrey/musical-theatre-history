@@ -150,7 +150,7 @@
   border: 1px solid #ddd;
   border-radius: 6px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  max-height: 360px;
+  max-height: 480px;
   overflow-y: auto;
   z-index: 200;
 }
@@ -200,6 +200,22 @@
 .search-result-type.creator {
   background: rgba(0, 0, 0, 0.06);
   color: #888;
+}
+
+.search-section-header {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  padding: 10px 12px 4px;
+  font-weight: 600;
+  font-family: 'ff-tisa-sans-web-pro', sans-serif;
+}
+
+.search-section-divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 4px 12px;
 }
 
 /* Main content area */

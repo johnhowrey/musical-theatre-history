@@ -4,7 +4,7 @@ import DetailPanel from './map/DetailPanel';
 import CreatorPanel from './map/CreatorPanel';
 import PeopleDirectory from './map/PeopleDirectory';
 import StatsOverlay from './map/StatsOverlay';
-import SearchBar from './map/SearchBar';
+import SearchBar, { addRecentShow } from './map/SearchBar';
 import { mapShows, mapCreators } from '../data';
 import type { MapShow } from '../data';
 
@@ -163,6 +163,7 @@ export default function BroadwayMap() {
   }, [panelMode]);
 
   const handleShowClick = useCallback((showName: string) => {
+    addRecentShow(showName);
     setSelectedShow(showName);
     setSelectedCreator(null);
     setPanelMode('show');
