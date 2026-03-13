@@ -79,6 +79,7 @@ export interface BroadwayShow {
   themes?: string[];
   description?: string;
   funFact?: string;
+  funFacts?: string[];
 
   // Awards
   tonyNominations?: number;

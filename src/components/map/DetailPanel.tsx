@@ -37,6 +37,7 @@ interface ShowInfo {
   wonBestMusical?: boolean;
   themes?: string[];
   funFact?: string;
+  funFacts?: string[];
   era?: string;
 }
 
@@ -136,6 +137,7 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
         wonBestMusical: dbMatch?.wonBestMusical,
         themes: dbMatch?.themes,
         funFact: dbMatch?.funFact,
+        funFacts: dbMatch?.funFacts,
         era: dbMatch?.era,
       };
       setShowInfo(info);
@@ -246,6 +248,18 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
               </div>
             )}
 
+            {/* Interesting Facts */}
+            {showInfo.funFacts && showInfo.funFacts.length > 0 && (
+              <div className="detail-section">
+                <h3>Interesting Facts</h3>
+                <ul className="fun-facts-list">
+                  {showInfo.funFacts.map((fact, i) => (
+                    <li key={i}>{fact}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Wikipedia images gallery */}
             {wikiImages.length > 0 && (
               <div className="detail-section">
@@ -277,6 +291,7 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
                     <button className="lightbox-arrow lightbox-next" onClick={nextImage} aria-label="Next">&#8250;</button>
                   )}
                   <button className="lightbox-close" onClick={closeLightbox} aria-label="Close">&#x2715;</button>
+                  <div className="lightbox-caption">Image from Wikipedia</div>
                   <div className="lightbox-counter">{lightboxIndex + 1} / {wikiImages.length}</div>
                 </div>
               </div>

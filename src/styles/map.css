@@ -533,9 +533,21 @@
   opacity: 1;
 }
 
+.lightbox-caption {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 11px;
+  font-family: 'ff-tisa-sans-web-pro', sans-serif;
+  white-space: nowrap;
+  text-align: center;
+}
+
 .lightbox-counter {
   position: absolute;
-  bottom: -32px;
+  bottom: -48px;
   left: 50%;
   transform: translateX(-50%);
   color: rgba(255, 255, 255, 0.6);
@@ -658,6 +670,32 @@
   border-radius: 16px;
   font-size: 14px;
   color: #fff;
+}
+
+/* Fun facts list */
+.fun-facts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fun-facts-list li {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #fff;
+  font-family: 'ff-tisa-sans-web-pro', sans-serif;
+  padding-left: 16px;
+  position: relative;
+}
+
+.fun-facts-list li::before {
+  content: '\2022';
+  position: absolute;
+  left: 0;
+  color: #ffe816;
 }
 
 /* Connected shows list */
