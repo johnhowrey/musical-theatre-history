@@ -232,6 +232,8 @@ export default function BroadwayMap() {
     setNavigateToShow(null);
   }, []);
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const handleMapReady = useCallback(() => {
     setIsReady(true);
   }, []);
@@ -261,10 +263,13 @@ export default function BroadwayMap() {
       <div className="map-header">
         <div className="header-nav">
           <h1>The Musical Theatre History Subway Map</h1>
-          <div className="header-nav-links">
-            <button className="people-btn" onClick={handlePeopleClick}>People</button>
-            <button className="people-btn" onClick={handleStatsClick}>Stats</button>
-            <button className="header-action-btn" onClick={handleRandomShow}>Random Show</button>
+          <button className="header-menu-toggle" onClick={() => setMenuOpen(o => !o)} aria-label="Menu">
+            <span /><span /><span />
+          </button>
+          <div className={`header-nav-links${menuOpen ? ' open' : ''}`}>
+            <button className="people-btn" onClick={() => { handlePeopleClick(); setMenuOpen(false); }}>People</button>
+            <button className="people-btn" onClick={() => { handleStatsClick(); setMenuOpen(false); }}>Stats</button>
+            <button className="header-action-btn" onClick={() => { handleRandomShow(); setMenuOpen(false); }}>Random Show</button>
           </div>
         </div>
         <SearchBar
