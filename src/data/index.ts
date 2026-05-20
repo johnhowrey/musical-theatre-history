@@ -3,7 +3,7 @@ export { mapShows, mapCreators } from './mapShows';
 export type { MapShow, MapCreator } from './mapShows';
 export { showDetails } from './showDetails';
 export { SHOWS, PEOPLE, searchShows, searchPeople, getShowById, getPersonById } from './broadway';
-export type { BroadwayShow, BroadwayPerson } from './broadway/types';
+export type { BroadwayShow, BroadwayPerson } from './broadway';
 
 // Services
 export { getShowLinks, getCreatorLinks } from '../services/affiliateLinks';

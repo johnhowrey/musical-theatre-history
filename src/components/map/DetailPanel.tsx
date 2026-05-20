@@ -37,7 +37,6 @@ interface ShowInfo {
   wonBestMusical?: boolean;
   themes?: string[];
   funFact?: string;
-  funFacts?: string[];
   era?: string;
 }
 
@@ -137,7 +136,6 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
         wonBestMusical: dbMatch?.wonBestMusical,
         themes: dbMatch?.themes,
         funFact: dbMatch?.funFact,
-        funFacts: dbMatch?.funFacts,
         era: dbMatch?.era,
       };
       setShowInfo(info);
@@ -248,15 +246,11 @@ export default function DetailPanel({ showName, onClose, onToggleExpand, onCreat
               </div>
             )}
 
-            {/* Interesting Facts */}
-            {showInfo.funFacts && showInfo.funFacts.length > 0 && (
+            {/* Interesting Fact */}
+            {showInfo.funFact && (
               <div className="detail-section">
-                <h3>Interesting Facts</h3>
-                <ul className="fun-facts-list">
-                  {showInfo.funFacts.map((fact, i) => (
-                    <li key={i}>{fact}</li>
-                  ))}
-                </ul>
+                <h3>Interesting Fact</h3>
+                <p>{showInfo.funFact}</p>
               </div>
             )}
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { mapCreators, getCreatorColor, PEOPLE } from '../../data';
-import type { PersonRole } from '../../data/broadway/types';
+import type { PersonRole } from '../../data/broadway';
 
 interface PeopleDirectoryProps {
   onCreatorClick: (creatorName: string) => void;
