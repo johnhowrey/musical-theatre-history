@@ -1,4 +1,4 @@
 {
   "framework": "vite",
-  "installCommand": "git config --global --add url.\"https://x-access-token:${GH_TOKEN}@github.com/\".insteadOf \"ssh://git@github.com/\" && git config --global --add url.\"https://x-access-token:${GH_TOKEN}@github.com/\".insteadOf \"git@github.com:\" && git config --global --add url.\"https://x-access-token:${GH_TOKEN}@github.com/\".insteadOf \"https://github.com/\" && npm ci"
+  "installCommand": "bash scripts/vercel-install.sh"
 }
