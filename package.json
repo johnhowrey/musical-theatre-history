@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@johnhowrey/broadway-data": "github:johnhowrey/broadway-data",
+    "@johnhowrey/broadway-data": "git+https://github.com/johnhowrey/broadway-data.git",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-zoom-pan-pinch": "^3.7.0"
