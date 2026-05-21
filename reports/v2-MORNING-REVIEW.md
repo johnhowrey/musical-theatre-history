@@ -769,3 +769,30 @@ EYE-VERIFIED v1-vs-v2 before shipping. The remaining label-overlap polish, if th
 user wants it, should be a visual region-by-region pass, not an automated solver.
 Most detector "overlaps" are v1's intentional tight packing (titles beside their
 own station markers; legend names along their lines) — not bugs.
+
+---
+
+## 2026-05-21 (cont.) — Data-link rendered-but-unmapped shows (task #30)
+
+Added 14 mapShows entries for shows v1 labels but the index omitted (via
+`scripts/propose-mapshows.ts`: slug-match label→broadway-data, check active-creator
+credit, x,y=label anchor, w,h=measured bbox). **13 now data-link** (anchor +
+computed credits + line membership), which also ADDED their station ticks that v1
+has but v2 was previously missing (these shows had a label but no marker before):
+a-bronx-tale-the-musical, a-strange-loop, be-more-chill, best-foot-forward,
+bless-you-all, city-of-angels, flahooley, jamaica, la-cage-aux-folles,
+new-girl-in-town, plain-and-fancy, twos-company, urinetown. `cabin-in-the-sky`
+added but label-only (its only active credit is Balanchine, whose line is absent).
+
+**Caught a misdiagnosis:** the audit flagged The Last Ship / The Who's Tommy as
+"stale coords." They're NOT — v1 labels each TWICE (two stations: The Last Ship
+1797,917 & 1194,970; The Who's Tommy 2151,501 & 1759,1200). The original mapShows
+coords were correct (first station). Reverted my "fix"; mapShows is id-keyed so
+the first station data-links and the duplicate renders label-only (fine). Verified
+by listing all label occurrences in the SVG before/after.
+
+Validation: text count steady at 1264, marker count steady at 310 (no doubled/
+stray computed markers), spot-checked La Cage / Urinetown / Brackett cluster
+(A Strange Loop, Be More Chill) v1-vs-v2 — ticks land on the line matching v1.
+~15 obscure shows are genuinely absent from broadway-data → noted in
+`reports/broadway-data-notes.md` for the data agent.

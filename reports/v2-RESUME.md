@@ -52,16 +52,26 @@ in MapV2 renders verbatim every v1 label not drawn by a data-matched anchor.
 Validated stacked v1-vs-v2 on La Cage, right-side new shows, left/right creators,
 1600 Penn, full overview. Detail: `reports/v2-MORNING-REVIEW.md` (2026-05-21 cont.).
 
+### DONE 2026-05-21 — Collision polish (task #31) ✅
+Fixed the marker-pill doubling bug (computed pill drawn over v1's circle at
+drifted intersections: Fiorello!, Annie Get Your Gun, Follies +4 — now prefer
+v1's verbatim marker within 24px). Slid GERSHWIN + GOWER CHAMPION legend labels
+clear of clipped titles. Learning saved to memory: bbox detectors over-report on
+this dense map; label nudges must be eye-verified (most "overlaps" are v1's
+intentional tight packing). `/v2?measure` mode + LABEL_NUDGES table persist.
+
+### DONE 2026-05-21 — Data-link shows (task #30) ✅
+Added 14 shows to mapShows that v1 labels but the index omitted (La Cage aux
+Folles, Be More Chill, A Strange Loop, A Bronx Tale, City of Angels, Urinetown,
+Jamaica, New Girl in Town, Plain and Fancy, Two's Company, Best Foot Forward,
+Bless You All, Flahooley, Cabin in the Sky). 13 now data-link (anchor + computed
+credits + station tick that v1 had but v2 was missing); cabin-in-the-sky waits on
+the Balanchine line. The Last Ship / The Who's Tommy were NOT stale — v1 labels
+them at TWO stations each; left as-is (id-keyed mapShows links the first; the
+second renders label-only). ~15 obscure shows genuinely missing from
+broadway-data → `reports/broadway-data-notes.md` for the data agent.
+
 ### Next up
-1. **Data-link rendered-but-unmapped shows (task #30).** ~31 shows now render
-   their label+marker but aren't in mapShows/broadway-data, so they're not
-   clickable and their line-membership/credits aren't computed. Add/correct
-   mapShows entries (slugify→match BD); fix 2 stale coords (The Last Ship, The
-   Who's Tommy) + little-shop-of-horrors (not in BD). List: `reports/label-audit.md`.
-2. **Nudge v1's own overlapping labels/markers (task #31).** The print-polish
-   pass the user asked for ("clean it up, keep lines exact"). v2 now renders all
-   labels verbatim ⇒ inherits v1's own label-on-label / label-on-line / collision
-   overlaps. Design-heavy — agree the nudge ruleset with the user first.
 3. **"Lines ending suddenly"** — user flagged it but I couldn't reproduce a clear
    case in the current render. Ask the user for one specific spot, then chase it
    (likely a v1 partial path or extraction terminus).
@@ -137,11 +147,11 @@ Validated stacked v1-vs-v2 on La Cage, right-side new shows, left/right creators
 
 ## Git / safety note
 
-The entire v2 build is **untracked** in git (`src/components/v2/`, `reports/` show
-as `??`; `src/data/mapShows.ts` + `creatorColors.ts` are modified-tracked). Work
-is saved on disk and safe across shutdown, but **nothing is committed**. If you
-want a checkpoint, commit before/after resuming (ask the user first — they have
-not requested commits).
+**Checkpointed 2026-05-21 → commit `b7caf2e`** ("v2 map: data-driven render with
+verbatim v1 markers + labels") on `main`. The whole v2 build + this session's
+missing-label/marker fixes are committed. Review render PNGs under `reports/**`
+are **gitignored** (reproducible, 24MB; kept on disk only). Working tree is clean
+apart from those ignored PNGs.
 
 ## Other reference docs
 - `reports/v2-MORNING-REVIEW.md` — master review / per-line punch list / D-decisions.

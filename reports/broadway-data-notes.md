@@ -44,3 +44,34 @@ it's not a book musical they wrote — e.g. **Never Gonna Dance** (Jerome Kern
 songs), **New York, New York** (also credits Lin-Manuel Miranda for new lyrics).
 Consider a flag distinguishing "wrote the show" from "songs used." The map's
 distance guard keeps these off the wrong line.
+
+## 2026-05-21 — Shows v1 labels but broadway-data is missing (task #30)
+
+These shows are LABELED on the v1 map (so they render in v2 via the static label
+layer) but have NO broadway-data SHOWS entry (slug match found nothing), so they
+can't be data-linked (no credits, no line membership, not clickable). Mostly
+older/obscure titles. Please add them to broadway-data with creator credits:
+
+- Allah Be Praised! (1944 revue)
+- Carnival in Flanders (1953)
+- Donnybrook! (1961)
+- Foxy (1964)
+- Great to Be Alive (1950)
+- Henry, Sweet Henry (1967)
+- How Now, Dow Jones (1967)
+- Jerry's Girls (1985 revue)
+- Mr. Strauss Goes to Boston (1945)
+- Park Avenue (1946)
+- The Education of H*Y*M*A*N K*A*P*L*A*N (1968)
+- The Fig Leaves Are Falling (1969)
+- The Lady Comes Across (1942)
+- The Life (1997, Cy Coleman) — surprising gap; verify the id
+- Touch & Go (1949 revue)
+
+Also: `cabin-in-the-sky` IS in broadway-data (Balanchine choreography) and now in
+mapShows, but can't data-link until George Balanchine's line is added (his palette
+color is the marker stroke #231F20; line currently absent).
+
+NOTE: v1 labels two shows TWICE (two stations each) — "The Last Ship" (1797,917 &
+1194,970) and "The Who's Tommy" (2151,501 & 1759,1200). mapShows is id-keyed so
+only the first station data-links; the second renders label-only (fine).
