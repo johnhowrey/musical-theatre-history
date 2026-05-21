@@ -35,7 +35,7 @@ export const creatorLineColors: Record<string, string> = {
   "GALT MACDERMOT": "#FF674C",
   "GENE SAKS": "#564F75",
   "GEORGE ABBOTT": "#3B44AC",
-  "GEORGE BALANCHINE": "#231F20",
+  "GEORGE BALANCHINE": "#71E4D1",
   "GEORGE C. WOLFE": "#93B4E4",
   "GEORGE FAISON": "#82A1C3",
   "GEORGE FORREST & ROBERT WRIGHT": "#B44B64",

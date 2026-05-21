@@ -78,12 +78,17 @@ broadway-data → `reports/broadway-data-notes.md` for the data agent.
 4. **Solid-black circle near "The Girl Friend"** (top-right of the Love Life
    region) — verify it isn't a marker-fill bug.
 
+### DONE 2026-05-21 — Balanchine's line color ✅
+Resolved: **George Balanchine = `#71E4D1`** (was wrongly `#231F20` = marker color,
+so his line never rendered). Found by coverage analysis (`scripts/_balanchine.ts`):
+`#71E4D1` is the only UNOWNED line color and its long top-spanning path (st127)
+threads his composer-diverse stations exactly (Cabin in the Sky, Louisiana
+Purchase, On Your Toes, I Married an Angel, Where's Charley?). Verified visually
+(v1 has the teal line; v2-old missing it; v2-new matches v1 — it renders v1's exact
+path verbatim). Bonus: this data-linked `cabin-in-the-sky`. The earlier "ticks land
+on Sunny Days/Great Waltz" dismissal was a misread (those ticks are d=31–56 away).
+
 ### Known open items (older)
-5. **George Balanchine's real line color** — his palette entry is `#231F20`, which
-   IS the marker stroke color (caused the old doubled-marker bug; line excluded).
-   His true long line color is still unidentified. `#71E4D1` was a candidate but
-   its ticks land on Sunny Days / The Great Waltz (not Balanchine shows), so NOT
-   confirmed. (`src/data/creatorColors.ts`)
 6. **Add famous missing shows**, one at a time, WITH USER APPROVAL each: Kismet,
    La Cage aux Folles, etc. (Task #24)
 7. **Color-collision recolors** (D10) — 3 palette pairs share a color; new colors

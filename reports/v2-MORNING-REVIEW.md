@@ -796,3 +796,22 @@ stray computed markers), spot-checked La Cage / Urinetown / Brackett cluster
 (A Strange Loop, Be More Chill) v1-vs-v2 — ticks land on the line matching v1.
 ~15 obscure shows are genuinely absent from broadway-data → noted in
 `reports/broadway-data-notes.md` for the data agent.
+
+---
+
+## 2026-05-21 (cont.) — George Balanchine's line color FOUND (#71E4D1)
+
+His palette entry was `#231F20` (the marker/text stroke color), so `extractCreatorLine`
+found only marker classes (all excluded as fill≠none) and his line never rendered —
+a MISSING LINE. Found the real color with `scripts/_balanchine.ts`: of all v1 line
+colors, `#71E4D1` is the only UNOWNED one, and its single long path (st127,
+x[-58→1310] y[→315]) passes EXACTLY through his composer-diverse stations —
+Cabin in the Sky (d=2), Louisiana Purchase (d=1), On Your Toes (d=2), I Married an
+Angel (d=1), Where's Charley? (d=3) — shows linked by nothing but his choreography.
+
+**Fix:** `creatorColors.ts` GEORGE BALANCHINE → `#71E4D1`. Verified by 3-way zoom
+(v1 has the teal line; v2-old lacks it; v2-new matches v1 — the line is v1's exact
+st127 path rendered verbatim, so pixel-identical by construction). No regressions:
+1264 labels, no stray off-canvas segment, tsc clean. Bonus: `cabin-in-the-sky` now
+data-links (it was waiting on this line). The prior "#71E4D1 ticks on Sunny Days /
+Great Waltz" dismissal was a misread — those ticks are 31–56px away, not matches.
