@@ -4,3 +4,6 @@ dist/
 .DS_Store
 .env
 .vercel
+
+# v2 review render artifacts (reproducible; keep out of git)
+reports/**/*.png

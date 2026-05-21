@@ -15,3 +15,85 @@ html, body, #root {
   background: #16213e;
   font-family: 'ff-tisa-sans-web-pro', sans-serif;
 }
+
+/* ===== v2 — Vignelli-anchored modernist ===== */
+:root {
+  --v2-bg: #FAF6E8;
+  --v2-ink: #1A1A1A;
+  --v2-muted: rgba(26, 26, 26, 0.55);
+  --v2-divider: rgba(26, 26, 26, 0.10);
+  --v2-divider-strong: rgba(26, 26, 26, 0.20);
+  --v2-sans: 'ff-tisa-sans-web-pro', 'Helvetica Neue', sans-serif;
+}
+
+.v2-shell {
+  width: 100%;
+  height: 100%;
+  background: var(--v2-bg);
+  color: var(--v2-ink);
+  font-family: var(--v2-sans);
+  position: relative;
+  overflow: hidden;
+}
+.v2-back {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  z-index: 10;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--v2-muted);
+  transition: color 0.15s;
+}
+.v2-back:hover { color: var(--v2-ink); }
+
+.v2-shell .react-transform-wrapper,
+.v2-shell .react-transform-component {
+  width: 100% !important;
+  height: 100% !important;
+}
+.v2-map {
+  display: block;
+}
+
+/* ---- Loading state ---- */
+.v2-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.v2-loading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--v2-muted);
+}
+.v2-loading-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--v2-ink);
+  animation: v2-pulse 1.1s ease-in-out infinite;
+}
+@keyframes v2-pulse {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50%      { opacity: 1;   transform: scale(1.2); }
+}
+
+/* ---- SVG label refinement ---- */
+.v2-labels text {
+  user-select: none;
+  paint-order: stroke fill;
+  stroke: var(--v2-bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}

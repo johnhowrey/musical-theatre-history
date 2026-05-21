@@ -5,7 +5,7 @@ import {
   type ReactZoomPanPinchRef,
 } from 'react-zoom-pan-pinch';
 import type { MapShow } from '../../data';
-import { mapShows, mapCreators } from '../../data';
+import { mapShows, mapCreators, getContrastTextColor, creatorLineColors } from '../../data';
 import mapSvgRaw from '../../assets/map.svg?raw';
 
 interface MapViewerProps {
@@ -65,6 +65,188 @@ export default function MapViewer({
     observer.observe(container);
     return () => observer.disconnect();
   }, []);
+
+  // Inject a hover background rect behind each show label. We rasterize a
+  // text-stripped clone of the SVG to a canvas, then sample pixel colors
+  // around each label to detect which line(s) sit underneath. Single line ⇒
+  // use that color; intersection (2+ distinct line colors) or off-line ⇒
+  // fall back to the map's warm-black ink.
+  useEffect(() => {
+    if (!svgContent || !containerSize.width) return;
+    const container = svgContainerRef.current;
+    if (!container) return;
+    const svgRoot = container.querySelector<SVGSVGElement>('svg');
+    if (!svgRoot) return;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const PAD_X = 8;
+    const PAD_Y = 4;
+    const DEFAULT_BG = '#231F20';
+
+    // Wrap any standalone text[data-show] in a group so the rect+text share a parent
+    container.querySelectorAll<SVGTextElement>('text[data-show]').forEach(text => {
+      const parent = text.parentElement;
+      if (parent && parent.tagName.toLowerCase() === 'g' && parent.hasAttribute('data-show')) return;
+      const showName = text.getAttribute('data-show');
+      if (!showName || !parent) return;
+      const wrap = document.createElementNS(svgNS, 'g');
+      wrap.setAttribute('data-show', showName);
+      parent.insertBefore(wrap, text);
+      wrap.appendChild(text);
+      text.removeAttribute('data-show');
+    });
+
+    // Collect text-bboxes BEFORE clone-and-rasterize (need them in SVG coords)
+    const showGroups: Array<{ g: SVGGElement; bbox: DOMRect }> = [];
+    container.querySelectorAll<SVGGElement>('g[data-show]').forEach(g => {
+      const existing = g.querySelector<SVGRectElement>(':scope > rect.show-bg');
+      if (existing) existing.remove();
+      let bbox: DOMRect;
+      try { bbox = g.getBBox(); } catch { return; }
+      if (!bbox.width || !bbox.height) return;
+      showGroups.push({ g, bbox });
+    });
+    if (!showGroups.length) return;
+
+    // Build a text-stripped SVG clone for clean pixel sampling
+    const cloned = svgRoot.cloneNode(true) as SVGSVGElement;
+    cloned.querySelectorAll('text, rect.show-bg').forEach(el => el.remove());
+    if (!cloned.getAttribute('width')) cloned.setAttribute('width', String(SVG_WIDTH));
+    if (!cloned.getAttribute('height')) cloned.setAttribute('height', String(SVG_HEIGHT));
+    const xml = new XMLSerializer().serializeToString(cloned);
+    const blob = new Blob([xml], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    let cancelled = false;
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      if (cancelled) return;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.ceil(SVG_WIDTH);
+      canvas.height = Math.ceil(SVG_HEIGHT);
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      let pixels: Uint8ClampedArray;
+      try {
+        pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      } catch (err) {
+        console.error('[map] canvas tainted, cannot sample line colors', err);
+        return;
+      }
+      const W = canvas.width;
+      console.log('[map] canvas ready', canvas.width, 'x', canvas.height, 'showGroups:', showGroups.length);
+
+      // Build palette as RGB triples
+      const palette = Object.values(creatorLineColors).map(hex => ({
+        hex: hex.toUpperCase(),
+        r: parseInt(hex.slice(1, 3), 16),
+        g: parseInt(hex.slice(3, 5), 16),
+        b: parseInt(hex.slice(5, 7), 16),
+      }));
+
+      // Sample a single pixel; return nearest palette hex if within threshold
+      const MATCH_THRESHOLD = 50; // RGB euclidean
+      const sampleAt = (x: number, y: number): string | null => {
+        const px = Math.round(x);
+        const py = Math.round(y);
+        if (px < 0 || py < 0 || px >= canvas.width || py >= canvas.height) return null;
+        const i = (py * W + px) * 4;
+        const r = pixels[i], g = pixels[i + 1], b = pixels[i + 2];
+        // Skip background-ish pixels (cream #f5f0e8 → ~245/240/232)
+        if (r > 230 && g > 225 && b > 215) return null;
+        // Skip near-white
+        if (r > 240 && g > 240 && b > 240) return null;
+        let bestHex: string | null = null;
+        let bestDist = MATCH_THRESHOLD;
+        for (const c of palette) {
+          const d = Math.hypot(r - c.r, g - c.g, b - c.b);
+          if (d < bestDist) { bestDist = d; bestHex = c.hex; }
+        }
+        return bestHex;
+      };
+
+      const showDiagnostics: Record<string, unknown> = {};
+      for (const { g, bbox } of showGroups) {
+        // Since we stripped <text> from the rasterized clone, the bbox
+        // interior is also safe to sample. Use a dense grid covering both
+        // inside the bbox and a 2px ring outside it.
+        const probes: Array<{ x: number; y: number; loc: string }> = [];
+        for (const fx of [0, 0.25, 0.5, 0.75, 1]) {
+          for (const fy of [0, 0.25, 0.5, 0.75, 1]) {
+            probes.push({
+              x: bbox.x + bbox.width * fx,
+              y: bbox.y + bbox.height * fy,
+              loc: `in(${fx},${fy})`,
+            });
+          }
+        }
+        // Ring 3px outside the bbox
+        const R = 3;
+        for (const fx of [0, 0.25, 0.5, 0.75, 1]) {
+          probes.push({ x: bbox.x + bbox.width * fx, y: bbox.y - R, loc: `out-top(${fx})` });
+          probes.push({ x: bbox.x + bbox.width * fx, y: bbox.y + bbox.height + R, loc: `out-bot(${fx})` });
+        }
+        for (const fy of [0.25, 0.5, 0.75]) {
+          probes.push({ x: bbox.x - R, y: bbox.y + bbox.height * fy, loc: `out-left(${fy})` });
+          probes.push({ x: bbox.x + bbox.width + R, y: bbox.y + bbox.height * fy, loc: `out-right(${fy})` });
+        }
+
+        const hitColors = new Map<string, number>();
+        for (const pt of probes) {
+          const hex = sampleAt(pt.x, pt.y);
+          if (!hex) continue;
+          hitColors.set(hex, (hitColors.get(hex) ?? 0) + 1);
+        }
+
+        // With text stripped, a single solid hit is reliable. Still require
+        // ≥2 to filter out noise at line corners/joins.
+        const strong = [...hitColors.entries()].filter(([, n]) => n >= 2).map(([h]) => h);
+
+        const showName = g.getAttribute('data-show') || '';
+        if (/dance a little closer|charlie and algernon|brooklyn|bye bye birdie/i.test(showName)) {
+          showDiagnostics[showName] = {
+            bbox: { x: Math.round(bbox.x), y: Math.round(bbox.y), w: Math.round(bbox.width), h: Math.round(bbox.height) },
+            hits: Object.fromEntries(hitColors),
+            strong,
+          };
+        }
+
+        let bgColor = DEFAULT_BG;
+        let bgOpacity = '0.95';
+        let textColor = '#FFFFFF';
+        if (strong.length === 1) {
+          bgColor = strong[0];
+          bgOpacity = '1';
+          textColor = getContrastTextColor(bgColor);
+        }
+        g.style.setProperty('--show-bg-text', textColor);
+
+        const rect = document.createElementNS(svgNS, 'rect');
+        rect.setAttribute('class', 'show-bg');
+        rect.setAttribute('x', String(bbox.x - PAD_X));
+        rect.setAttribute('y', String(bbox.y - PAD_Y));
+        rect.setAttribute('width', String(bbox.width + 2 * PAD_X));
+        rect.setAttribute('height', String(bbox.height + 2 * PAD_Y));
+        rect.setAttribute('rx', '6');
+        rect.setAttribute('ry', '6');
+        rect.setAttribute('fill', bgColor);
+        rect.setAttribute('fill-opacity', bgOpacity);
+        g.insertBefore(rect, g.firstChild);
+      }
+      console.log('[map] hover-bg diagnostics:', showDiagnostics);
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+
+    return () => { cancelled = true; };
+  }, [svgContent, containerSize]);
 
   // Random start position — zoom into a show on first render
   useEffect(() => {
@@ -225,11 +407,13 @@ function processShowInteractivity(svgText: string): string {
       .st90, [style*="TisaSansPro"] { font-family: 'ff-tisa-sans-web-pro', sans-serif !important; font-weight: 400 !important; }
 
       g[data-show] { cursor: pointer; }
-      g[data-show] text { transition: fill 0.15s, stroke 0.15s, stroke-width 0.15s; paint-order: stroke; }
-      g[data-show]:hover text { fill: #fff !important; stroke: #000 !important; stroke-width: 8px !important; stroke-linejoin: round !important; }
+      g[data-show] text { transition: fill 0.15s; }
+      g[data-show] rect.show-bg { opacity: 0; transition: opacity 0.15s; pointer-events: none; }
+      g[data-show]:hover rect.show-bg { opacity: 1; }
+      g[data-show]:hover text { fill: var(--show-bg-text, #fff) !important; }
       g.map-highlight-active text { fill: #ffe816 !important; }
-      text[data-show] { cursor: pointer; transition: fill 0.15s, stroke 0.15s, stroke-width 0.15s; paint-order: stroke; }
-      text[data-show]:hover { fill: #fff !important; stroke: #000 !important; stroke-width: 8px !important; stroke-linejoin: round !important; }
+      text[data-show] { cursor: pointer; transition: fill 0.15s; }
+      text[data-show]:hover { fill: #fff !important; }
       text[data-show].map-highlight-active { fill: #ffe816 !important; }
 
       g[data-creator] { cursor: pointer; }
