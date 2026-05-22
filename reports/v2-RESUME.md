@@ -71,12 +71,24 @@ them at TWO stations each; left as-is (id-keyed mapShows links the first; the
 second renders label-only). ~15 obscure shows genuinely missing from
 broadway-data → `reports/broadway-data-notes.md` for the data agent.
 
+### DONE 2026-05-21 — Missing creator lines from orphan colors (task #32) ✅
+Added 3 creators whose v1 line color was unowned (line never rendered): **JERRY
+MITCHELL = #00BEF3**, **JULIE ARENAL = #00A85B**, **PATRICK MCCOLLUM = #71C166**
+(matched orphan color → creator-name legend label). Lines 117→120, verified
+v1-vs-v2. The other 9 orphan colors are degenerate dots (not lines). **David
+Yazbek** is a color collision (label #DA6756, held by Hamlisch whose label is
+#A92C31) → folded into #22 (D10 collisions).
+
 ### Next up
-3. **"Lines ending suddenly"** — user flagged it but I couldn't reproduce a clear
-   case in the current render. Ask the user for one specific spot, then chase it
-   (likely a v1 partial path or extraction terminus).
-4. **Solid-black circle near "The Girl Friend"** (top-right of the Love Life
-   region) — verify it isn't a marker-fill bug.
+1. **D10 color collisions (task #22)** — now concrete. Per legend-label colors:
+   Hamlisch → #A92C31, Yazbek → #DA6756 (split the shared two-segment line);
+   plus the 3 earlier pairs (Herbert Ross/Gower Champion, Danny Mefford/Casey
+   Nicholaw, Patricia Birch/Walter Bobbie). Resolve by checking each creator's
+   legend-label color. Also the ~66 director/choreographer tail lines need
+   reading-zoom validation.
+2. **Add famous missing shows** (#24), one at a time w/ approval.
+3. **"Lines ending suddenly"** — needs a specific spot from the user.
+4. **Solid-black circle near "The Girl Friend"** — verify it isn't a marker-fill bug.
 
 ### DONE 2026-05-21 — Balanchine's line color ✅
 Resolved: **George Balanchine = `#71E4D1`** (was wrongly `#231F20` = marker color,
