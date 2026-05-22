@@ -62,6 +62,11 @@ export const creatorLineColors: Record<string, string> = {
   "JEROME ROBBINS": "#00A75D",
   "JERRY BOCK & SHELDON HARNICK": "#F0776C",
   "JERRY HERMAN": "#FFCE2D",
+  // Task #32: creators whose v1 line color was unowned (line never rendered).
+  // Confirmed by orphan-color → creator-name legend label (+ broadway-data shows).
+  "JERRY MITCHELL": "#00BEF3",
+  "JULIE ARENAL": "#00A85B",
+  "PATRICK MCCOLLUM": "#71C166",
   "JERRY ZAKS": "#5C61B9",
   "JOE LAYTON": "#89578C",
   "JOE MANTELLO": "#00C496",

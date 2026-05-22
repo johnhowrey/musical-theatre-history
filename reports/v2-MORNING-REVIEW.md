@@ -815,3 +815,32 @@ st127 path rendered verbatim, so pixel-identical by construction). No regression
 1264 labels, no stray off-canvas segment, tsc clean. Bonus: `cabin-in-the-sky` now
 data-links (it was waiting on this line). The prior "#71E4D1 ticks on Sunny Days /
 Great Waltz" dismissal was a misread — those ticks are 31–56px away, not matches.
+
+---
+
+## 2026-05-21 (cont.) — Missing creator lines from orphan colors (task #32)
+
+After the Balanchine fix, scanned for ALL unowned v1 line colors (`scripts/_orphan-lines.ts`,
+`_orphan-path.ts`) and matched each to its creator-name legend label (legend labels
+are filled with their line's color). Result: 12 orphan colors =
+- **3 real missing creator lines, now ADDED** (creator was never in the palette):
+  - **JERRY MITCHELL = #00BEF3** (line st47; 6/6 path-shows credit him: Kinky Boots,
+    Legally Blonde, Pretty Woman, On Your Feet!, Catch Me If You Can, Dirty Rotten
+    Scoundrels). Verified v1-vs-v2 (cyan line through Pretty Woman/Legally Blonde/
+    Kinky Boots — identical).
+  - **JULIE ARENAL = #00A85B** (legend label colored #00A85B; Hair choreographer).
+  - **PATRICK MCCOLLUM = #71C166** (legend label colored #71C166).
+  Added to `creatorColors.ts` + `ACTIVE_CREATORS` (all 3 are in broadway-data PEOPLE).
+  Lines: 117 → 120. Text steady at 1264.
+- **9 degenerate colors** (0px-span single-point paths = dots/stubs, no legend
+  label): #378C42 #A0D9D9 #00ABBD #6E6EA2 #CF1E51 #007297 #6FCAC8 #00A990 #BE1E2D —
+  NOT creator lines; left alone.
+
+**David Yazbek — a color COLLISION (deferred to #22).** His palette color #8C2F44
+is phantom (not in the SVG). His legend label "DAVID YAZBECK" is colored **#DA6756**,
+which is currently assigned to **MARVIN HAMLISCH** — but Hamlisch's own label is
+**#A92C31**. And #DA6756 (st122) has TWO disjoint segments (bottom-left near Smile/
+Hamlisch + top-right near Yazbek's shows). So #DA6756 is shared by two creators.
+Correct end state (per legend labels): **Hamlisch → #A92C31, Yazbek → #DA6756**, and
+the shared #DA6756 line needs splitting by region. This is the D10 color-collision
+work — folded into task #22, not touched here (would disturb Hamlisch's line).
