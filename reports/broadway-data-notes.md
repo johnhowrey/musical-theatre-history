@@ -75,3 +75,35 @@ color is the marker stroke #231F20; line currently absent).
 NOTE: v1 labels two shows TWICE (two stations each) — "The Last Ship" (1797,917 &
 1194,970) and "The Who's Tommy" (2151,501 & 1759,1200). mapShows is id-keyed so
 only the first station data-links; the second renders label-only (fine).
+
+## 2026-05-22 — Missing creator credits found by v1 line-station reverse check (task #22)
+
+The v1 map (hand-drawn by someone knowledgeable) routes these creators' colored
+lines THROUGH stations at shows that broadway-data does NOT credit them for.
+Source: `scripts/_tail-scan.ts` reverse check (a tick in the creator's unique line
+color sits on the show's station). These are high-confidence missing credits —
+please verify & add to broadway-data (most are well-known works of the creator):
+
+- **Des McAnuff** — Big River, The Who's Tommy (he directed both)
+- **Michael Greif** — Rent (directed)
+- **Susan Stroman** — Contact, Big Fish, Big (directed/choreographed)
+- **Tommy Tune** — Nine, The Best Little Whorehouse in Texas (dir/choreo)
+- **Michael Kidd** — Cyrano, Finian's Rainbow, Destry Rides Again, Skyscraper, Hold It, Li'l Abner (choreographed)
+- **Onna White** — 1776, Let It Ride, Whoop-Up (choreographed)
+- **George Faison** — The Wiz, Don't Bother Me I Can't Cope (choreographed)
+- **George C. Wolfe** — Jelly's Last Jam, The Wild Party (directed)
+- **John Rando** — Urinetown, A Christmas Story: The Musical, Swing! (directed)
+- **Joe Layton** — Drat! the Cat!, George M!, Platinum, Harrigan 'n Hart
+- **Ron Field** — Café Crown, Nowhere To Go But Up, Irma La Douce
+- **Sergio Trujillo** — Hands on a Hardbody, Memphis, The Addams Family (choreographed)
+- **Helen Tamiris** — Plain and Fancy, Bless You All, Flahooley (choreographed)
+- **Graciela Daniele** — Marie Christine, Chronicle of a Death Foretold
+- **Wayne Cilento** — Dream, Holler If Ya Hear Me
+- **Steven Hoggett** — Once (movement) ; **Mel Brooks** — Shinbone Alley (co-writer)
+- **Scott Ellis** — The Adventures of Tom Sawyer, The Look of Love
+- **Alex Timbers** — Here Lies Love, Beetlejuice ; **Christopher Ashley** — Xanadu
+- **Bartlett Sher** — The Light in the Piazza (directed) ; **Andy Blankenbuehler** — Bandstand
+- **Christopher Gattelli** — Amazing Grace ; **Jack Cole** — Jamaica
+- **Peter Gennaro** — Bajour ; **Rob Ashford** — Cry-Baby ; **Hal Hackady** — Ambassador
+- **Albert Marre** — Chu Chem
+Full table (incl. forward column, which is NOISY — ignore): `reports/tail-scan.md`.

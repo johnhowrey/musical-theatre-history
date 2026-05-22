@@ -600,7 +600,12 @@ function MapSvg({
               computed marker in their per-show group below. */}
           <g data-layer="v1-markers">
             {v1Stations.map((s, i) =>
-              s.pillD ? (
+              s.dot ? (
+                // v1 degenerate round-cap dot = small SOLID dot of diameter =
+                // strokeWidth. Render filled (no stroke) so it isn't a 2×-size
+                // black blob (stroke would swamp the tiny radius).
+                <circle key={i} cx={s.cx} cy={s.cy} r={s.strokeWidth / 2} fill="#231F20" />
+              ) : s.pillD ? (
                 <path key={i} d={s.pillD} fill="#FFFFFF" stroke="#231F20" strokeWidth={s.strokeWidth} strokeMiterlimit={10} />
               ) : (
                 <circle key={i} cx={s.cx} cy={s.cy} r={s.r} fill="#FFFFFF" stroke="#231F20" strokeWidth={s.strokeWidth} />

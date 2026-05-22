@@ -26,6 +26,10 @@ export interface ExtractedStation {
   strokeWidth: number;
   /** Raw path `d` for a stadium pill marker; absent for circles. */
   pillD?: string;
+  /** True for v1's degenerate zero-length "dot" markers (st363/st365 round-cap
+   *  paths). v1 renders these as a small SOLID dot of diameter = strokeWidth;
+   *  render as a filled circle (no stroke) so it isn't an oversized black blob. */
+  dot?: boolean;
 }
 
 /** Single-line tick marker from v1 (short colored segment perpendicular to a line). */
@@ -305,8 +309,8 @@ export function extractStations(): ExtractedStation[] {
     const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
     const sw = markerSW.get(cls) ?? 1;
     if (w < 1 && h < 1) {
-      // Degenerate path = a round dot of diameter ≈ strokeWidth.
-      out.push({ cx, cy, r: sw / 2, strokeWidth: sw });
+      // Degenerate path = a round dot of diameter ≈ strokeWidth (v1 round cap).
+      out.push({ cx, cy, r: sw / 2, strokeWidth: sw, dot: true });
     } else {
       out.push({ cx, cy, r: Math.min(w, h) / 2, strokeWidth: sw, pillD: d });
     }

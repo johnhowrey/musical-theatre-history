@@ -890,3 +890,34 @@ Each line group now has exactly 1 path in its own color (no doubling). Validated
 v1-vs-v2 on all 4 regions + full overview; text steady 1264, lines 117→... (Yazbek
 now renders too). NOTE: in v1 the Hamlisch line was drawn #DA6756 while its label
 was #A92C31 (v1 inconsistency) — v2 now matches line to label.
+
+---
+
+## 2026-05-22 — Director/choreographer tail validation (task #22)
+
+**Visual sweep:** rendered v1 vs v2 at reading zoom across 8 regions covering the
+whole map (top-left/center/right, center, bottom-left/center/right, right-mid).
+ALL match v1 — every tail line's geometry, stations, labels, and colors (incl. the
+just-resolved collisions + the 3 added orphan-color lines: Jerry Mitchell, Julie
+Arenal, Patrick McCollum, and Yazbek/Hamlisch). Lines render verbatim from v1
+paths, so geometry matches by construction; the sweep + full overview confirm it.
+
+**Bug caught & fixed (resolves the "solid-black circle" open item):** v1's
+degenerate zero-length "dot" markers (st363/st365 round-cap paths, ~5 of them)
+were rendered by v2 as `<circle r=2.5 stroke-width=5>` — the stroke swamped the
+tiny radius, making a ~10px SOLID BLACK BLOB (visible between Pal Joey & Jumbo).
+Fix: flag them (`dot` in ExtractedStation) and render as a filled black circle of
+diameter = strokeWidth (≈5px, no stroke), matching v1's round-cap dot. Verified
+v1-vs-v2 at Pal Joey.
+
+**Data scan (`scripts/_tail-scan.ts`):** forward check (credited→on-line) is NOISY
+(path-extraction gaps + label offset) — ignore. Reverse check (line-station→
+uncredited show) is reliable and found ~30 creators with broadway-data credit gaps
+(v1 routes their line through shows BD doesn't credit them for: Des McAnuff/Big
+River+Tommy, Michael Greif/Rent, Susan Stroman/Contact+Big Fish+Big, Tommy Tune/
+Nine+Whorehouse, Michael Kidd/Finian's+Li'l Abner, Onna White/1776, George Faison/
+The Wiz, George C. Wolfe/Jelly's Last Jam, …). Logged in `reports/broadway-data-notes.md`.
+
+**Remaining #22:** D1–D9 cross-cutting decisions (esp. D2 horizontal label
+centering — a USER call, don't settle unilaterally); per-line data flags (Kismet,
+jukebox credits, BD garbage entries). Tail VISUAL + line-render validation: done.
