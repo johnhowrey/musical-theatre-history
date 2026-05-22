@@ -134,6 +134,26 @@ function labelNudgeKey(l: ExtractedLabel): string {
   return `${merged}@${Math.round(l.lines[0].anchorX)},${Math.round(l.lines[0].anchorY)}`;
 }
 
+// Color-collision split (task #22 / D10). v1 reused one stroke color for two
+// different creators (their line segments separate cleanly — see
+// scripts/_collide-paths.ts). Both creators' palette entries point at the SHARED
+// color (so extractCreatorLine finds the geometry); here we say, per creator,
+// who their partner is and what DISTINCT color to render in. At render time each
+// creator keeps only the path segments that thread THEIR shows and is drawn in
+// `render`. Their legend label is recolored to match. Keyed by creator name
+// (UPPERCASE). render colors: 3 pairs use new D10 colors; Hamlisch/Yazbek use
+// each creator's own legend-label color (Hamlisch #A92C31, Yazbek #DA6756).
+const COLLISION_RECOLOR: Record<string, { partner: string; render: string }> = {
+  'HERBERT ROSS': { partner: 'Gower Champion', render: '#147A8C' },
+  'GOWER CHAMPION': { partner: 'Herbert Ross', render: '#00CCBE' },
+  'DANNY MEFFORD': { partner: 'Casey Nicholaw', render: '#3D5AA9' },
+  'CASEY NICHOLAW': { partner: 'Danny Mefford', render: '#2A2A78' },
+  'WALTER BOBBIE': { partner: 'Patricia Birch', render: '#5E54A0' },
+  'PATRICIA BIRCH': { partner: 'Walter Bobbie', render: '#78B0E9' },
+  'MARVIN HAMLISCH': { partner: 'David Yazbek', render: '#A92C31' },
+  'DAVID YAZBEK': { partner: 'Marvin Hamlisch', render: '#DA6756' },
+};
+
 const MARKER_R = 5;       // circle radius / pill half-thickness (≈ v1)
 const LINE_WIDTH = 5;     // v1 line stroke width
 const LABEL_PAD = 4;      // standard gap between marker edge and label text
@@ -177,10 +197,36 @@ interface ShowAnchor {
 export default function MapV2() {
   const view = useMemo(() => {
     // 1. Active creators + their line geometry
+    // mapShows positions of a creator's shows (for collision path attribution).
+    const showPtsFor = (creatorName: string): Array<{ x: number; y: number }> => {
+      const person = PEOPLE.find(p => p.name.toUpperCase() === creatorName.toUpperCase());
+      if (!person) return [];
+      const ids = new Set(
+        SHOWS.filter(s => CREATOR_FIELDS.some(f =>
+          ((s[f as keyof typeof s] as string[] | undefined) || []).includes(person.id))).map(s => s.id),
+      );
+      return mapShows.filter(m => ids.has(m.id)).map(m => ({ x: m.x, y: m.y }));
+    };
+
     const lines: ActiveLine[] = [];
     for (const name of ACTIVE_CREATORS) {
       const extracted = extractCreatorLine(name);
       if (!extracted) continue;
+      // Color-collision split: keep only the path segments threading THIS
+      // creator's shows (the partner's segments separate cleanly), then render
+      // in the creator's distinct color. See COLLISION_RECOLOR.
+      const recolor = COLLISION_RECOLOR[name.toUpperCase()];
+      if (recolor) {
+        const mine = showPtsFor(name);
+        const partner = showPtsFor(recolor.partner);
+        const threads = (pts: SampledPoint[], shows: Array<{ x: number; y: number }>) =>
+          shows.filter(s => pts.some(p => Math.hypot(p.x - s.x, p.y - s.y) < 22)).length;
+        extracted.paths = extracted.paths.filter(p => {
+          const pts = samplePathPoints(p.d, 6);
+          return threads(pts, mine) > threads(pts, partner);
+        });
+        extracted.color = recolor.render;
+      }
       // Team lines (e.g. "John Kander & Fred Ebb") own several broadway-data
       // person IDs; an individual owns one. A show is on the line if it credits
       // ANY owned ID. Geometry still comes from the palette color (works for both).
@@ -263,7 +309,11 @@ export default function MapV2() {
     const allLabels = extractLabels();
     // Apply print-polish nudges: shift the RENDERED transform of a matched label
     // (anchorX/anchorY untouched ⇒ matching below is unaffected). See LABEL_NUDGES.
+    // Also recolor a collision creator's legend label to match its new line color.
     for (const l of allLabels) {
+      const merged = l.lines.map(x => x.text).join(' ').replace(/\s+/g, ' ').trim().toUpperCase();
+      const rc = COLLISION_RECOLOR[merged];
+      if (rc) l.fill = rc.render;
       const n = LABEL_NUDGES[labelNudgeKey(l)];
       if (n) l.lines = l.lines.map(ln => ({ ...ln, transform: shiftMatrix(ln.transform, n[0], n[1]) }));
     }

@@ -24,7 +24,7 @@ export const creatorLineColors: Record<string, string> = {
   "COLE PORTER": "#A27461",
   "CY COLEMAN": "#AF8F6E",
   "DANNY MEFFORD": "#2A2A78",
-  "DAVID YAZBEK": "#8C2F44",
+  "DAVID YAZBEK": "#DA6756",
   "DES MCANUFF": "#2AD03D",
   "DIANE PAULUS": "#1F6793",
   "DONALD SADDLER": "#CFEE8E",

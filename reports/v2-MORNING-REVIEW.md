@@ -870,3 +870,23 @@ faithful to v1; no work), or (B) resolve collisions by recoloring one creator ea
 Herbert Ross→#147A8C, Danny Mefford→#3D5AA9, Walter Bobbie→#5E54A0, Hamlisch→#A92C31
 / Yazbek→#DA6756). Implementation: renderer-side override (keeps map.svg pristine)
 or SVG recolor. NOT executed pending the call.
+
+### D10 collisions — RESOLVED (renderer-side split)
+Per-path attribution (`scripts/_collide-paths.ts`) showed each shared color's two
+segments separate CLEANLY by show-threading. Implemented a renderer-side split
+(`COLLISION_RECOLOR` in MapV2): both creators' palette entries keep the shared
+SVG color (so extractCreatorLine finds the geometry); at render time each creator
+keeps only the path segments threading THEIR shows and is drawn in a distinct
+color; their legend label is recolored to match. map.svg untouched.
+- Herbert Ross → #147A8C  |  Gower Champion keeps #00CCBE
+- Danny Mefford → #3D5AA9  |  Casey Nicholaw keeps #2A2A78
+- Walter Bobbie → #5E54A0  |  Patricia Birch keeps #78B0E9
+- Marvin Hamlisch → #A92C31 (his own label color)  |  David Yazbek → #DA6756 (his
+  label color; palette was phantom #8C2F44). **Confirmed the user's hint:** the
+  Hamlisch segment is in the LOWER map (Ballroom → A Chorus Line → connects to
+  Michael Bennett's line); Yazbek's is the upper-right segment (Full Monty,
+  Tootsie, Band's Visit, Dirty Rotten Scoundrels, Women on the Verge).
+Each line group now has exactly 1 path in its own color (no doubling). Validated
+v1-vs-v2 on all 4 regions + full overview; text steady 1264, lines 117→... (Yazbek
+now renders too). NOTE: in v1 the Hamlisch line was drawn #DA6756 while its label
+was #A92C31 (v1 inconsistency) — v2 now matches line to label.
