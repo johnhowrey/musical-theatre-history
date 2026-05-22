@@ -5,8 +5,17 @@ _Last updated: 2026-05-21. Read this first when restarting._
 ## TL;DR — where we are
 
 The `/v2` route is a programmatic, data-driven rebuild of the hand-drawn Broadway
-subway map (v1 = `src/assets/map.svg`). All ~118 creator lines render, every
-station marker now matches v1, and a map-wide **layout cleanup** just landed.
+subway map (v1 = `src/assets/map.svg`). **The render is feature-complete and
+validated:** all 120 creator lines render in their correct distinct colors, all
+1264 v1 labels render, every station marker matches v1, all D1–D10 decisions are
+resolved, and the director/choreographer tail is validated (8-region v1-vs-v2
+sweep). Remaining work is INTERACTIONS (#9), adding famous missing shows (#24,
+w/ approval), and the broadway-data agent processing the logged credit gaps.
+
+**Status by date:** 2026-05-21 — missing labels (#29), marker-pill fix + legend
+slides (#31), data-linked 13 shows (#30). 2026-05-22 — Balanchine line (#71E4D1),
+3 orphan-color lines (#32: Mitchell/Arenal/McCollum), D10 collisions split (#22),
+tail visual validation + degenerate-dot fix (#22). All committed on `main`.
 
 **Direction (decided this session):** keep v1's **line routing pixel-exact**, but
 **clean up markers and labels** to remove overlaps/collisions even where v1 itself
