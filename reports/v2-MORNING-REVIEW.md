@@ -844,3 +844,29 @@ Hamlisch + top-right near Yazbek's shows). So #DA6756 is shared by two creators.
 Correct end state (per legend labels): **Hamlisch → #A92C31, Yazbek → #DA6756**, and
 the shared #DA6756 line needs splitting by region. This is the D10 color-collision
 work — folded into task #22, not touched here (would disturb Hamlisch's line).
+
+---
+
+## 2026-05-22 — D10 color-collision diagnosis (task #22)
+
+Investigated all known palette color collisions (`scripts/_collide.ts`, label-color
+cross-check). Ground truth = each creator's legend-label color. Findings:
+
+| Color | Creators (both assigned it) | SVG classes | Notes |
+| --- | --- | --- | --- |
+| #00CCBE | Herbert Ross + Gower Champion | st98 (line ×2), st249 (ticks) | BOTH labels #00CCBE. st98 paths both read nearest-Ross; st249 ticks MIXED (Ross: House of Flowers, Apple Tree; Champion: 42nd Street, Rockabye Hamlet). Not a clean 2-way cut. |
+| #2A2A78 | Danny Mefford + Casey Nicholaw | st45 (line ×2), st274 (ticks) | BOTH labels #2A2A78. st274 ticks ALL nearest Casey Nicholaw; Mefford has only 2 shows, far. |
+| #78B0E9 | Patricia Birch + Walter Bobbie | st74 (line ×2), st263 (ticks) | BOTH labels #78B0E9. st263 ticks split (Birch: Over Here!, Raggedy Ann, Charlie Brown; Bobbie: Footloose, High Fidelity). |
+| #DA6756 | Marvin Hamlisch (palette) + David Yazbek | st122 (line ×2 disjoint segs), st266 | INCONSISTENT: Hamlisch label=#A92C31 (NOT a drawn line); Yazbek label=#DA6756. Yazbek palette=#8C2F44 (phantom). #DA6756 has 2 disjoint segments (bottom-left Smile/Hamlisch + top-right Yazbek). |
+
+**Key tension:** for the first 3, BOTH creators' legend labels ARE the shared color,
+so v1 *intended* them the same color (or reused it) — recoloring one DEVIATES from
+v1's own colors. Per-element attribution (which path/tick is whose) is intertwined,
+not a clean split. Hamlisch/Yazbek has inconsistent labels (artist error).
+
+**Decision needed (user):** (A) keep v1's colors exactly (collisions remain;
+faithful to v1; no work), or (B) resolve collisions by recoloring one creator each
+(deviates from v1; needs careful per-element attribution + chosen colors:
+Herbert Ross→#147A8C, Danny Mefford→#3D5AA9, Walter Bobbie→#5E54A0, Hamlisch→#A92C31
+/ Yazbek→#DA6756). Implementation: renderer-side override (keeps map.svg pristine)
+or SVG recolor. NOT executed pending the call.
