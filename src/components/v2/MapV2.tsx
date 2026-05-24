@@ -135,6 +135,25 @@ function labelNudgeKey(l: ExtractedLabel): string {
   return `${merged}@${Math.round(l.lines[0].anchorX)},${Math.round(l.lines[0].anchorY)}`;
 }
 
+// Creator "legend" labels are the only non-black labels (show titles are all
+// #231F20). They're drawn in their line color, but several are too light to read
+// on the cream background. Darken (toward black, keeping hue) only when the
+// color's luminance is above a legible threshold; dark colors pass through.
+const CREATOR_LABEL_BLACK = '#231F20';
+const isCreatorLabel = (fill: string) => fill.toUpperCase() !== CREATOR_LABEL_BLACK;
+function darkenForContrast(hex: string): string {
+  const m = /^#?([0-9a-fA-F]{6})$/.exec(hex.trim());
+  if (!m) return hex;
+  let r = parseInt(m[1].slice(0, 2), 16), g = parseInt(m[1].slice(2, 4), 16), b = parseInt(m[1].slice(4, 6), 16);
+  const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  const TARGET = 0.42; // luminance ceiling for legibility on cream (#FAF6E8)
+  if (lum > TARGET) {
+    const k = TARGET / lum;
+    r = Math.round(r * k); g = Math.round(g * k); b = Math.round(b * k);
+  }
+  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
 // Color-collision split (task #22 / D10). v1 reused one stroke color for two
 // different creators (their line segments separate cleanly — see
 // scripts/_collide-paths.ts). Both creators' palette entries point at the SHARED
@@ -731,6 +750,10 @@ function MapSvg({
           <g data-layer="v1-labels">
             {orphanLabels.flatMap((l, i) => {
               const lk = labelNudgeKey(l);
+              // Creator "legend" labels (non-black): UPPERCASE for consistency
+              // (v1 mixed upper/title/lowercase) + darken light ones for legibility.
+              const creator = isCreatorLabel(l.fill);
+              const fill = creator ? darkenForContrast(l.fill) : l.fill;
               return l.lines.map((line, j) => (
                 <text
                   key={`o-${i}-${j}`}
@@ -738,10 +761,10 @@ function MapSvg({
                   transform={line.transform}
                   fontSize={l.fontSize}
                   fontWeight={l.bold ? 700 : 400}
-                  fill={l.fill}
+                  fill={fill}
                   style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
                 >
-                  {line.text}
+                  {creator ? line.text.toUpperCase() : line.text}
                 </text>
               ));
             })}
