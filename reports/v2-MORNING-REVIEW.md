@@ -921,3 +921,31 @@ The Wiz, George C. Wolfe/Jelly's Last Jam, …). Logged in `reports/broadway-dat
 **Remaining #22:** D1–D9 cross-cutting decisions (esp. D2 horizontal label
 centering — a USER call, don't settle unilaterally); per-line data flags (Kismet,
 jukebox credits, BD garbage entries). Tail VISUAL + line-render validation: done.
+
+---
+
+## 2026-05-24 — Floating labels fixed: static v1-tick layer (user screenshot batch)
+
+User sent ~28 screenshots of "little things." Dominant pattern: **labels floating
+with no connecting tick** (The Life, Truckload, A History of the American Film,
+The Last Ship, Darling of the Day, Woman of the Year, Sail Away!, Anastasia, …).
+Root cause: v2 rendered ALL v1 labels + circle/pill markers verbatim, but TICKS
+were only COMPUTED per data-linked show — so un-linked single-line shows showed a
+label with no tick. (v1 has 312 square-cap ticks.)
+
+**Fix:** render all 312 v1 ticks verbatim as a static `<g data-layer="v1-ticks">`
+(mirrors the markers layer), and suppress the per-show computed tick when a v1
+tick covers the station (within 12px of the computed station OR 30px of the
+label). Collision-line ticks are recolored to the owning creator's render color
+(nearest split segment). Verified v1-vs-v2: The Life, Truckload, A History,
+Darling, Woman of the Year, Sail Away!, MJ The Musical — all now connect.
+
+**Also:** v1's degenerate zero-length "dot" paths (st363/st365, 5 of them) render
+as NOTHING in v1 (Chrome) — confirmed at Coco — so extractStations now skips them
+(was drawing stray black dots, e.g. below "Coco").
+
+**Residual (14 computed ticks remain):** shows whose v1 LABEL sits far (28–95px)
+from any captured marker (Ghost The Musical, MJ The Musical, Sail Away, Be More
+Chill, A Strange Loop, Rock of Ages, Street Scene, Threepenny Opera, …). These
+drew computed ticks before too (no regression); some now match v1 (MJ). A few may
+have v1 ticks that extractTicks misses (non-square-cap / path-based) — follow-up.

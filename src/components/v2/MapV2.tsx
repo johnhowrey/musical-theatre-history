@@ -13,6 +13,7 @@ import {
   type ExtractedLine,
   type ExtractedLabel,
   type ExtractedStation,
+  type ExtractedTick,
   type SampledPoint,
 } from './v1Extract';
 
@@ -184,6 +185,9 @@ interface ShowAnchor {
    *  v1-markers layer already draws it, so the per-show group must NOT draw a
    *  computed marker (that's what caused doubled circles). */
   coveredByV1Marker: boolean;
+  /** True if a v1 tick sits on this station — the static v1-ticks layer draws
+   *  it, so the per-show group must NOT draw a computed tick. */
+  coveredByV1Tick: boolean;
   primaryLineColor: string;
   label?: ExtractedLabel;
   /** Raw offset (v1 label position − station), tells which side the label is on. */
@@ -257,6 +261,28 @@ export default function MapV2() {
     // v1 station markers + ticks (authoritative on-line station anchors).
     const v1Stations = extractStations();
     const v1Ticks = extractTicks();
+
+    // Resolve tick colors for collision lines: a tick drawn in a SHARED color
+    // belongs to whichever pair-member's (already-split) line it sits nearest;
+    // recolor it to that creator's render color so ticks match their line.
+    const sharedColorLines = new Map<string, ActiveLine[]>();
+    for (const ln of lines) {
+      if (!COLLISION_RECOLOR[ln.creatorName.toUpperCase()]) continue;
+      const shared = (creatorLineColors[ln.creatorName.toUpperCase()] || '').toUpperCase();
+      if (!sharedColorLines.has(shared)) sharedColorLines.set(shared, []);
+      sharedColorLines.get(shared)!.push(ln);
+    }
+    const v1TicksResolved = v1Ticks.map(t => {
+      const pair = sharedColorLines.get(t.color.toUpperCase());
+      if (!pair) return t;
+      const mx = (t.x1 + t.x2) / 2, my = (t.y1 + t.y2) / 2;
+      let best: ActiveLine | null = null, bestD = Infinity;
+      for (const ln of pair) {
+        const d = Math.min(...ln.samplePoints.map(p => Math.hypot(p.x - mx, p.y - my)));
+        if (d < bestD) { bestD = d; best = ln; }
+      }
+      return best ? { ...t, color: best.extracted.color } : t;
+    });
 
     function closestPointOnLine(target: { x: number; y: number }, ln: ActiveLine) {
       let bestI = -1;
@@ -412,6 +438,20 @@ export default function MapV2() {
       // A v1 marker now covers this station (assigned or adopted) ⇒ the static
       // layer already draws it; the per-show group must not add a computed one.
       const coveredByV1Marker = !!v1Marker;
+      // Likewise, if a v1 TICK sits on this station, the static v1-ticks layer
+      // draws it — so the per-show group must not add a computed tick (that's
+      // what left labels with mismatched/duplicate ticks). Computed ticks now
+      // only ever appear for a NEW show with no v1 tick of its own.
+      // Covered if a v1 tick is near the computed station OR near the show's
+      // LABEL (the computed station can drift from where v1 drew the tick; the
+      // real tick stays by the label). Either way the static v1-ticks layer
+      // draws it ⇒ no computed tick (which would be a strayed/duplicate stub).
+      const lblCx = m.x + (m.width || 0) / 2, lblCy = m.y + (m.height || 0) / 2;
+      let coveredByV1Tick = false;
+      for (const t of v1Ticks) {
+        const tx = (t.x1 + t.x2) / 2, ty = (t.y1 + t.y2) / 2;
+        if (Math.hypot(tx - stationX, ty - stationY) <= 12 || Math.hypot(tx - lblCx, ty - lblCy) <= 30) { coveredByV1Tick = true; break; }
+      }
       const tangentX = primary.pt.tx;
       const tangentY = primary.pt.ty;
 
@@ -448,6 +488,7 @@ export default function MapV2() {
         isIntersection,
         v1Marker,
         coveredByV1Marker,
+        coveredByV1Tick,
         primaryLineColor: primaryColor,
         label,
         labelDx: ldx,
@@ -469,7 +510,7 @@ export default function MapV2() {
     for (const a of anchors) if (a.label) renderedLabelSet.add(a.label);
     const orphanLabels = allLabels.filter(l => !renderedLabelSet.has(l));
 
-    return { lines, anchors, orphanLabels, v1Stations };
+    return { lines, anchors, orphanLabels, v1Stations, v1Ticks: v1TicksResolved };
   }, []);
 
   // Compare mode (?compare): render the bare SVG at v1's exact coordinate
@@ -551,16 +592,18 @@ function Canvas({
   anchors,
   orphanLabels,
   v1Stations,
+  v1Ticks,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
   orphanLabels: ExtractedLabel[];
   v1Stations: ExtractedStation[];
+  v1Ticks: ExtractedTick[];
 }) {
   return (
     <TransformWrapper initialScale={0.5} minScale={0.1} maxScale={6} centerOnInit limitToBounds={false} smooth wheel={{ step: 0.08 }}>
       <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: V1_SVG_WIDTH, height: V1_SVG_HEIGHT }}>
-        <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} />
+        <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} />
       </TransformComponent>
     </TransformWrapper>
   );
@@ -571,11 +614,13 @@ function MapSvg({
   anchors,
   orphanLabels,
   v1Stations,
+  v1Ticks,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
   orphanLabels: ExtractedLabel[];
   v1Stations: ExtractedStation[];
+  v1Ticks: ExtractedTick[];
 }) {
   return (
         <svg
@@ -593,6 +638,19 @@ function MapSvg({
               ))}
             </g>
           ))}
+
+          {/* v1 single-line station TICKS, rendered verbatim as one static layer
+              (like the markers layer). v1 has ~312 of these; rendering them all
+              means every single-line station shows its tick — including shows
+              whose label renders but that aren't data-linked (those used to
+              float with no marker). Computed ticks below are suppressed when a
+              v1 tick covers the station. */}
+          <g data-layer="v1-ticks">
+            {v1Ticks.map((t, i) => (
+              <line key={i} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
+                stroke={t.color} strokeWidth={t.strokeWidth} strokeLinecap="square" />
+            ))}
+          </g>
 
           {/* v1 station markers, rendered verbatim as one static layer so every
               hand-placed circle/pill appears exactly once (no orphans, no
@@ -641,9 +699,11 @@ function MapSvg({
                       strokeWidth={3}
                     />
                   );
-                })() : (() => {
+                })() : a.coveredByV1Tick ? null /* drawn by the static v1-ticks layer */
+                 : (() => {
                   // Tick is PERPENDICULAR to the line tangent, extending
-                  // outward on whichever side the label is on.
+                  // outward on whichever side the label is on. Only for NEW
+                  // shows with no v1 tick of their own.
                   let px = -a.tangentY, py = a.tangentX;
                   if (px * a.labelDx + py * a.labelDy < 0) { px = -px; py = -py; }
                   return (

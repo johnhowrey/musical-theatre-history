@@ -309,8 +309,10 @@ export function extractStations(): ExtractedStation[] {
     const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
     const sw = markerSW.get(cls) ?? 1;
     if (w < 1 && h < 1) {
-      // Degenerate path = a round dot of diameter ≈ strokeWidth (v1 round cap).
-      out.push({ cx, cy, r: sw / 2, strokeWidth: sw, dot: true });
+      // Degenerate zero-length path = an Illustrator stray point. v1 (Chrome)
+      // renders these as NOTHING (verified at Coco), so skip — rendering them
+      // produced stray black dots floating off the lines.
+      continue;
     } else {
       out.push({ cx, cy, r: Math.min(w, h) / 2, strokeWidth: sw, pillD: d });
     }
