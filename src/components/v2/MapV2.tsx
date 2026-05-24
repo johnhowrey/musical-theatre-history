@@ -352,15 +352,55 @@ export default function MapV2() {
 
     // Labels by show id (matched to mapShows top-left anchor)
     const allLabels = extractLabels();
+    // creator name (normalized) -> its line, for legend-label placement.
+    const normName = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const lineByCreator = new Map(lines.map(l => [normName(l.creatorName), l]));
     // Apply print-polish nudges: shift the RENDERED transform of a matched label
     // (anchorX/anchorY untouched ⇒ matching below is unaffected). See LABEL_NUDGES.
     // Also recolor a collision creator's legend label to match its new line color.
     for (const l of allLabels) {
-      const merged = l.lines.map(x => x.text).join(' ').replace(/\s+/g, ' ').trim().toUpperCase();
+      const mergedRaw = l.lines.map(x => x.text).join(' ').replace(/\s+/g, ' ').trim();
+      const merged = mergedRaw.toUpperCase();
       const rc = COLLISION_RECOLOR[merged];
       if (rc) l.fill = rc.render;
       const n = LABEL_NUDGES[labelNudgeKey(l)];
       if (n) l.lines = l.lines.map(ln => ({ ...ln, transform: shiftMatrix(ln.transform, n[0], n[1]) }));
+
+      // Creator legend labels: place at a CONSISTENT perpendicular gap off their
+      // line (never touching it), preserving v1's rotation, along-line position,
+      // and chosen side (so we don't create new cramming). v1 left them
+      // inconsistently spaced — some sitting on the stroke.
+      if (!isCreatorLabel(l.fill)) continue;
+      const ln = lineByCreator.get(normName(mergedRaw));
+      if (!ln || !ln.samplePoints.length) continue;
+      const mm = /matrix\(([^)]+)\)/.exec(l.lines[0].transform);
+      if (!mm) continue;
+      const p = mm[1].split(/[\s,]+/).map(Number);
+      if (p.length < 6 || p.some(v => !Number.isFinite(v))) continue;
+      const [, mb, mc, md, ex, fy] = p; // a, b, c, d, e, f
+      const A = { x: ex, y: fy };
+      let bi = 0, bd = Infinity;
+      for (let i = 0; i < ln.samplePoints.length; i++) {
+        const pt = ln.samplePoints[i]; const dd = Math.hypot(pt.x - A.x, pt.y - A.y);
+        if (dd < bd) { bd = dd; bi = i; }
+      }
+      if (bd > 120) continue; // label not near its own line — leave it
+      const P = ln.samplePoints[bi];
+      const W = 6;
+      const pa = ln.samplePoints[Math.max(0, bi - W)];
+      const pbb = ln.samplePoints[Math.min(ln.samplePoints.length - 1, bi + W)];
+      let tx = pbb.x - pa.x, ty = pbb.y - pa.y; const tl = Math.hypot(tx, ty) || 1; tx /= tl; ty /= tl;
+      const nx = -ty, ny = tx; // unit perpendicular to the line
+      const curOff = (A.x - P.x) * nx + (A.y - P.y) * ny;
+      const side = Math.abs(curOff) < 3 ? 1 : Math.sign(curOff); // keep v1 side
+      // Does the text ink grow AWAY from the line? local "up" = (-c,-d) in user space.
+      const ulen = Math.hypot(mc, md) || 1;
+      const textAway = Math.sign((-mc / ulen) * nx + (-md / ulen) * ny) === side;
+      const cap = 0.72 * l.fontSize;
+      const baselineOff = 2.5 /*half line*/ + 2 /*gap*/ + (textAway ? 1 : cap);
+      const dx = (P.x + nx * side * baselineOff) - A.x;
+      const dy = (P.y + ny * side * baselineOff) - A.y;
+      if (Math.hypot(dx, dy) >= 0.5) l.lines = l.lines.map(line => ({ ...line, transform: shiftMatrix(line.transform, dx, dy) }));
     }
     const labelByShowId = new Map<string, ExtractedLabel>();
     for (const l of allLabels) {
