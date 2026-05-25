@@ -297,6 +297,81 @@ function darkenForContrast(hex: string): string {
   return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
 }
 
+// --- Yellow-line legibility --------------------------------------------------
+// Pure yellow is intrinsically luminous, so on the cream background the bright
+// yellow lines' NAME LABELS read at ~1.2 contrast (effectively invisible) and
+// darkenForContrast deliberately skips them (darkening yellow toward black looks
+// olive). Instead we deepen each yellow toward GOLD — same hue, higher
+// saturation, lower lightness — only as far as needed to clear a contrast floor
+// on cream. That keeps it recognizably "the yellow line" while making the name
+// legible. YELLOW_DARKEN_LINES also recolors the line + its ticks to the same
+// gold, so the name stays color-matched to the line it labels.
+const CREAM_BG: [number, number, number] = [0xFA, 0xF6, 0xE8];
+const YELLOW_TARGET_CONTRAST = 3.6; // vs cream — deep gold for the bright yellows
+const YELLOW_DARKEN_LINES = false;   // also recolor line + ticks (keep label↔line matched)
+
+function hexToRgb(hex: string): [number, number, number] | null {
+  const m = /^#?([0-9a-fA-F]{6})$/.exec(hex.trim());
+  if (!m) return null;
+  return [parseInt(m[1].slice(0, 2), 16), parseInt(m[1].slice(2, 4), 16), parseInt(m[1].slice(4, 6), 16)];
+}
+function rgbToHex(r: number, g: number, b: number): string {
+  return '#' + [r, g, b].map(v => Math.round(Math.min(255, Math.max(0, v))).toString(16).padStart(2, '0')).join('');
+}
+function relLum([r, g, b]: [number, number, number]): number {
+  const f = (c: number) => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+function contrastRatio(a: [number, number, number], b: [number, number, number]): number {
+  const la = relLum(a), lb = relLum(b), hi = Math.max(la, lb), lo = Math.min(la, lb);
+  return (hi + 0.05) / (lo + 0.05);
+}
+function rgbToHsl([r, g, b]: [number, number, number]): [number, number, number] {
+  r /= 255; g /= 255; b /= 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+  let h = 0; const l = (mx + mn) / 2; const s = d === 0 ? 0 : (l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn));
+  if (d) { if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h *= 60; if (h < 0) h += 360; }
+  return [h, s, l];
+}
+function hslToRgb([h, s, l]: [number, number, number]): [number, number, number] {
+  const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2;
+  let r = 0, g = 0, b = 0;
+  if (h < 60) { r = c; g = x; } else if (h < 120) { r = x; g = c; } else if (h < 180) { g = c; b = x; }
+  else if (h < 240) { g = x; b = c; } else if (h < 300) { r = x; b = c; } else { r = c; b = x; }
+  return [(r + m) * 255, (g + m) * 255, (b + m) * 255];
+}
+const isYellowHue = (h: number) => h >= 40 && h <= 75;
+
+// Deepen a yellow toward gold until it clears YELLOW_TARGET_CONTRAST on cream,
+// dropping lightness as LITTLE as possible (binary search for the highest L that
+// still meets the floor). Non-yellow hues pass through unchanged.
+function deepenYellow(hex: string): string {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return hex;
+  const [h, s, l0] = rgbToHsl(rgb);
+  if (!isYellowHue(h)) return hex;
+  if (contrastRatio(rgb, CREAM_BG) >= YELLOW_TARGET_CONTRAST) return hex; // already deep enough
+  const sat = Math.max(s, 0.92); // richer gold reads better than washed-out
+  let lo = 0.1, hi = l0;         // contrast is monotonic in L: want max L meeting the floor
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2;
+    if (contrastRatio(hslToRgb([h, sat, mid]), CREAM_BG) >= YELLOW_TARGET_CONTRAST) lo = mid; else hi = mid;
+  }
+  const [r, g, b] = hslToRgb([h, sat, lo]);
+  return rgbToHex(r, g, b);
+}
+// A line/tick color rendered legibly: deepen yellow (if enabled), else as-is.
+function legibleLineColor(hex: string): string {
+  if (!YELLOW_DARKEN_LINES) return hex;
+  return deepenYellow(hex);
+}
+// A creator-label color rendered legibly: deepen yellow; darken other lights.
+function legibleLabelColor(hex: string): string {
+  const rgb = hexToRgb(hex);
+  if (rgb && isYellowHue(rgbToHsl(rgb)[0])) return deepenYellow(hex);
+  return darkenForContrast(hex);
+}
+
 // Color-collision split (task #22 / D10). v1 reused one stroke color for two
 // different creators (their line segments separate cleanly — see
 // scripts/_collide-paths.ts). Both creators' palette entries point at the SHARED
@@ -401,7 +476,8 @@ function buildMapDoc(v: MapView) {
     addedLabels: v.addedLabels.map(a => ({ id: a.id, lines: a.lines, x: a.x, y: a.y, align: a.align, fontSize: a.fontSize, bold: a.bold })),
     orphanLabels: v.orphanLabels.map(l => ({
       lines: l.lines.map(x => ({ text: x.text, transform: x.transform })),
-      fontSize: l.fontSize, bold: l.bold, fill: l.fill,
+      // Bake the legible (deepened-yellow) fill so native renders match the web.
+      fontSize: l.fontSize, bold: l.bold, fill: isCreatorLabel(l.fill) ? legibleLabelColor(l.fill) : l.fill,
     })),
   };
 }
@@ -463,6 +539,8 @@ export default function MapV2() {
           samplePoints.push(...samplePathPoints(d));
         }
       }
+      // Deepen bright-yellow lines toward a legible gold (no-op for other hues).
+      extracted.color = legibleLineColor(extracted.color);
       lines.push({ creatorName: name, personIds, extracted, samplePoints });
     }
 
@@ -502,7 +580,7 @@ export default function MapV2() {
     }
     const v1TicksResolved = v1Ticks.map(t => {
       const pair = sharedColorLines.get(t.color.toUpperCase());
-      if (!pair) return t;
+      if (!pair) return { ...t, color: legibleLineColor(t.color) }; // match the deepened yellow line
       const mx = (t.x1 + t.x2) / 2, my = (t.y1 + t.y2) / 2;
       let best: ActiveLine | null = null, bestD = Infinity;
       for (const ln of pair) {
@@ -1025,16 +1103,23 @@ export default function MapV2() {
 }
 
 // Camera persistence (restore last view). Saved on transform-stop (throttled).
+// Key is versioned: bump CAM_KEY to invalidate stale saves after a camera/layout
+// change (e.g. the limitToBounds content-size fix).
+const CAM_KEY = 'v2.cam.2';
 function getSavedCam(): { scale: number; x: number; y: number } | null {
   if (typeof window === 'undefined') return null;
-  try { return JSON.parse(localStorage.getItem('v2.cam') || 'null'); } catch { return null; }
+  try {
+    const c = JSON.parse(localStorage.getItem(CAM_KEY) || 'null');
+    if (!c || ![c.scale, c.x, c.y].every(Number.isFinite)) return null;
+    return c;
+  } catch { return null; }
 }
 let _camTimer: ReturnType<typeof setTimeout> | undefined;
 function saveCam(s: { scale: number; positionX: number; positionY: number }) {
   if (typeof window === 'undefined') return;
   clearTimeout(_camTimer);
   _camTimer = setTimeout(() => {
-    try { localStorage.setItem('v2.cam', JSON.stringify({ scale: s.scale, x: s.positionX, y: s.positionY })); } catch { /* ignore */ }
+    try { localStorage.setItem(CAM_KEY, JSON.stringify({ scale: s.scale, x: s.positionX, y: s.positionY })); } catch { /* ignore */ }
   }, 250);
 }
 const V2_MIN_SCALE = 0.5;   // never too small
@@ -1127,6 +1212,10 @@ function MapSvg({
   flagPins?: Array<{ number: number; title: string; url: string; x?: number; y?: number }>;
 }) {
   const interactive = !!(onShowClick || onCreatorClick);
+  // Distinguish a tap (drop a flag) from a pan (move the map): a pan ends with a
+  // click too, so remember where the press started and ignore the click if the
+  // pointer travelled more than a few px.
+  const downPt = useRef<{ x: number; y: number } | null>(null);
   return (
         <svg
           width={V1_SVG_WIDTH}
@@ -1134,12 +1223,21 @@ function MapSvg({
           viewBox={`0 0 ${V1_SVG_WIDTH} ${V1_SVG_HEIGHT}`}
           xmlns="http://www.w3.org/2000/svg"
           className={spotMode ? 'v2-map v2-map-flagging' : 'v2-map'}
+          onPointerDown={spotMode ? (e) => { downPt.current = { x: e.clientX, y: e.clientY }; } : undefined}
           onClick={spotMode && onFlagAt ? (e) => {
-            const svg = e.currentTarget;
-            const ctm = svg.getScreenCTM();
-            if (!ctm) return;
-            const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
-            onFlagAt(pt.x, pt.y);
+            // Ignore the click that ends a pan (pointer moved) — only a near-still
+            // tap drops a flag.
+            const d = downPt.current; downPt.current = null;
+            if (d && Math.hypot(e.clientX - d.x, e.clientY - d.y) > 6) return;
+            // Map the click to SVG user space via the element's on-screen rect,
+            // which already reflects the react-zoom-pan-pinch CSS transform.
+            // (getScreenCTM() does NOT undo that ancestor transform here, so it
+            // produced out-of-bounds coords that stacked the pins off-map.)
+            const rect = e.currentTarget.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            const x = ((e.clientX - rect.left) / rect.width) * V1_SVG_WIDTH;
+            const y = ((e.clientY - rect.top) / rect.height) * V1_SVG_HEIGHT;
+            onFlagAt(x, y);
           } : undefined}
         >
           {/* Lines (clickable → creator; dimmed when another creator is focused) */}
@@ -1254,7 +1352,7 @@ function MapSvg({
               // the cream background. paint-order:stroke draws the halo behind the
               // fill so the line color stays clean and recognizable.
               const creator = isCreatorLabel(l.fill);
-              const fill = creator ? darkenForContrast(l.fill) : l.fill;
+              const fill = creator ? legibleLabelColor(l.fill) : l.fill;
               // Creator legend labels are clickable → open that creator.
               const creatorName = creator ? l.lines.map(x => x.text).join(' ').toUpperCase().trim() : '';
               const clickCreator = creator && onCreatorClick ? () => onCreatorClick(creatorName) : undefined;
@@ -1310,7 +1408,7 @@ function MapSvg({
                 transform={`translate(${c.x} ${c.y}) rotate(${c.angle})`}
                 fontSize={6.64}
                 fontWeight={700}
-                fill={darkenForContrast(c.color)}
+                fill={legibleLabelColor(c.color)}
                 onClick={onCreatorClick ? () => onCreatorClick(c.text.toUpperCase()) : undefined}
                 className={onCreatorClick ? 'v2-clickable' : undefined}
                 style={{ pointerEvents: onCreatorClick ? 'auto' : 'none', cursor: onCreatorClick ? 'pointer' : undefined, fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}

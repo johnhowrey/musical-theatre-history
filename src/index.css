@@ -50,8 +50,11 @@ html, body, #root {
 }
 .v2-back:hover { color: var(--v2-ink); }
 
-.v2-shell .react-transform-wrapper,
-.v2-shell .react-transform-component {
+/* The WRAPPER is the viewport-filling clip box. The COMPONENT must keep its
+   true content size (set via contentStyle to the full map dimensions) — forcing
+   it to 100% made react-zoom-pan-pinch mis-measure the content as viewport-sized,
+   so limitToBounds locked panning to the upper-left. */
+.v2-shell .react-transform-wrapper {
   width: 100% !important;
   height: 100% !important;
 }
