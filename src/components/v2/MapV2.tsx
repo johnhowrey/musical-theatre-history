@@ -248,6 +248,9 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // curves to horizontal in from the right.
   'SUSAN STROMAN': ['M 1661 427 L 1855 427'],
   'MARC SHAIMAN': ['M 2033 396 L 2011 418 C 2005 424 1996 427 1989 427 L 1855 427'],
+  // The line stopped ~15px short of the A Bronx Tale circle (2076,805); continue
+  // it straight up into the circle so it reaches the station (flag #20).
+  'JERRY ZAKS': ['M 2083 818 L 2079 805'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
