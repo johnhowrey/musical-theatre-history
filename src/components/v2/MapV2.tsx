@@ -103,6 +103,19 @@ const CREDIT_OVERRIDES: Record<string, string[]> = {
   'lady-fingers': ['richard-rodgers'],   // Rodgers interpolated songs; BD lists only Joseph Meyer
   'always-you': ['oscar-hammerstein'],   // Hammerstein's 1st show (book+lyrics); BD missing him
 };
+
+// Added shows (task #24): famous shows v1 never drew. Each gets a NEW station at
+// a hand-chosen point on its creator's line (year-appropriate), with a synthetic
+// label + computed marker (no v1 geometry exists). `lines` overrides the label's
+// line-break; defaults to the broadway-data title on one line. Added one at a
+// time with the user's approval. (x,y are in v1 SVG user units.)
+const ADDED_SHOWS: Array<{ id: string; x: number; y: number; lines?: string[] }> = [
+  // Kismet (1953): v1 DREW the station (the unnamed 3-line intersection below
+  // "This is the Army" connecting Forrest/Wright × Albert Marre × Jack Cole) but
+  // accidentally omitted the NAME. Point the label at that existing marker; the
+  // static markers layer already draws it.
+  { id: 'kismet', x: 1733, y: 785 },
+];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
 // (clean it up, keep LINES pixel-exact), we move only the LABEL: [dx,dy] in SVG
@@ -281,6 +294,14 @@ export default function MapV2() {
     }
 
     const mapShowsById = new Map(mapShows.map(s => [s.id, s]));
+    // Added shows (task #24): synthesize a mapShows entry at the chosen point so
+    // the anchor pipeline places a (computed) marker there; the label is
+    // synthesized below. Title comes from broadway-data.
+    for (const a of ADDED_SHOWS) {
+      const s = SHOWS.find(x => x.id === a.id);
+      if (!s) continue;
+      mapShowsById.set(a.id, { id: a.id, name: s.title, x: a.x, y: a.y, width: 30, height: 8 });
+    }
     const linesByPersonId = new Map<string, ActiveLine>();
     for (const l of lines) for (const id of l.personIds) linesByPersonId.set(id, l);
     const activeIds = new Set(linesByPersonId.keys());
@@ -424,6 +445,17 @@ export default function MapV2() {
         if (d < bestD) { bestD = d; bestId = ms.id; }
       }
       if (bestId) labelByShowId.set(bestId, l);
+    }
+    // Added shows (task #24): synthesize a computed-placement label (no v1
+    // transform ⇒ ShowLabel positions it beside the marker). Bold like v1 titles.
+    for (const a of ADDED_SHOWS) {
+      const s = SHOWS.find(x => x.id === a.id);
+      if (!s) continue;
+      const texts = a.lines ?? [s.title];
+      labelByShowId.set(a.id, {
+        lines: texts.map(t => ({ text: t, transform: '', anchorX: a.x, anchorY: a.y })),
+        fill: '#231F20', fontSize: 7.6, bold: true,
+      });
     }
 
     const anchors: ShowAnchor[] = [];
