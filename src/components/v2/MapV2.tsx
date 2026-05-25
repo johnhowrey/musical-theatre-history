@@ -228,6 +228,16 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // no legend label). Place it down the clear stretch of his vertical run.
   { text: 'JERRY MITCHELL', x: 2264, y: 700, angle: -90, color: '#00BEF3' },
 ];
+
+// Extra perpendicular offset (px) for creator legend labels whose v1 rotation
+// runs them ALONG their own line, so the standard auto-placement gap isn't enough
+// (flags #11, #13). Pushed further off on the side the auto-placer already chose.
+// Keyed by normalized creator name (letters/digits only), same form used to
+// match the line — avoids casing/spacing mismatches.
+const CREATOR_LABEL_EXTRA_OFFSET: Record<string, number> = {
+  'RICHARDADLER': 9,
+  'CLAUDEMICHELSCHOENBERG': 10,
+};
 // Line EXTENSIONS: extra path segments appended to a creator's line (rendered in
 // the line color + added to its sample points so new stations can anchor there).
 // MUST be octolinear (H / V / 45°) with CURVED turns — see feedback memory.
@@ -695,7 +705,7 @@ export default function MapV2() {
       const ulen = Math.hypot(mc, md) || 1;
       const textAway = Math.sign((-mc / ulen) * nx + (-md / ulen) * ny) === side;
       const cap = 0.72 * l.fontSize;
-      const baselineOff = 2.5 /*half line*/ + 2 /*gap*/ + (textAway ? 1 : cap);
+      const baselineOff = 2.5 /*half line*/ + 2 /*gap*/ + (textAway ? 1 : cap) + (CREATOR_LABEL_EXTRA_OFFSET[normName(mergedRaw)] || 0);
       const dx = (P.x + nx * side * baselineOff) - A.x;
       const dy = (P.y + ny * side * baselineOff) - A.y;
       if (Math.hypot(dx, dy) >= 0.5) l.lines = l.lines.map(line => ({ ...line, transform: shiftMatrix(line.transform, dx, dy) }));
