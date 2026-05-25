@@ -129,6 +129,11 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // American Film", in the gap between the Michael Bennett (y≈1428) and Patricia
   // Birch (y≈1477) crossings. Tick station ⇒ small regular type; label LEFT.
   { id: 'the-pirates-of-penzance', x: 1111, y: 1452, labelX: 1105, labelY: 1449, align: 'end', lines: ['The Pirates', 'of Penzance'] },
+  // The Last Five Years (Jason Robert Brown, music/lyrics/book) — single-creator
+  // tick on his magenta line. User-chosen spot: the line's horizontal bottom run
+  // (y=1608), just left of Honeymoon in Vegas. Honeymoon's label sits ABOVE the
+  // line, so this one goes BELOW (centered) into the open bottom margin.
+  { id: 'the-last-five-years', x: 1866, y: 1608, labelX: 1866, labelY: 1623, align: 'middle' },
 ];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
