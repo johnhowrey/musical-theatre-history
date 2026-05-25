@@ -113,14 +113,22 @@ const CREDIT_OVERRIDES: Record<string, string[]> = {
 // one is within range, else a computed marker is drawn). labelX/labelY = the
 // label's anchor; align = text-anchor (use 'end' to sit LEFT of the station,
 // 'start' for RIGHT) so the label clears the lines per the label rules.
-const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; labelY: number; align: 'start' | 'end' | 'middle'; lines?: string[] }> = [
+// fontSize/bold override the default (7.59 regular). Per the user's station-label
+// rules: a single-creator tick station gets the small regular type (7.59); a
+// multi-line/intersection station (circle/pill) gets bold + bigger (8.54, the
+// Call Me Madam size).
+const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; labelY: number; align: 'start' | 'end' | 'middle'; lines?: string[]; fontSize?: number; bold?: boolean }> = [
   // Kismet (1953): v1 drew the station (unnamed 3-line intersection below "This
   // is the Army": Forrest/Wright × Albert Marre × Jack Cole) but omitted the
-  // NAME. Label on the LEFT of the station (the right side is over the lines).
-  { id: 'kismet', x: 1733, y: 785, labelX: 1724, labelY: 788, align: 'end' },
-  // The Pirates of Penzance (1981, Graciela Daniele) — new station on her line
-  // between Zorba (1968) and The Rink (1984).
-  { id: 'the-pirates-of-penzance', x: 921, y: 956, labelX: 909, labelY: 949, align: 'end', lines: ['The Pirates', 'of Penzance'] },
+  // NAME. Intersection ⇒ bold 8.54 (Call Me Madam size). Label on the LEFT of
+  // the station (the right side is over the lines).
+  { id: 'kismet', x: 1733, y: 785, labelX: 1724, labelY: 788, align: 'end', fontSize: 8.54, bold: true },
+  // The Pirates of Penzance (1981, Graciela Daniele) — single-creator tick on her
+  // line. v1 has it boxed-in between Zorba/The Rink; the user relocated it to the
+  // roomier stretch of her (vertical, x≈1111) line below "A History of the
+  // American Film", in the gap between the Michael Bennett (y≈1428) and Patricia
+  // Birch (y≈1477) crossings. Tick station ⇒ small regular type; label LEFT.
+  { id: 'the-pirates-of-penzance', x: 1111, y: 1452, labelX: 1105, labelY: 1449, align: 'end', lines: ['The Pirates', 'of Penzance'] },
 ];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
@@ -459,7 +467,7 @@ export default function MapV2() {
     const addedLabels = ADDED_SHOWS.flatMap(a => {
       const s = SHOWS.find(x => x.id === a.id);
       if (!s) return [];
-      return [{ lines: a.lines ?? [s.title], x: a.labelX, y: a.labelY, align: a.align }];
+      return [{ lines: a.lines ?? [s.title], x: a.labelX, y: a.labelY, align: a.align, fontSize: a.fontSize ?? 7.59, bold: a.bold ?? false }];
     });
 
     const anchors: ShowAnchor[] = [];
@@ -724,7 +732,7 @@ function Canvas({
   );
 }
 
-interface AddedLabel { lines: string[]; x: number; y: number; align: 'start' | 'end' | 'middle'; }
+interface AddedLabel { lines: string[]; x: number; y: number; align: 'start' | 'end' | 'middle'; fontSize: number; bold: boolean; }
 
 function MapSvg({
   lines,
@@ -874,8 +882,9 @@ function MapSvg({
           </g>
 
           {/* Added-show labels (task #24): shows v1 never named, placed explicitly
-              off the lines per the label rules. Type matches v1's standard show
-              title: TisaSansPro regular 7.59 (the dominant style). */}
+              off the lines per the label rules. Single-creator tick stations use
+              v1's standard title type (TisaSansPro regular 7.59); multi-line
+              intersection stations use bold 8.54 (the Call Me Madam size). */}
           <g data-layer="added-labels">
             {addedLabels.map((a, i) => (
               <text
@@ -883,13 +892,13 @@ function MapSvg({
                 x={a.x}
                 y={a.y}
                 textAnchor={a.align}
-                fontSize={7.59}
-                fontWeight={400}
+                fontSize={a.fontSize}
+                fontWeight={a.bold ? 700 : 400}
                 fill="#231F20"
                 style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
               >
                 {a.lines.map((t, j) => (
-                  <tspan key={j} x={a.x} dy={j === 0 ? 0 : 7.59 * 1.15}>{t}</tspan>
+                  <tspan key={j} x={a.x} dy={j === 0 ? 0 : a.fontSize * 1.15}>{t}</tspan>
                 ))}
               </text>
             ))}
