@@ -270,6 +270,8 @@ const LABEL_NUDGES: Record<string, [number, number]> = {
   // Shaiman's extension leaves Charlie's circle down-left; the pink line leaves it
   // down-right; so drop Charlie's label straight BELOW the circle into open space.
   'Charlie and the Chocolate Factory@2004,404': [8, 40],
+  // Left edge sat on the Jerry Zaks vertical line (x~2087); shift right (flag #19).
+  'Little Shop of Horrors@2087,915': [10, 0],
 };
 
 function shiftMatrix(transform: string, dx: number, dy: number): string {
