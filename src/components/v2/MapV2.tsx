@@ -109,12 +109,15 @@ const CREDIT_OVERRIDES: Record<string, string[]> = {
 // label + computed marker (no v1 geometry exists). `lines` overrides the label's
 // line-break; defaults to the broadway-data title on one line. Added one at a
 // time with the user's approval. (x,y are in v1 SVG user units.)
-const ADDED_SHOWS: Array<{ id: string; x: number; y: number; lines?: string[] }> = [
-  // Kismet (1953): v1 DREW the station (the unnamed 3-line intersection below
-  // "This is the Army" connecting Forrest/Wright × Albert Marre × Jack Cole) but
-  // accidentally omitted the NAME. Point the label at that existing marker; the
-  // static markers layer already draws it.
-  { id: 'kismet', x: 1733, y: 785 },
+// Added shows: x,y = the station (for data-link; reuses the existing v1 marker if
+// one is within range, else a computed marker is drawn). labelX/labelY = the
+// label's anchor; align = text-anchor (use 'end' to sit LEFT of the station,
+// 'start' for RIGHT) so the label clears the lines per the label rules.
+const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; labelY: number; align: 'start' | 'end' | 'middle'; lines?: string[] }> = [
+  // Kismet (1953): v1 drew the station (unnamed 3-line intersection below "This
+  // is the Army": Forrest/Wright × Albert Marre × Jack Cole) but omitted the
+  // NAME. Label on the LEFT of the station (the right side is over the lines).
+  { id: 'kismet', x: 1733, y: 785, labelX: 1724, labelY: 788, align: 'end' },
 ];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
@@ -446,17 +449,14 @@ export default function MapV2() {
       }
       if (bestId) labelByShowId.set(bestId, l);
     }
-    // Added shows (task #24): synthesize a computed-placement label (no v1
-    // transform ⇒ ShowLabel positions it beside the marker). Bold like v1 titles.
-    for (const a of ADDED_SHOWS) {
+    // Added-show labels render in a dedicated layer (explicit placement so they
+    // obey the label rules — off the lines, on the chosen side). Built here so
+    // the anchor's marker (reused/computed) still renders, but NOT via ShowLabel.
+    const addedLabels = ADDED_SHOWS.flatMap(a => {
       const s = SHOWS.find(x => x.id === a.id);
-      if (!s) continue;
-      const texts = a.lines ?? [s.title];
-      labelByShowId.set(a.id, {
-        lines: texts.map(t => ({ text: t, transform: '', anchorX: a.x, anchorY: a.y })),
-        fill: '#231F20', fontSize: 7.6, bold: true,
-      });
-    }
+      if (!s) return [];
+      return [{ lines: a.lines ?? [s.title], x: a.labelX, y: a.labelY, align: a.align }];
+    });
 
     const anchors: ShowAnchor[] = [];
     for (const show of SHOWS) {
@@ -614,7 +614,7 @@ export default function MapV2() {
     for (const a of anchors) if (a.label) renderedLabelSet.add(a.label);
     const orphanLabels = allLabels.filter(l => !renderedLabelSet.has(l));
 
-    return { lines, anchors, orphanLabels, v1Stations, v1Ticks: v1TicksResolved };
+    return { lines, anchors, orphanLabels, v1Stations, v1Ticks: v1TicksResolved, addedLabels };
   }, []);
 
   // Compare mode (?compare): render the bare SVG at v1's exact coordinate
@@ -697,21 +697,25 @@ function Canvas({
   orphanLabels,
   v1Stations,
   v1Ticks,
+  addedLabels,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
   orphanLabels: ExtractedLabel[];
   v1Stations: ExtractedStation[];
   v1Ticks: ExtractedTick[];
+  addedLabels: AddedLabel[];
 }) {
   return (
     <TransformWrapper initialScale={0.5} minScale={0.1} maxScale={6} centerOnInit limitToBounds={false} smooth wheel={{ step: 0.08 }}>
       <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: V1_SVG_WIDTH, height: V1_SVG_HEIGHT }}>
-        <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} />
+        <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels} />
       </TransformComponent>
     </TransformWrapper>
   );
 }
+
+interface AddedLabel { lines: string[]; x: number; y: number; align: 'start' | 'end' | 'middle'; }
 
 function MapSvg({
   lines,
@@ -719,12 +723,14 @@ function MapSvg({
   orphanLabels,
   v1Stations,
   v1Ticks,
+  addedLabels,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
   orphanLabels: ExtractedLabel[];
   v1Stations: ExtractedStation[];
   v1Ticks: ExtractedTick[];
+  addedLabels: AddedLabel[];
 }) {
   return (
         <svg
@@ -856,6 +862,27 @@ function MapSvg({
                 </text>
               ));
             })}
+          </g>
+
+          {/* Added-show labels (task #24): shows v1 never named, placed explicitly
+              off the lines per the label rules. Bold like v1 show titles. */}
+          <g data-layer="added-labels">
+            {addedLabels.map((a, i) => (
+              <text
+                key={`a-${i}`}
+                x={a.x}
+                y={a.y}
+                textAnchor={a.align}
+                fontSize={7.6}
+                fontWeight={700}
+                fill="#231F20"
+                style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
+              >
+                {a.lines.map((t, j) => (
+                  <tspan key={j} x={a.x} dy={j === 0 ? 0 : 7.6 * 1.15}>{t}</tspan>
+                ))}
+              </text>
+            ))}
           </g>
         </svg>
   );
