@@ -118,6 +118,9 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // is the Army": Forrest/Wright × Albert Marre × Jack Cole) but omitted the
   // NAME. Label on the LEFT of the station (the right side is over the lines).
   { id: 'kismet', x: 1733, y: 785, labelX: 1724, labelY: 788, align: 'end' },
+  // The Pirates of Penzance (1981, Graciela Daniele) — new station on her line
+  // between Zorba (1968) and The Rink (1984).
+  { id: 'the-pirates-of-penzance', x: 921, y: 956, labelX: 909, labelY: 949, align: 'end', lines: ['The Pirates', 'of Penzance'] },
 ];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
@@ -305,6 +308,7 @@ export default function MapV2() {
       if (!s) continue;
       mapShowsById.set(a.id, { id: a.id, name: s.title, x: a.x, y: a.y, width: 30, height: 8 });
     }
+    const addedById = new Map(ADDED_SHOWS.map(a => [a.id, a]));
     const linesByPersonId = new Map<string, ActiveLine>();
     for (const l of lines) for (const id of l.personIds) linesByPersonId.set(id, l);
     const activeIds = new Set(linesByPersonId.keys());
@@ -462,6 +466,7 @@ export default function MapV2() {
     for (const show of SHOWS) {
       const m = mapShowsById.get(show.id);
       if (!m) continue;
+      const _add = addedById.get(show.id);
 
       const activeLineSet = new Set<ActiveLine>();
       const paletteCreatorIds = new Set<string>();
@@ -550,9 +555,11 @@ export default function MapV2() {
       // LABEL (the computed station can drift from where v1 drew the tick; the
       // real tick stays by the label). Either way the static v1-ticks layer
       // draws it ⇒ no computed tick (which would be a strayed/duplicate stub).
+      // Added shows are NEW stations — they must draw their own tick even if a
+      // neighbor's v1 tick is nearby, so never count them as tick-covered.
       const lblCx = m.x + (m.width || 0) / 2, lblCy = m.y + (m.height || 0) / 2;
       let coveredByV1Tick = false;
-      for (const t of v1Ticks) {
+      if (!_add) for (const t of v1Ticks) {
         const tx = (t.x1 + t.x2) / 2, ty = (t.y1 + t.y2) / 2;
         if (Math.hypot(tx - stationX, ty - stationY) <= 12 || Math.hypot(tx - lblCx, ty - lblCy) <= 30) { coveredByV1Tick = true; break; }
       }
@@ -577,8 +584,10 @@ export default function MapV2() {
       const primaryColor = primary.ln.extracted.color;
       const label = labelByShowId.get(show.id);
 
-      // Raw label offset (which side of the marker the label sits on)
-      const ldx = m.x - stationX, ldy = m.y - stationY;
+      // Raw label offset (which side of the marker the label sits on). For added
+      // shows the label is placed explicitly, so point the tick at THAT label.
+      const ldx = (_add ? _add.labelX : m.x) - stationX;
+      const ldy = (_add ? _add.labelY : m.y) - stationY;
       const tlen = Math.hypot(ldx, ldy) || 1;
 
       anchors.push({
@@ -818,12 +827,12 @@ function MapSvg({
                   if (px * a.labelDx + py * a.labelDy < 0) { px = -px; py = -py; }
                   return (
                     <line
-                      x1={a.stationX}
-                      y1={a.stationY}
+                      x1={a.stationX + px * 2.5}
+                      y1={a.stationY + py * 2.5}
                       x2={a.stationX + px * 6}
                       y2={a.stationY + py * 6}
                       stroke={a.primaryLineColor}
-                      strokeWidth={2.5}
+                      strokeWidth={1}
                       strokeLinecap="square"
                     />
                   );
@@ -865,7 +874,8 @@ function MapSvg({
           </g>
 
           {/* Added-show labels (task #24): shows v1 never named, placed explicitly
-              off the lines per the label rules. Bold like v1 show titles. */}
+              off the lines per the label rules. Type matches v1's standard show
+              title: TisaSansPro regular 7.59 (the dominant style). */}
           <g data-layer="added-labels">
             {addedLabels.map((a, i) => (
               <text
@@ -873,13 +883,13 @@ function MapSvg({
                 x={a.x}
                 y={a.y}
                 textAnchor={a.align}
-                fontSize={7.6}
-                fontWeight={700}
+                fontSize={7.59}
+                fontWeight={400}
                 fill="#231F20"
                 style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
               >
                 {a.lines.map((t, j) => (
-                  <tspan key={j} x={a.x} dy={j === 0 ? 0 : 7.6 * 1.15}>{t}</tspan>
+                  <tspan key={j} x={a.x} dy={j === 0 ? 0 : 7.59 * 1.15}>{t}</tspan>
                 ))}
               </text>
             ))}
