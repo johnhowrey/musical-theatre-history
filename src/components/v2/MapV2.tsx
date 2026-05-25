@@ -141,10 +141,23 @@ function labelNudgeKey(l: ExtractedLabel): string {
 // color's luminance is above a legible threshold; dark colors pass through.
 const CREATOR_LABEL_BLACK = '#231F20';
 const isCreatorLabel = (fill: string) => fill.toUpperCase() !== CREATOR_LABEL_BLACK;
+// Darken a creator-label color (same HUE, just deeper) so light colors are
+// legible on the cream background. Scales sRGB toward black uniformly, which
+// preserves the R:G:B ratio = the hue, so it stays recognizably the line color.
 function darkenForContrast(hex: string): string {
   const m = /^#?([0-9a-fA-F]{6})$/.exec(hex.trim());
   if (!m) return hex;
   let r = parseInt(m[1].slice(0, 2), 16), g = parseInt(m[1].slice(2, 4), 16), b = parseInt(m[1].slice(4, 6), 16);
+  // Yellow hues turn olive/gold when darkened (look like a different color), so
+  // leave them as-is — the yellow lines need a separate palette decision.
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), dl = mx - mn;
+  let hue = 0;
+  if (dl > 0) {
+    if (mx === r) hue = (((g - b) / dl) % 6 + 6) % 6;
+    else if (mx === g) hue = (b - r) / dl + 2; else hue = (r - g) / dl + 4;
+    hue *= 60;
+  }
+  if (hue >= 40 && hue <= 75) return hex; // yellow / yellow-gold — don't darken
   const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   const TARGET = 0.42; // luminance ceiling for legibility on cream (#FAF6E8)
   if (lum > TARGET) {
@@ -791,7 +804,10 @@ function MapSvg({
             {orphanLabels.flatMap((l, i) => {
               const lk = labelNudgeKey(l);
               // Creator "legend" labels (non-black): UPPERCASE for consistency
-              // (v1 mixed upper/title/lowercase) + darken light ones for legibility.
+              // (v1 mixed upper/title/lowercase) + keep the EXACT line color but
+              // add a thin dark halo so even light colors (yellows) are legible on
+              // the cream background. paint-order:stroke draws the halo behind the
+              // fill so the line color stays clean and recognizable.
               const creator = isCreatorLabel(l.fill);
               const fill = creator ? darkenForContrast(l.fill) : l.fill;
               return l.lines.map((line, j) => (
