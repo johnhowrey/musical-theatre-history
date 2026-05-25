@@ -100,6 +100,16 @@ const FORCE_ON_LINE = new Set<string>([
   'id-rather-be-right',  // v1 had it on George Abbott; belongs on Rodgers (+Hart later)
 ]);
 
+// Shows v1 marked with a single TICK (not an intersection circle) even though 2+
+// credited lines cross nearby. Without this, the crossing lines get bundled into
+// a fat computed pill (flagged: Three's a Crowd, Wonderful Town, A Chorus Line).
+// Forcing single-line anchors them on their primary line so v1's own tick shows.
+const FORCE_SINGLE_LINE = new Set<string>([
+  'threes-a-crowd',
+  'wonderful-town',
+  'a-chorus-line',
+]);
+
 // Credit overrides: supplement broadway-data where it's missing a credit that
 // v1 (correctly) reflects. Keyed by show id → person ids to add.
 // (broadway-data should eventually be updated to match.)
@@ -765,8 +775,10 @@ export default function MapV2() {
       // crossing doesn't stretch the marker into a giant capsule (e.g. Berlin's
       // horizontal line vs Moss Hart's line ~160px off at Face the Music).
       const BUNDLE_RADIUS = 50;
-      const bundle = perLine.filter(e =>
-        Math.hypot(e.pt.x - primary.pt.x, e.pt.y - primary.pt.y) <= BUNDLE_RADIUS);
+      const bundle = FORCE_SINGLE_LINE.has(show.id)
+        ? [primary] // v1 ticked it on one line; don't bundle crossing lines into a pill
+        : perLine.filter(e =>
+            Math.hypot(e.pt.x - primary.pt.x, e.pt.y - primary.pt.y) <= BUNDLE_RADIUS);
       const bundlePts = bundle.map(e => e.pt);
 
       let stationX = bundlePts.reduce((a, p) => a + p.x, 0) / bundlePts.length;
