@@ -1,0 +1,22 @@
+# XcodeGen spec — run `xcodegen generate` in ios/ to produce MTMap.xcodeproj,
+# then open it in Xcode. (Or create a new iOS App in Xcode and add MTMap/*.swift
+# + Resources/map-document.json to the target.)
+name: MTMap
+options:
+  bundleIdPrefix: com.johnhowrey
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  MTMap:
+    type: application
+    platform: iOS
+    sources:
+      - MTMap
+    settings:
+      base:
+        PRODUCT_NAME: MTMap
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Broadway Map
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
