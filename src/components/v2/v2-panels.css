@@ -107,3 +107,17 @@
   .v2-panel { width: 100%; max-width: 100%; }
   .v2-panel-hero { height: 160px; }
 }
+
+/* ---- map hover affordances ---- */
+.v2-map g[data-layer="hit"] circle { transition: fill 0.12s ease, stroke 0.12s ease; }
+.v2-map g[data-layer="hit"] circle:hover {
+  fill: rgba(35, 31, 32, 0.07);
+  stroke: #231F20;
+  stroke-width: 1.2;
+}
+.v2-map .v2-clickable { transition: fill 0.12s ease; }
+.v2-map .v2-clickable:hover { text-decoration: underline; }
+/* touch: no hover ring (avoid sticky highlight after tap) */
+@media (hover: none) {
+  .v2-map g[data-layer="hit"] circle:hover { fill: transparent; stroke: none; }
+}

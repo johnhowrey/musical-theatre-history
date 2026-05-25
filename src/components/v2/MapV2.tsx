@@ -589,7 +589,7 @@ export default function MapV2() {
     const addedLabels = ADDED_SHOWS.flatMap(a => {
       const s = SHOWS.find(x => x.id === a.id);
       if (!s) return [];
-      return [{ lines: a.lines ?? [s.title], x: a.labelX, y: a.labelY, align: a.align, fontSize: a.fontSize ?? 7.59, bold: a.bold ?? false }];
+      return [{ id: a.id, lines: a.lines ?? [s.title], x: a.labelX, y: a.labelY, align: a.align, fontSize: a.fontSize ?? 7.59, bold: a.bold ?? false }];
     });
 
     const anchors: ShowAnchor[] = [];
@@ -887,6 +887,7 @@ export default function MapV2() {
   // Pan/zoom the selected station clear of the right-hand panel.
   useEffect(() => {
     if (!interactive || !selShow || !transformRef.current) return;
+    if (window.innerWidth <= 560) return; // mobile: panel is full-screen, no pan needed
     const scale = 1.15, panelW = 440;
     const tx = (window.innerWidth - panelW) / 2, ty = window.innerHeight / 2;
     transformRef.current.setTransform(tx - selShow.stationX * scale, ty - selShow.stationY * scale, scale, 450, 'easeOut');
@@ -970,7 +971,7 @@ function Canvas({
   );
 }
 
-interface AddedLabel { lines: string[]; x: number; y: number; align: 'start' | 'end' | 'middle'; fontSize: number; bold: boolean; }
+interface AddedLabel { id: string; lines: string[]; x: number; y: number; align: 'start' | 'end' | 'middle'; fontSize: number; bold: boolean; }
 
 function MapSvg({
   lines,
@@ -1052,7 +1053,9 @@ function MapSvg({
           {anchors.map(a => {
             const angleDeg = (Math.atan2(a.tangentX, -a.tangentY) * 180) / Math.PI; // perp orientation
             return (
-              <g key={a.id} data-show={a.id}>
+              <g key={a.id} data-show={a.id}
+                 onClick={onShowClick ? () => onShowClick(a.id) : undefined}
+                 style={interactive ? { cursor: 'pointer' } : undefined}>
                 {a.coveredByV1Marker ? null /* drawn by the static v1-markers layer */
                  : a.isIntersection ? (() => {
                   // Marker = stadium whose LENGTH equals the bundle's visual
@@ -1115,6 +1118,9 @@ function MapSvg({
               // fill so the line color stays clean and recognizable.
               const creator = isCreatorLabel(l.fill);
               const fill = creator ? darkenForContrast(l.fill) : l.fill;
+              // Creator legend labels are clickable → open that creator.
+              const creatorName = creator ? l.lines.map(x => x.text).join(' ').toUpperCase().trim() : '';
+              const clickCreator = creator && onCreatorClick ? () => onCreatorClick(creatorName) : undefined;
               return l.lines.map((line, j) => (
                 <text
                   key={`o-${i}-${j}`}
@@ -1123,7 +1129,9 @@ function MapSvg({
                   fontSize={l.fontSize}
                   fontWeight={l.bold ? 700 : 400}
                   fill={fill}
-                  style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
+                  onClick={clickCreator}
+                  className={clickCreator ? 'v2-clickable' : undefined}
+                  style={{ pointerEvents: clickCreator ? 'auto' : 'none', cursor: clickCreator ? 'pointer' : undefined, fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
                 >
                   {creator ? line.text.toUpperCase() : line.text}
                 </text>
@@ -1145,7 +1153,9 @@ function MapSvg({
                 fontSize={a.fontSize}
                 fontWeight={a.bold ? 700 : 400}
                 fill="#231F20"
-                style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
+                onClick={onShowClick ? () => onShowClick(a.id) : undefined}
+                className={onShowClick ? 'v2-clickable' : undefined}
+                style={{ pointerEvents: onShowClick ? 'auto' : 'none', cursor: onShowClick ? 'pointer' : undefined, fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
               >
                 {a.lines.map((t, j) => (
                   <tspan key={j} x={a.x} dy={j === 0 ? 0 : a.fontSize * 1.15}>{t}</tspan>
@@ -1164,7 +1174,9 @@ function MapSvg({
                 fontSize={6.64}
                 fontWeight={700}
                 fill={darkenForContrast(c.color)}
-                style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
+                onClick={onCreatorClick ? () => onCreatorClick(c.text.toUpperCase()) : undefined}
+                className={onCreatorClick ? 'v2-clickable' : undefined}
+                style={{ pointerEvents: onCreatorClick ? 'auto' : 'none', cursor: onCreatorClick ? 'pointer' : undefined, fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
               >
                 {c.text.toUpperCase()}
               </text>
@@ -1250,7 +1262,7 @@ function ShowLabel({ anchor }: { anchor: ShowAnchor }) {
             fontSize={fs}
             fontWeight={label.bold ? 700 : 400}
             fill={label.fill}
-            style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
+            style={{ pointerEvents: 'auto', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
           >
             {line.text}
           </text>
@@ -1291,7 +1303,7 @@ function ShowLabel({ anchor }: { anchor: ShowAnchor }) {
       fontSize={fs}
       fontWeight={label.bold ? 700 : 400}
       fill={label.fill}
-      style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
+      style={{ pointerEvents: 'auto', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
     >
       {label.lines.map((line, i) => (
         <tspan key={i} x={x} dy={i === 0 ? 0 : lineH}>{line.text}</tspan>
