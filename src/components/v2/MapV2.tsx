@@ -134,6 +134,12 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // (y=1608), just left of Honeymoon in Vegas. Honeymoon's label sits ABOVE the
   // line, so this one goes BELOW (centered) into the open bottom margin.
   { id: 'the-last-five-years', x: 1866, y: 1608, labelX: 1866, labelY: 1623, align: 'middle' },
+  // The Little Mermaid (Alan Menken, music) — single-creator tick on his orange
+  // line. User-chosen spot: below Leap of Faith, in the open pocket between the
+  // Michael Greif (teal horizontal at y~731) and Christopher Ashley (green, which
+  // shares the descent then peels off) lines. Left side is crowded (Ashley/Korie/
+  // War Paint), so the label sits to the RIGHT, before the Kelly Devine line.
+  { id: 'the-little-mermaid', x: 1964, y: 695, labelX: 1971, labelY: 692, align: 'start', lines: ['The Little', 'Mermaid'] },
 ];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
