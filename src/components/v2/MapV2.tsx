@@ -1319,14 +1319,17 @@ function MapSvg({
                   // Tick is PERPENDICULAR to the line tangent, extending
                   // outward on whichever side the label is on. Only for NEW
                   // shows with no v1 tick of their own.
+                  // Perpendicular to the line at the station, on the label side.
+                  // Length/offset matched to v1's ticks: start just inside the
+                  // line (no hairline gap) and run ~4.4 units out.
                   let px = -a.tangentY, py = a.tangentX;
                   if (px * a.labelDx + py * a.labelDy < 0) { px = -px; py = -py; }
                   return (
                     <line
-                      x1={a.stationX + px * 2.5}
-                      y1={a.stationY + py * 2.5}
-                      x2={a.stationX + px * 6}
-                      y2={a.stationY + py * 6}
+                      x1={a.stationX + px * 2.0}
+                      y1={a.stationY + py * 2.0}
+                      x2={a.stationX + px * 6.4}
+                      y2={a.stationY + py * 6.4}
                       stroke={a.primaryLineColor}
                       strokeWidth={1}
                       strokeLinecap="square"
