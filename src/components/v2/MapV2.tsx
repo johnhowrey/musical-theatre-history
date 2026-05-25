@@ -140,6 +140,14 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // shares the descent then peels off) lines. Left side is crowded (Ashley/Korie/
   // War Paint), so the label sits to the RIGHT, before the Kelly Devine line.
   { id: 'the-little-mermaid', x: 1964, y: 695, labelX: 1971, labelY: 692, align: 'start', lines: ['The Little', 'Mermaid'] },
+  // High Spirits (1964) — Gower Champion directed/supervised; he's the only
+  // credited creator with a line, so it's a single-creator tick (render color
+  // #00CCBE). User-chosen spot: to the RIGHT of Hello, Dolly!, basically below
+  // the big "Hello, Dolly!" label, in the cream pocket between the yellow Jerry
+  // Herman line (which drops to La Cage aux Folles) and the rising Champion
+  // bundle. x,y snaps the station to the Champion segment at ~(1185,880); label
+  // sits below the line, left-aligned just clear of the Herman line.
+  { id: 'high-spirits', x: 1170, y: 876, labelX: 1183, labelY: 897, align: 'start' },
 ];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
