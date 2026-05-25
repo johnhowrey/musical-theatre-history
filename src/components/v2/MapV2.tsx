@@ -1,6 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { PEOPLE, SHOWS, mapShows, creatorLineColors } from '../../data';
+import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
+import { PEOPLE, SHOWS, mapShows, creatorLineColors, getCreatorColor } from '../../data';
+import { ShowPanel, CreatorPanel } from './panels';
+import type { ShowNav } from './panels';
+import './v2-panels.css';
 import { creatorTeams } from '../../data/creatorTeams';
 import {
   extractCreatorLine,
@@ -350,6 +354,9 @@ interface ShowAnchor {
    *  by the added-labels layer at the chosen spot, so ShowLabel must NOT draw it
    *  (its v1 label is still held in `label` so the static orphan layer skips it). */
   isAdded: boolean;
+  /** Names of the creator lines that credit this show (for the creator panel
+   *  and show→show navigation along each involved line). */
+  creatorNames: string[];
   primaryLineColor: string;
   label?: ExtractedLabel;
   /** Raw offset (v1 label position − station), tells which side the label is on. */
@@ -728,6 +735,7 @@ export default function MapV2() {
         coveredByV1Marker,
         coveredByV1Tick,
         isAdded: !!_add,
+        creatorNames: activeLinesForShow.map(l => l.creatorName),
         primaryLineColor: primaryColor,
         label,
         labelDx: ldx,
@@ -751,7 +759,28 @@ export default function MapV2() {
       !renderedLabelSet.has(l) &&
       !SUPPRESS_LABELS.includes(normLabelText(l.lines.map(x => x.text).join(' '))));
 
-    return { lines, anchors, orphanLabels, v1Stations, v1Ticks: v1TicksResolved, addedLabels };
+    // Per-creator ordered station list: each creator's shows sorted by their
+    // position ALONG the line (project each station onto the line's sample points
+    // and sort by arc index). Powers the creator panel + show→show navigation.
+    const anchorById = new Map(anchors.map(a => [a.id, a]));
+    const creatorOrder = new Map<string, string[]>();
+    for (const ln of lines) {
+      const mine = anchors.filter(a => a.creatorNames.includes(ln.creatorName));
+      if (!mine.length || !ln.samplePoints.length) continue;
+      const idxOf = (a: ShowAnchor) => {
+        let bi = 0, bd = Infinity;
+        for (let i = 0; i < ln.samplePoints.length; i++) {
+          const p = ln.samplePoints[i];
+          const d = (p.x - a.stationX) ** 2 + (p.y - a.stationY) ** 2;
+          if (d < bd) { bd = d; bi = i; }
+        }
+        return bi;
+      };
+      mine.sort((a, b) => idxOf(a) - idxOf(b));
+      creatorOrder.set(ln.creatorName, mine.map(a => a.id));
+    }
+
+    return { lines, anchors, orphanLabels, v1Stations, v1Ticks: v1TicksResolved, addedLabels, anchorById, creatorOrder };
   }, []);
 
   // Compare mode (?compare): render the bare SVG at v1's exact coordinate
@@ -812,18 +841,96 @@ export default function MapV2() {
     document.body.appendChild(pre);
   }, [measureMode]);
 
+  const { lines, anchors, orphanLabels, v1Stations, v1Ticks, addedLabels, anchorById, creatorOrder } = view;
+
+  // Selection: a show (by id) or a creator (by name) — drives panel + map focus.
+  const [sel, setSel] = useState<{ type: 'show'; id: string } | { type: 'creator'; name: string } | null>(null);
+  const transformRef = useRef<ReactZoomPanPinchRef | null>(null);
+  const interactive = !compareMode && !measureMode;
+
+  // Selection changes push the URL directly (handlers), and the URL is read ONLY
+  // on mount + back/forward — a one-way read so there's no echo loop (which under
+  // StrictMode's double-mount stripped the deep-link param).
+  type Sel = { type: 'show'; id: string } | { type: 'creator'; name: string } | null;
+  const navTo = useCallback((next: Sel) => {
+    setSel(next);
+    if (typeof window === 'undefined') return;
+    const base = window.location.pathname;
+    const url = next?.type === 'show' ? `${base}?show=${encodeURIComponent(next.id)}`
+      : next?.type === 'creator' ? `${base}?creator=${encodeURIComponent(next.name)}` : base;
+    if (url !== window.location.pathname + window.location.search) window.history.pushState(null, '', url);
+  }, []);
+  const openShow = useCallback((id: string) => navTo({ type: 'show', id }), [navTo]);
+  const openCreator = useCallback((name: string) => navTo({ type: 'creator', name }), [navTo]);
+  const close = useCallback(() => navTo(null), [navTo]);
+
+  useEffect(() => {
+    if (!interactive) return;
+    const read = () => {
+      const p = new URLSearchParams(window.location.search);
+      const s = p.get('show'), c = p.get('creator');
+      setSel(s ? { type: 'show', id: s } : c ? { type: 'creator', name: c } : null);
+    };
+    read();
+    window.addEventListener('popstate', read);
+    return () => window.removeEventListener('popstate', read);
+  }, [interactive]);
+  useEffect(() => {
+    if (!interactive) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSel(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [interactive]);
+
+  const selShow = sel?.type === 'show' ? anchorById.get(sel.id) : undefined;
+
+  // Pan/zoom the selected station clear of the right-hand panel.
+  useEffect(() => {
+    if (!interactive || !selShow || !transformRef.current) return;
+    const scale = 1.15, panelW = 440;
+    const tx = (window.innerWidth - panelW) / 2, ty = window.innerHeight / 2;
+    transformRef.current.setTransform(tx - selShow.stationX * scale, ty - selShow.stationY * scale, scale, 450, 'easeOut');
+  }, [selShow, interactive]);
+
   if (compareMode || measureMode) {
     return (
       <div style={{ width: V1_SVG_WIDTH, height: V1_SVG_HEIGHT, background: '#FAF6E8' }}>
-        <MapSvg {...view} />
+        <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels} />
       </div>
     );
   }
 
+  const dimCreator = sel?.type === 'creator' ? sel.name : null;
+  const navs: ShowNav[] = selShow ? selShow.creatorNames.map(cn => {
+    const order = creatorOrder.get(cn) || [];
+    const idx = order.indexOf(selShow.id);
+    const prevA = idx > 0 ? anchorById.get(order[idx - 1]) : undefined;
+    const nextA = idx >= 0 && idx < order.length - 1 ? anchorById.get(order[idx + 1]) : undefined;
+    return {
+      creator: cn, color: getCreatorColor(cn) || '#231F20',
+      prev: prevA ? { id: prevA.id, title: prevA.title } : undefined,
+      next: nextA ? { id: nextA.id, title: nextA.title } : undefined,
+    };
+  }) : [];
+  const creatorShows = sel?.type === 'creator'
+    ? (creatorOrder.get(sel.name) || []).flatMap(id => {
+        const a = anchorById.get(id); if (!a) return [];
+        return [{ id: a.id, title: a.title, year: SHOWS.find(s => s.id === a.id)?.year }];
+      })
+    : [];
+
   return (
     <div className="v2-shell">
       <a href="/" className="v2-back">← v1</a>
-      <Canvas {...view} />
+      <Canvas lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
+        onShowClick={openShow} onCreatorClick={openCreator} dimCreator={dimCreator} selectedShowId={selShow?.id ?? null} transformRef={transformRef} />
+      {sel && <div className="v2-backdrop" onClick={close} />}
+      {sel?.type === 'show' && selShow && (
+        <ShowPanel title={selShow.title} onClose={close} onCreatorClick={openCreator} onNavShow={openShow} navs={navs} />
+      )}
+      {sel?.type === 'creator' && (
+        <CreatorPanel name={sel.name} shows={creatorShows} onClose={close} onShowClick={openShow} />
+      )}
     </div>
   );
 }
@@ -835,6 +942,11 @@ function Canvas({
   v1Stations,
   v1Ticks,
   addedLabels,
+  onShowClick,
+  onCreatorClick,
+  dimCreator,
+  selectedShowId,
+  transformRef,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
@@ -842,11 +954,17 @@ function Canvas({
   v1Stations: ExtractedStation[];
   v1Ticks: ExtractedTick[];
   addedLabels: AddedLabel[];
+  onShowClick?: (id: string) => void;
+  onCreatorClick?: (name: string) => void;
+  dimCreator?: string | null;
+  selectedShowId?: string | null;
+  transformRef?: React.Ref<ReactZoomPanPinchRef>;
 }) {
   return (
-    <TransformWrapper initialScale={0.5} minScale={0.1} maxScale={6} centerOnInit limitToBounds={false} smooth wheel={{ step: 0.08 }}>
+    <TransformWrapper ref={transformRef} initialScale={0.5} minScale={0.1} maxScale={6} centerOnInit limitToBounds={false} smooth wheel={{ step: 0.08 }}>
       <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: V1_SVG_WIDTH, height: V1_SVG_HEIGHT }}>
-        <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels} />
+        <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
+          onShowClick={onShowClick} onCreatorClick={onCreatorClick} dimCreator={dimCreator} selectedShowId={selectedShowId} />
       </TransformComponent>
     </TransformWrapper>
   );
@@ -861,6 +979,10 @@ function MapSvg({
   v1Stations,
   v1Ticks,
   addedLabels,
+  onShowClick,
+  onCreatorClick,
+  dimCreator,
+  selectedShowId,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
@@ -868,7 +990,12 @@ function MapSvg({
   v1Stations: ExtractedStation[];
   v1Ticks: ExtractedTick[];
   addedLabels: AddedLabel[];
+  onShowClick?: (id: string) => void;
+  onCreatorClick?: (name: string) => void;
+  dimCreator?: string | null;
+  selectedShowId?: string | null;
 }) {
+  const interactive = !!(onShowClick || onCreatorClick);
   return (
         <svg
           width={V1_SVG_WIDTH}
@@ -877,9 +1004,12 @@ function MapSvg({
           xmlns="http://www.w3.org/2000/svg"
           className="v2-map"
         >
-          {/* Lines */}
+          {/* Lines (clickable → creator; dimmed when another creator is focused) */}
           {lines.map(line => (
-            <g key={line.creatorName} data-line={line.personIds[0]}>
+            <g key={line.creatorName} data-line={line.personIds[0]}
+               opacity={dimCreator && line.creatorName !== dimCreator ? 0.12 : 1}
+               onClick={onCreatorClick ? () => onCreatorClick(line.creatorName) : undefined}
+               style={interactive ? { cursor: 'pointer' } : undefined}>
               {line.extracted.paths.map((p, i) => (
                 <path key={i} d={p.d} stroke={line.extracted.color} strokeWidth={p.strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round" />
               ))}
@@ -1040,6 +1170,36 @@ function MapSvg({
               </text>
             ))}
           </g>
+
+          {/* Highlight: ring on the selected show + on the focused creator's stations */}
+          {(selectedShowId || dimCreator) && anchors.map(a => {
+            const isSel = selectedShowId === a.id;
+            const onFocusLine = !!(dimCreator && a.creatorNames.includes(dimCreator));
+            if (!isSel && !onFocusLine) return null;
+            const r = Math.max(7, a.bundleSpread / 2 + 6);
+            return (
+              <circle key={`hl-${a.id}`} cx={a.stationX} cy={a.stationY} r={r}
+                fill="none" stroke={isSel ? '#231F20' : a.primaryLineColor}
+                strokeWidth={isSel ? 2.5 : 1.5} style={{ pointerEvents: 'none' }} />
+            );
+          })}
+
+          {/* Interaction hit layer (DATA-DRIVEN): one transparent target per show,
+              generated from anchors — so every show is automatically clickable, and
+              stray visual artifacts (not in the data) get no target. On top so a
+              station click beats the underlying line's creator click. */}
+          {interactive && (
+            <g data-layer="hit">
+              {anchors.map(a => (
+                <circle key={`hit-${a.id}`} cx={a.stationX} cy={a.stationY}
+                  r={Math.max(9, a.bundleSpread / 2 + 7)} fill="transparent"
+                  onClick={onShowClick ? (e) => { e.stopPropagation(); onShowClick(a.id); } : undefined}
+                  style={{ cursor: 'pointer' }}>
+                  <title>{a.title}</title>
+                </circle>
+              ))}
+            </g>
+          )}
         </svg>
   );
 }
