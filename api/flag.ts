@@ -17,7 +17,16 @@ export function flagBody(p: any): string {
   if (typeof p.x === 'number') lines.push(`**Map coords:** (${Math.round(p.x)}, ${Math.round(p.y)})  — crop: \`magick v2.png -crop 200x200+${Math.round(p.x * 2 - 100)}+${Math.round(p.y * 2 - 100)}\``);
   if (p.url) lines.push(`**Link:** ${p.url}`);
   lines.push('', '_filed via map flag mode_');
+  // machine-readable so OPEN flags can be plotted back as pins on the map
+  lines.push('', `<!-- flag-meta: ${JSON.stringify({ x: p.x, y: p.y, kind: p.kind, id: p.context?.id })} -->`);
   return lines.join('\n');
+}
+
+// Parse the flag-meta comment out of an issue body → pin coords (or null).
+export function parseFlagMeta(body: string): { x?: number; y?: number; kind?: string; id?: string } | null {
+  const m = /<!-- flag-meta: (\{.*?\}) -->/.exec(body || '');
+  if (!m) return null;
+  try { return JSON.parse(m[1]); } catch { return null; }
 }
 
 export default async function handler(req: Req, res: Res) {

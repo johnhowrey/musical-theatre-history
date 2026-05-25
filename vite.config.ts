@@ -4,14 +4,28 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import { execFile } from "node:child_process";
 import { appendFileSync } from "node:fs";
-import { flagTitle, flagBody } from "./api/flag";
+import { flagTitle, flagBody, parseFlagMeta } from "./api/flag";
 
-// Dev-only endpoint mirroring the Vercel /api/flag function: creates a GitHub
-// issue via the locally-authed `gh` CLI (no token in code) + logs to flags.jsonl.
+// Dev-only endpoints mirroring the Vercel /api/flag(+s) functions, via the locally
+// authed `gh` CLI (no token in code). POST /api/flag creates an issue (+ logs to
+// flags.jsonl); GET /api/flags lists OPEN map-flag issues so the UI can plot pins.
 function flagDevPlugin(): Plugin {
   return {
     name: "flag-dev-endpoint",
     configureServer(server) {
+      // GET /api/flags — registered before /api/flag (prefix would also match it).
+      server.middlewares.use("/api/flags", (req, res) => {
+        const json = (code: number, body: any) => { res.statusCode = code; res.setHeader("content-type", "application/json"); res.end(JSON.stringify(body)); };
+        if (req.method !== "GET") { res.statusCode = 405; res.end("GET only"); return; }
+        execFile("gh", ["issue", "list", "--repo", "johnhowrey/musical-theatre-history", "--label", "map-flag", "--state", "open", "--json", "number,title,url,body", "--limit", "200"],
+          (err, stdout) => {
+            if (err) return json(200, { ok: true, flags: [] });
+            let arr: any[] = [];
+            try { arr = JSON.parse(stdout || "[]"); } catch { /* ignore */ }
+            const flags = arr.map((i) => ({ number: i.number, title: i.title, url: i.url, ...(parseFlagMeta(i.body || "") || {}) }));
+            json(200, { ok: true, flags });
+          });
+      });
       server.middlewares.use("/api/flag", (req, res) => {
         if (req.method !== "POST") { res.statusCode = 405; res.end("POST only"); return; }
         let raw = "";

@@ -252,7 +252,7 @@ export interface FlagTarget {
   context?: { id?: string; title?: string; name?: string };
 }
 
-export function FlagNote({ target, secret, onClose }: { target: FlagTarget; secret: string; onClose: () => void }) {
+export function FlagNote({ target, secret, onClose, onFiled }: { target: FlagTarget; secret: string; onClose: () => void; onFiled?: () => void }) {
   const [note, setNote] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'err'>('idle');
   const [result, setResult] = useState('');
@@ -273,7 +273,7 @@ export function FlagNote({ target, secret, onClose }: { target: FlagTarget; secr
         body: JSON.stringify({ ...target, note, secret, url: window.location.href }),
       });
       const j = await r.json();
-      if (j.ok) { setStatus('done'); setResult(j.url || 'logged'); }
+      if (j.ok) { setStatus('done'); setResult(j.url || 'logged'); onFiled?.(); }
       else { setStatus('err'); setResult(j.error || 'error'); }
     } catch (e) { setStatus('err'); setResult(String(e)); }
   };

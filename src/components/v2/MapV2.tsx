@@ -893,6 +893,7 @@ export default function MapV2() {
   // sub-toggle — when on, a map click drops a flag pin instead of opening a panel.
   const [spotMode, setSpotMode] = useState(false);
   const [flagTarget, setFlagTarget] = useState<FlagTarget | null>(null);
+  const [flagPins, setFlagPins] = useState<Array<{ number: number; title: string; url: string; x?: number; y?: number }>>([]);
 
   // Selection changes push the URL directly (handlers), and the URL is read ONLY
   // on mount + back/forward — a one-way read so there's no echo loop (which under
@@ -920,6 +921,14 @@ export default function MapV2() {
     for (const a of anchors) { const d = (a.stationX - x) ** 2 + (a.stationY - y) ** 2; if (d < bd) { bd = d; nearest = a.title; } }
     setFlagTarget({ kind: 'map', x, y, nearest: bd < 1600 ? nearest : undefined });
   }, [anchors]);
+  // Open flags → pins. Re-fetched on load + after filing; CLOSED issues drop out,
+  // so resolving a flag makes its pin disappear.
+  const refreshPins = useCallback(() => {
+    if (!flagMode) return;
+    fetch('/api/flags' + (flagSecret ? `?secret=${encodeURIComponent(flagSecret)}` : ''))
+      .then(r => r.json()).then(j => setFlagPins(j.flags || [])).catch(() => {});
+  }, [flagMode, flagSecret]);
+  useEffect(() => { refreshPins(); }, [refreshPins]);
 
   useEffect(() => {
     if (!interactive) return;
@@ -987,7 +996,7 @@ export default function MapV2() {
       <a href="/" className="v2-back">← v1</a>
       <Canvas lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
         onShowClick={openShow} onCreatorClick={openCreator} dimCreator={dimCreator} selectedShowId={selShow?.id ?? null} transformRef={transformRef}
-        spotMode={spotMode} onFlagAt={onFlagAt} />
+        spotMode={spotMode} onFlagAt={onFlagAt} flagPins={flagMode ? flagPins : undefined} />
 
       {flagMode && (
         <div className="v2-flag-banner">
@@ -1010,7 +1019,7 @@ export default function MapV2() {
           onFlag={flagMode ? () => setFlagTarget({ kind: 'creator-info', context: { name: sel.name } }) : undefined} />
       )}
 
-      {flagTarget && <FlagNote target={flagTarget} secret={flagSecret} onClose={() => setFlagTarget(null)} />}
+      {flagTarget && <FlagNote target={flagTarget} secret={flagSecret} onClose={() => setFlagTarget(null)} onFiled={refreshPins} />}
     </div>
   );
 }
@@ -1029,6 +1038,7 @@ function Canvas({
   transformRef,
   spotMode,
   onFlagAt,
+  flagPins,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
@@ -1043,13 +1053,14 @@ function Canvas({
   transformRef?: React.Ref<ReactZoomPanPinchRef>;
   spotMode?: boolean;
   onFlagAt?: (x: number, y: number) => void;
+  flagPins?: Array<{ number: number; title: string; url: string; x?: number; y?: number }>;
 }) {
   return (
     <TransformWrapper ref={transformRef} initialScale={0.5} minScale={0.1} maxScale={6} centerOnInit limitToBounds={false} smooth wheel={{ step: 0.08 }}>
       <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: V1_SVG_WIDTH, height: V1_SVG_HEIGHT }}>
         <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
           onShowClick={onShowClick} onCreatorClick={onCreatorClick} dimCreator={dimCreator} selectedShowId={selectedShowId}
-          spotMode={spotMode} onFlagAt={onFlagAt} />
+          spotMode={spotMode} onFlagAt={onFlagAt} flagPins={flagPins} />
       </TransformComponent>
     </TransformWrapper>
   );
@@ -1070,6 +1081,7 @@ function MapSvg({
   selectedShowId,
   spotMode,
   onFlagAt,
+  flagPins,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
@@ -1083,6 +1095,7 @@ function MapSvg({
   selectedShowId?: string | null;
   spotMode?: boolean;
   onFlagAt?: (x: number, y: number) => void;
+  flagPins?: Array<{ number: number; title: string; url: string; x?: number; y?: number }>;
 }) {
   const interactive = !!(onShowClick || onCreatorClick);
   return (
@@ -1307,6 +1320,18 @@ function MapSvg({
               ))}
             </g>
           )}
+
+          {/* Flag pins: OPEN flagged issues with coords. Closing an issue removes
+              it from /api/flags, so its pin disappears on the next load. Click → issue. */}
+          {flagPins && flagPins.filter(p => p.x != null && p.y != null).map(p => (
+            <g key={`pin-${p.number}`} className="v2-pin" style={{ cursor: 'pointer' }}
+               onClick={(e) => { e.stopPropagation(); window.open(p.url, '_blank', 'noopener'); }}>
+              <circle cx={p.x} cy={p.y! - 11} r={9} fill="#FBCA04" stroke="#231F20" strokeWidth={1.5} />
+              <path d={`M ${p.x! - 5} ${p.y! - 5} L ${p.x} ${p.y} L ${p.x! + 5} ${p.y! - 5} Z`} fill="#231F20" />
+              <text x={p.x} y={p.y! - 8} textAnchor="middle" fontSize={9} fontWeight={700} fill="#231F20" style={{ pointerEvents: 'none' }}>{p.number}</text>
+              <title>{p.title}</title>
+            </g>
+          ))}
         </svg>
   );
 }
