@@ -180,12 +180,16 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // here (in place) so the label renders NON-bold (added labels default to 7.59
   // regular) and the isAdded flag suppresses the v1 bold "Hair" label.
   { id: 'hair', x: 1840, y: 466, labelX: 1856, labelY: 470, align: 'start' },
+  // Smash (2025) = Marc Shaiman × Susan Stroman — intersection at the junction
+  // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
+  { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
 ];
 
 // Static v1 ticks to DROP (by approx midpoint). Used when a v1 station is
 // relocated and its original static tick would otherwise be orphaned.
 const SUPPRESS_TICKS: Array<{ x: number; y: number }> = [
   { x: 2247, y: 438 }, // Legally Blonde's original tick (relocated up to y401)
+  { x: 1852, y: 592 }, // Two Gentlemen of Verona — stray duplicate v1 tick (computed one renders)
 ];
 // v1 labels to DROP entirely (normalized text match). Used to remove a show or a
 // now-defunct creator legend label.
@@ -195,7 +199,26 @@ const SUPPRESS_LABELS = ['boccaccio', 'julie arenal'].map(normLabelText);
 // when a show that v1 drew as an intersection circle is now a single-line tick.
 const SUPPRESS_MARKERS: Array<{ x: number; y: number }> = [
   { x: 1849, y: 474 }, // Hair's old MacDermot×Arenal intersection circle (now a tick)
+  { x: 1660, y: 429 }, // The Frogs — off-center v1 circle; let the anchor recompute it centered
 ];
+// Creator "legend" labels we ADD (v1 omitted them). Rendered in the line color
+// (darkened for contrast), UPPERCASE, optionally rotated to follow the line.
+const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: number; color: string }> = [
+  // Jerry Mitchell's cyan line had no name (its line was added in #32 but v1 has
+  // no legend label). Place it down the clear stretch of his vertical run.
+  { text: 'JERRY MITCHELL', x: 2247, y: 700, angle: -90, color: '#00BEF3' },
+];
+// Line EXTENSIONS: extra path segments appended to a creator's line (rendered in
+// the line color + added to its sample points so new stations can anchor there).
+// MUST be octolinear (H / V / 45°) with CURVED turns — see feedback memory.
+const LINE_EXTENSIONS: Record<string, string[]> = {
+  // Smash (2025) = Marc Shaiman (music) × Susan Stroman (dir). Their lines don't
+  // meet, so extend both to a junction at (1855,427): Stroman straight in from the
+  // left (it already ends horizontal), Shaiman continues its 45° down-left then
+  // curves to horizontal in from the right.
+  'SUSAN STROMAN': ['M 1661 427 L 1855 427'],
+  'MARC SHAIMAN': ['M 2033 396 L 2011 418 C 2005 424 1996 427 1989 427 L 1855 427'],
+};
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
 // (clean it up, keep LINES pixel-exact), we move only the LABEL: [dx,dy] in SVG
@@ -213,6 +236,11 @@ const LABEL_NUDGES: Record<string, [number, number]> = {
   // smaller computed nudges were reverted as unnecessary deviations from v1.
   'GEORGE GERSHWIN@888,609': [-35.0, 35.0],   // was clipping "Lady, Be Good!"
   'GOWER CHAMPION@1400,725': [-14.1, 14.1],    // was clipping "A Broadway Musical" / "Make A Wish"
+  // Smash line extensions cross these labels — nudge them clear of the new lines.
+  'Music Box Revue@1693,425': [0, -14],   // lift clear of Stroman's extension (down-left move orphaned its tick — needs a full relocate)
+  // Shaiman's extension leaves Charlie's circle down-left; the pink line leaves it
+  // down-right; so drop Charlie's label straight BELOW the circle into open space.
+  'Charlie and the Chocolate Factory@2004,404': [8, 40],
 };
 
 function shiftMatrix(transform: string, dx: number, dy: number): string {
@@ -374,6 +402,16 @@ export default function MapV2() {
       }
       const samplePoints: SampledPoint[] = [];
       for (const p of extracted.paths) samplePoints.push(...samplePathPoints(p.d));
+      // Octolinear line extensions: append extra segments (rendered in-color) and
+      // their sample points so a new station can anchor on the extended stretch.
+      const exts = LINE_EXTENSIONS[name.toUpperCase()];
+      if (exts) {
+        const sw = extracted.paths[0]?.strokeWidth ?? LINE_WIDTH;
+        for (const d of exts) {
+          extracted.paths.push({ d, strokeWidth: sw });
+          samplePoints.push(...samplePathPoints(d));
+        }
+      }
       lines.push({ creatorName: name, personIds, extracted, samplePoints });
     }
 
@@ -977,6 +1015,23 @@ function MapSvg({
                 {a.lines.map((t, j) => (
                   <tspan key={j} x={a.x} dy={j === 0 ? 0 : a.fontSize * 1.15}>{t}</tspan>
                 ))}
+              </text>
+            ))}
+          </g>
+
+          {/* Added creator "legend" labels (v1 omitted them): line color, darkened
+              for contrast, UPPERCASE, rotated to follow the line. */}
+          <g data-layer="added-creator-labels">
+            {ADDED_CREATOR_LABELS.map((c, i) => (
+              <text
+                key={`cl-${i}`}
+                transform={`translate(${c.x} ${c.y}) rotate(${c.angle})`}
+                fontSize={6.64}
+                fontWeight={700}
+                fill={darkenForContrast(c.color)}
+                style={{ pointerEvents: 'none', fontFamily: "'ff-tisa-sans-web-pro', sans-serif" }}
+              >
+                {c.text.toUpperCase()}
               </text>
             ))}
           </g>
