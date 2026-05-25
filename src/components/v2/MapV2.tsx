@@ -180,6 +180,11 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // here (in place) so the label renders NON-bold (added labels default to 7.59
   // regular) and the isAdded flag suppresses the v1 bold "Hair" label.
   { id: 'hair', x: 1840, y: 466, labelX: 1856, labelY: 470, align: 'start' },
+  // Music Box Revue (1921, Irving Berlin) — RELOCATED a little DOWN its vertical
+  // line (x1683) and FLIPPED to the LEFT side, into the clear space below the
+  // Stroman extension crossing (per user). Relocate (not label-nudge) so the tick
+  // moves with it.
+  { id: 'music-box-revue', x: 1668, y: 441, labelX: 1677, labelY: 445, align: 'end', lines: ['Music Box', 'Revue'] },
   // Smash (2025) = Marc Shaiman × Susan Stroman — intersection at the junction
   // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
   { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
@@ -190,6 +195,7 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
 const SUPPRESS_TICKS: Array<{ x: number; y: number }> = [
   { x: 2247, y: 438 }, // Legally Blonde's original tick (relocated up to y401)
   { x: 1852, y: 592 }, // Two Gentlemen of Verona — stray duplicate v1 tick (computed one renders)
+  { x: 1685, y: 423 }, // Music Box Revue — old static v1 tick (relocated down its line)
 ];
 // v1 labels to DROP entirely (normalized text match). Used to remove a show or a
 // now-defunct creator legend label.
@@ -237,7 +243,6 @@ const LABEL_NUDGES: Record<string, [number, number]> = {
   'GEORGE GERSHWIN@888,609': [-35.0, 35.0],   // was clipping "Lady, Be Good!"
   'GOWER CHAMPION@1400,725': [-14.1, 14.1],    // was clipping "A Broadway Musical" / "Make A Wish"
   // Smash line extensions cross these labels — nudge them clear of the new lines.
-  'Music Box Revue@1693,425': [0, -14],   // lift clear of Stroman's extension (down-left move orphaned its tick — needs a full relocate)
   // Shaiman's extension leaves Charlie's circle down-left; the pink line leaves it
   // down-right; so drop Charlie's label straight BELOW the circle into open space.
   'Charlie and the Chocolate Factory@2004,404': [8, 40],
