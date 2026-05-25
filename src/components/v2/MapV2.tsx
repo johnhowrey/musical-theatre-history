@@ -226,7 +226,7 @@ const SUPPRESS_MARKERS: Array<{ x: number; y: number }> = [
 const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: number; color: string }> = [
   // Jerry Mitchell's cyan line had no name (its line was added in #32 but v1 has
   // no legend label). Place it down the clear stretch of his vertical run.
-  { text: 'JERRY MITCHELL', x: 2247, y: 700, angle: -90, color: '#00BEF3' },
+  { text: 'JERRY MITCHELL', x: 2264, y: 700, angle: -90, color: '#00BEF3' },
 ];
 // Line EXTENSIONS: extra path segments appended to a creator's line (rendered in
 // the line color + added to its sample points so new stations can anchor there).
