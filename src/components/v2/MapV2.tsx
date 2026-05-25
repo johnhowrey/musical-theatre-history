@@ -1024,6 +1024,22 @@ export default function MapV2() {
   );
 }
 
+// Camera persistence (restore last view). Saved on transform-stop (throttled).
+function getSavedCam(): { scale: number; x: number; y: number } | null {
+  if (typeof window === 'undefined') return null;
+  try { return JSON.parse(localStorage.getItem('v2.cam') || 'null'); } catch { return null; }
+}
+let _camTimer: ReturnType<typeof setTimeout> | undefined;
+function saveCam(s: { scale: number; positionX: number; positionY: number }) {
+  if (typeof window === 'undefined') return;
+  clearTimeout(_camTimer);
+  _camTimer = setTimeout(() => {
+    try { localStorage.setItem('v2.cam', JSON.stringify({ scale: s.scale, x: s.positionX, y: s.positionY })); } catch { /* ignore */ }
+  }, 250);
+}
+const V2_MIN_SCALE = 0.5;   // never too small
+const V2_INIT_SCALE = 0.85; // readable on first load
+
 function Canvas({
   lines,
   anchors,
@@ -1055,8 +1071,21 @@ function Canvas({
   onFlagAt?: (x: number, y: number) => void;
   flagPins?: Array<{ number: number; title: string; url: string; x?: number; y?: number }>;
 }) {
+  const saved = getSavedCam();
   return (
-    <TransformWrapper ref={transformRef} initialScale={0.5} minScale={0.1} maxScale={6} centerOnInit limitToBounds={false} smooth wheel={{ step: 0.08 }}>
+    <TransformWrapper
+      ref={transformRef}
+      initialScale={saved?.scale ?? V2_INIT_SCALE}
+      initialPositionX={saved?.x}
+      initialPositionY={saved?.y}
+      minScale={V2_MIN_SCALE}
+      maxScale={6}
+      centerOnInit={!saved}
+      limitToBounds={true}
+      smooth
+      wheel={{ step: 0.08 }}
+      onTransformed={(_ref, state) => saveCam(state)}
+    >
       <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: V1_SVG_WIDTH, height: V1_SVG_HEIGHT }}>
         <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
           onShowClick={onShowClick} onCreatorClick={onCreatorClick} dimCreator={dimCreator} selectedShowId={selectedShowId}
