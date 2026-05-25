@@ -318,7 +318,17 @@ export function extractStations(): ExtractedStation[] {
     }
   }
 
-  return out;
+  // Dedupe exact-overlap markers: v1's hand-drawn SVG occasionally stacks two
+  // identical circles/pills at the same point (e.g. They're Playing Our Song at
+  // 783.4,1478.3) — renders as one but doubles the data. Keep the first of any
+  // set sharing center + shape.
+  const seen = new Set<string>();
+  return out.filter(s => {
+    const key = `${s.cx.toFixed(1)},${s.cy.toFixed(1)},${s.pillD ?? 'circle'},${s.r.toFixed(1)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 /**
