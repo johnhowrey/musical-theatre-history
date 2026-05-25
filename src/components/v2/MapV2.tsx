@@ -175,6 +175,26 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // y836. User-chosen spot: to the LEFT of the Diana label, STACKED so it doesn't
   // cover lines (above the line; the SERGIO TRUJILLO legend sits just below it).
   { id: 'real-women-have-curves', x: 1965, y: 832, labelX: 1982, labelY: 816, align: 'end', lines: ['Real Women', 'Have Curves'] },
+  // Hair — was a MacDermot × Julie Arenal intersection (computed circle, bold
+  // label). With the Arenal line removed it's a single MacDermot tick; re-added
+  // here (in place) so the label renders NON-bold (added labels default to 7.59
+  // regular) and the isAdded flag suppresses the v1 bold "Hair" label.
+  { id: 'hair', x: 1840, y: 466, labelX: 1856, labelY: 470, align: 'start' },
+];
+
+// Static v1 ticks to DROP (by approx midpoint). Used when a v1 station is
+// relocated and its original static tick would otherwise be orphaned.
+const SUPPRESS_TICKS: Array<{ x: number; y: number }> = [
+  { x: 2247, y: 438 }, // Legally Blonde's original tick (relocated up to y401)
+];
+// v1 labels to DROP entirely (normalized text match). Used to remove a show or a
+// now-defunct creator legend label.
+const normLabelText = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '');
+const SUPPRESS_LABELS = ['boccaccio', 'julie arenal'].map(normLabelText);
+// v1 station markers (circles/pills) to DROP (by approx rendered center). Used
+// when a show that v1 drew as an intersection circle is now a single-line tick.
+const SUPPRESS_MARKERS: Array<{ x: number; y: number }> = [
+  { x: 1849, y: 474 }, // Hair's old MacDermot×Arenal intersection circle (now a tick)
 ];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
@@ -377,7 +397,8 @@ export default function MapV2() {
     }
 
     // v1 station markers + ticks (authoritative on-line station anchors).
-    const v1Stations = extractStations();
+    const v1Stations = extractStations().filter(s =>
+      !SUPPRESS_MARKERS.some(p => Math.hypot(s.cx - p.x, s.cy - p.y) < 8));
     const v1Ticks = extractTicks();
 
     // Resolve tick colors for collision lines: a tick drawn in a SHARED color
@@ -400,7 +421,8 @@ export default function MapV2() {
         if (d < bestD) { bestD = d; best = ln; }
       }
       return best ? { ...t, color: best.extracted.color } : t;
-    });
+    }).filter(t => !SUPPRESS_TICKS.some(p =>
+      Math.hypot((t.x1 + t.x2) / 2 - p.x, (t.y1 + t.y2) / 2 - p.y) < 8));
 
     function closestPointOnLine(target: { x: number; y: number }, ln: ActiveLine) {
       let bestI = -1;
@@ -682,7 +704,9 @@ export default function MapV2() {
     // Set dedups exactly against anchor-rendered labels — no double draw.)
     const renderedLabelSet = new Set<ExtractedLabel>();
     for (const a of anchors) if (a.label) renderedLabelSet.add(a.label);
-    const orphanLabels = allLabels.filter(l => !renderedLabelSet.has(l));
+    const orphanLabels = allLabels.filter(l =>
+      !renderedLabelSet.has(l) &&
+      !SUPPRESS_LABELS.includes(normLabelText(l.lines.map(x => x.text).join(' '))));
 
     return { lines, anchors, orphanLabels, v1Stations, v1Ticks: v1TicksResolved, addedLabels };
   }, []);

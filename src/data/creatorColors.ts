@@ -65,7 +65,8 @@ export const creatorLineColors: Record<string, string> = {
   // Task #32: creators whose v1 line color was unowned (line never rendered).
   // Confirmed by orphan-color → creator-name legend label (+ broadway-data shows).
   "JERRY MITCHELL": "#00BEF3",
-  "JULIE ARENAL": "#00A85B",
+  // JULIE ARENAL line removed per user: only connected Hair + Boccaccio; Hair is
+  // now a plain MacDermot tick and Boccaccio is dropped.
   "PATRICK MCCOLLUM": "#71C166",
   "JERRY ZAKS": "#5C61B9",
   "JOE LAYTON": "#89578C",
