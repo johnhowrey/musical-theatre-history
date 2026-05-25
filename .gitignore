@@ -8,3 +8,5 @@ dist/
 # v2 review render artifacts (reproducible; keep out of git)
 reports/**/*.png
 reports/flags.jsonl
+# ...except flag-fix before/after images (referenced from closed GitHub issues)
+!reports/flag-fixes/**
