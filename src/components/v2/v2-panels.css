@@ -121,3 +121,40 @@
 @media (hover: none) {
   .v2-map g[data-layer="hit"] circle:hover { fill: transparent; stroke: none; }
 }
+
+/* ---- flag mode ---- */
+.v2-flag-banner {
+  position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+  z-index: 55; background: #231F20; color: #FBCA04; padding: 7px 14px;
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+  font-family: 'ff-tisa-sans-web-pro', system-ui, sans-serif;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+.v2-map-flagging { cursor: crosshair; }
+.v2-flag-link {
+  margin-top: 8px; background: none; border: 1px solid #d8d1bd; color: #6b655a;
+  border-radius: 6px; padding: 4px 9px; font-size: 12px; cursor: pointer;
+  font-family: inherit; transition: border-color 0.12s, color 0.12s;
+}
+.v2-flag-link:hover { border-color: #231F20; color: #231F20; }
+.v2-flag-link--oncolor { border-color: rgba(255,255,255,0.5); color: #fff; }
+.v2-flag-link--oncolor:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.12); }
+
+.v2-flag-overlay { position: fixed; inset: 0; background: rgba(35,31,32,0.35); z-index: 70; display: grid; place-items: center; padding: 20px; }
+.v2-flag-box {
+  background: #FAF6E8; color: #231F20; border-radius: 12px; padding: 18px 20px;
+  width: 420px; max-width: 92vw; box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  font-family: 'ff-tisa-sans-web-pro', system-ui, sans-serif;
+}
+.v2-flag-box h3 { margin: 0 0 12px; font-size: 16px; }
+.v2-flag-box textarea {
+  width: 100%; box-sizing: border-box; resize: vertical; border: 1px solid #d8d1bd;
+  border-radius: 8px; padding: 10px; font: inherit; font-size: 14px; background: #fff;
+}
+.v2-flag-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.v2-flag-actions button { border: 1px solid #d8d1bd; background: #fff; border-radius: 7px; padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; }
+.v2-flag-submit { background: #231F20 !important; color: #FBCA04 !important; border-color: #231F20 !important; }
+.v2-flag-submit:disabled { opacity: 0.5; cursor: default; }
+.v2-flag-ok { color: #1a8a3c; font-size: 14px; }
+.v2-flag-ok a { color: #1a8a3c; }
+.v2-flag-err { color: #c0392b; font-size: 13px; }

@@ -51,13 +51,14 @@ export interface ShowNav {
 // ---- ShowPanel -------------------------------------------------------------
 
 export function ShowPanel({
-  title, onClose, onCreatorClick, onNavShow, navs,
+  title, onClose, onCreatorClick, onNavShow, navs, onFlag,
 }: {
   title: string;
   onClose: () => void;
   onCreatorClick: (name: string) => void;
   onNavShow: (id: string) => void;
   navs: ShowNav[];
+  onFlag?: () => void;
 }) {
   const [thumb, setThumb] = useState<string | null>(null);
   const [images, setImages] = useState<string[]>([]);
@@ -97,6 +98,7 @@ export function ShowPanel({
             {db?.wonBestMusical && <span className="v2-badge">Best Musical</span>}
             {(sd?.status === 'running' || db?.closingDate === null) && <span className="v2-badge v2-badge--run">Running</span>}
           </div>
+          {onFlag && <button className="v2-flag-link" onClick={onFlag}>🚩 Flag wrong / missing info</button>}
         </header>
 
         {/* show→show navigation, one stepper per involved creator line */}
@@ -177,12 +179,13 @@ export function ShowPanel({
 // ---- CreatorPanel ----------------------------------------------------------
 
 export function CreatorPanel({
-  name, shows, onClose, onShowClick,
+  name, shows, onClose, onShowClick, onFlag,
 }: {
   name: string;
   shows: Array<{ id: string; title: string; year?: number }>;
   onClose: () => void;
   onShowClick: (id: string) => void;
+  onFlag?: () => void;
 }) {
   const color = getCreatorColor(name) || '#231F20';
   const [bio, setBio] = useState<string | null>(null);
@@ -202,6 +205,7 @@ export function CreatorPanel({
         <span className="v2-line-swatch" />
         <h2>{name}</h2>
         {person?.roles?.length ? <p className="v2-roles">{person.roles.join(' · ')}</p> : null}
+        {onFlag && <button className="v2-flag-link v2-flag-link--oncolor" onClick={onFlag}>🚩 Flag wrong / missing info</button>}
       </div>
       <div className="v2-panel-body">
         {(person?.birthYear || person?.tonyWins) && (
@@ -235,5 +239,66 @@ export function CreatorPanel({
         )}
       </div>
     </aside>
+  );
+}
+
+// ---- Flag mode: capture a note → POST /api/flag (becomes a GitHub issue) ------
+
+export interface FlagTarget {
+  kind: 'map' | 'station' | 'show-info' | 'creator-info';
+  x?: number;
+  y?: number;
+  nearest?: string;
+  context?: { id?: string; title?: string; name?: string };
+}
+
+export function FlagNote({ target, secret, onClose }: { target: FlagTarget; secret: string; onClose: () => void }) {
+  const [note, setNote] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'err'>('idle');
+  const [result, setResult] = useState('');
+
+  const where =
+    target.kind === 'show-info' ? `“${target.context?.title}”` :
+    target.kind === 'creator-info' ? target.context?.name :
+    target.nearest ? `near ${target.nearest}` :
+    target.x != null ? `map (${Math.round(target.x)}, ${Math.round(target.y!)})` : 'the map';
+
+  const submit = async () => {
+    if (!note.trim()) return;
+    setStatus('sending');
+    try {
+      const r = await fetch('/api/flag', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ...target, note, secret, url: window.location.href }),
+      });
+      const j = await r.json();
+      if (j.ok) { setStatus('done'); setResult(j.url || 'logged'); }
+      else { setStatus('err'); setResult(j.error || 'error'); }
+    } catch (e) { setStatus('err'); setResult(String(e)); }
+  };
+
+  return (
+    <div className="v2-flag-overlay" onClick={onClose}>
+      <div className="v2-flag-box" onClick={e => e.stopPropagation()}>
+        <h3>🚩 Flag {where}</h3>
+        {status === 'done' ? (
+          <p className="v2-flag-ok">Filed ✓ {result.startsWith('http')
+            ? <a href={result} target="_blank" rel="noreferrer">view issue</a> : result}</p>
+        ) : (
+          <>
+            <textarea autoFocus value={note} onChange={e => setNote(e.target.value)}
+              placeholder="What's wrong, missing, or to adjust here?" rows={4} />
+            {status === 'err' && <p className="v2-flag-err">{result}</p>}
+            <div className="v2-flag-actions">
+              <button onClick={onClose}>Cancel</button>
+              <button className="v2-flag-submit" disabled={status === 'sending' || !note.trim()} onClick={submit}>
+                {status === 'sending' ? 'Filing…' : 'Create issue'}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

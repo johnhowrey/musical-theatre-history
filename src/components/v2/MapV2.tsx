@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { PEOPLE, SHOWS, mapShows, creatorLineColors, getCreatorColor } from '../../data';
-import { ShowPanel, CreatorPanel } from './panels';
-import type { ShowNav } from './panels';
+import { ShowPanel, CreatorPanel, FlagNote } from './panels';
+import type { ShowNav, FlagTarget } from './panels';
 import './v2-panels.css';
 import { creatorTeams } from '../../data/creatorTeams';
 import {
@@ -793,6 +793,8 @@ export default function MapV2() {
     typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
   const compareMode = params.has('compare');
   const measureMode = params.has('measure');
+  const flagMode = params.has('flag');           // admin: ?flag=<secret> → note-to-issue
+  const flagSecret = params.get('flag') || '';
 
   useEffect(() => {
     if (!measureMode) return;
@@ -847,6 +849,10 @@ export default function MapV2() {
   const [sel, setSel] = useState<{ type: 'show'; id: string } | { type: 'creator'; name: string } | null>(null);
   const transformRef = useRef<ReactZoomPanPinchRef | null>(null);
   const interactive = !compareMode && !measureMode;
+  // Flag (admin) mode: ?flag=<secret> shows the flag affordances. `spotMode` is a
+  // sub-toggle — when on, a map click drops a flag pin instead of opening a panel.
+  const [spotMode, setSpotMode] = useState(false);
+  const [flagTarget, setFlagTarget] = useState<FlagTarget | null>(null);
 
   // Selection changes push the URL directly (handlers), and the URL is read ONLY
   // on mount + back/forward — a one-way read so there's no echo loop (which under
@@ -860,9 +866,20 @@ export default function MapV2() {
       : next?.type === 'creator' ? `${base}?creator=${encodeURIComponent(next.name)}` : base;
     if (url !== window.location.pathname + window.location.search) window.history.pushState(null, '', url);
   }, []);
-  const openShow = useCallback((id: string) => navTo({ type: 'show', id }), [navTo]);
-  const openCreator = useCallback((name: string) => navTo({ type: 'creator', name }), [navTo]);
+  const openShow = useCallback((id: string) => {
+    if (spotMode) { const a = anchorById.get(id); setFlagTarget({ kind: 'station', context: { id, title: a?.title }, x: a?.stationX, y: a?.stationY, nearest: a?.title }); return; }
+    navTo({ type: 'show', id });
+  }, [spotMode, anchorById, navTo]);
+  const openCreator = useCallback((name: string) => {
+    if (spotMode) { setFlagTarget({ kind: 'creator-info', context: { name } }); return; }
+    navTo({ type: 'creator', name });
+  }, [spotMode, navTo]);
   const close = useCallback(() => navTo(null), [navTo]);
+  const onFlagAt = useCallback((x: number, y: number) => {
+    let nearest: string | undefined, bd = Infinity;
+    for (const a of anchors) { const d = (a.stationX - x) ** 2 + (a.stationY - y) ** 2; if (d < bd) { bd = d; nearest = a.title; } }
+    setFlagTarget({ kind: 'map', x, y, nearest: bd < 1600 ? nearest : undefined });
+  }, [anchors]);
 
   useEffect(() => {
     if (!interactive) return;
@@ -924,14 +941,31 @@ export default function MapV2() {
     <div className="v2-shell">
       <a href="/" className="v2-back">← v1</a>
       <Canvas lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
-        onShowClick={openShow} onCreatorClick={openCreator} dimCreator={dimCreator} selectedShowId={selShow?.id ?? null} transformRef={transformRef} />
+        onShowClick={openShow} onCreatorClick={openCreator} dimCreator={dimCreator} selectedShowId={selShow?.id ?? null} transformRef={transformRef}
+        spotMode={spotMode} onFlagAt={onFlagAt} />
+
+      {flagMode && (
+        <div className="v2-flag-banner">
+          Flag mode ·{' '}
+          <button className="v2-flag-toggle" style={{ background: spotMode ? '#FBCA04' : 'transparent', color: spotMode ? '#231F20' : '#FBCA04', border: '1px solid #FBCA04', borderRadius: 14, padding: '2px 9px', cursor: 'pointer', font: 'inherit' }}
+            onClick={() => setSpotMode(s => !s)}>
+            {spotMode ? '📍 tap the map to flag' : '📍 flag a spot'}
+          </button>
+          {' '}· or open a show/creator to flag its info
+        </div>
+      )}
+
       {sel && <div className="v2-backdrop" onClick={close} />}
       {sel?.type === 'show' && selShow && (
-        <ShowPanel title={selShow.title} onClose={close} onCreatorClick={openCreator} onNavShow={openShow} navs={navs} />
+        <ShowPanel title={selShow.title} onClose={close} onCreatorClick={openCreator} onNavShow={openShow} navs={navs}
+          onFlag={flagMode ? () => setFlagTarget({ kind: 'show-info', context: { id: selShow.id, title: selShow.title } }) : undefined} />
       )}
       {sel?.type === 'creator' && (
-        <CreatorPanel name={sel.name} shows={creatorShows} onClose={close} onShowClick={openShow} />
+        <CreatorPanel name={sel.name} shows={creatorShows} onClose={close} onShowClick={openShow}
+          onFlag={flagMode ? () => setFlagTarget({ kind: 'creator-info', context: { name: sel.name } }) : undefined} />
       )}
+
+      {flagTarget && <FlagNote target={flagTarget} secret={flagSecret} onClose={() => setFlagTarget(null)} />}
     </div>
   );
 }
@@ -948,6 +982,8 @@ function Canvas({
   dimCreator,
   selectedShowId,
   transformRef,
+  spotMode,
+  onFlagAt,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
@@ -960,12 +996,15 @@ function Canvas({
   dimCreator?: string | null;
   selectedShowId?: string | null;
   transformRef?: React.Ref<ReactZoomPanPinchRef>;
+  spotMode?: boolean;
+  onFlagAt?: (x: number, y: number) => void;
 }) {
   return (
     <TransformWrapper ref={transformRef} initialScale={0.5} minScale={0.1} maxScale={6} centerOnInit limitToBounds={false} smooth wheel={{ step: 0.08 }}>
       <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: V1_SVG_WIDTH, height: V1_SVG_HEIGHT }}>
         <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
-          onShowClick={onShowClick} onCreatorClick={onCreatorClick} dimCreator={dimCreator} selectedShowId={selectedShowId} />
+          onShowClick={onShowClick} onCreatorClick={onCreatorClick} dimCreator={dimCreator} selectedShowId={selectedShowId}
+          spotMode={spotMode} onFlagAt={onFlagAt} />
       </TransformComponent>
     </TransformWrapper>
   );
@@ -984,6 +1023,8 @@ function MapSvg({
   onCreatorClick,
   dimCreator,
   selectedShowId,
+  spotMode,
+  onFlagAt,
 }: {
   lines: ActiveLine[];
   anchors: ShowAnchor[];
@@ -995,6 +1036,8 @@ function MapSvg({
   onCreatorClick?: (name: string) => void;
   dimCreator?: string | null;
   selectedShowId?: string | null;
+  spotMode?: boolean;
+  onFlagAt?: (x: number, y: number) => void;
 }) {
   const interactive = !!(onShowClick || onCreatorClick);
   return (
@@ -1003,7 +1046,14 @@ function MapSvg({
           height={V1_SVG_HEIGHT}
           viewBox={`0 0 ${V1_SVG_WIDTH} ${V1_SVG_HEIGHT}`}
           xmlns="http://www.w3.org/2000/svg"
-          className="v2-map"
+          className={spotMode ? 'v2-map v2-map-flagging' : 'v2-map'}
+          onClick={spotMode && onFlagAt ? (e) => {
+            const svg = e.currentTarget;
+            const ctm = svg.getScreenCTM();
+            if (!ctm) return;
+            const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+            onFlagAt(pt.x, pt.y);
+          } : undefined}
         >
           {/* Lines (clickable → creator; dimmed when another creator is focused) */}
           {lines.map(line => (
