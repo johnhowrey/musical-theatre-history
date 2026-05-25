@@ -102,6 +102,7 @@ const FORCE_ON_LINE = new Set<string>([
 const CREDIT_OVERRIDES: Record<string, string[]> = {
   'lady-fingers': ['richard-rodgers'],   // Rodgers interpolated songs; BD lists only Joseph Meyer
   'always-you': ['oscar-hammerstein'],   // Hammerstein's 1st show (book+lyrics); BD missing him
+  'legally-blonde': ['jerry-mitchell'],  // Mitchell directed AND choreographed it; BD missing him
 };
 
 // Added shows (task #24): famous shows v1 never drew. Each gets a NEW station at
@@ -148,6 +149,32 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // bundle. x,y snaps the station to the Champion segment at ~(1185,880); label
   // sits below the line, left-aligned just clear of the Herman line.
   { id: 'high-spirits', x: 1170, y: 876, labelX: 1183, labelY: 897, align: 'start' },
+  // --- Bringing the map up to date: 2024+ musicals (single-creator ticks on the
+  // line of whichever creator already has one). x,y are pre-compensated by the
+  // synthetic-entry centroid offset (-15,-4) so the station snaps to the target. ---
+  // Death Becomes Her (2024, dir Christopher Gattelli) — navy line, label below.
+  { id: 'death-becomes-her', x: 2052, y: 1455, labelX: 2067, labelY: 1471, align: 'middle' },
+  // Hell's Kitchen (2024, dir Michael Greif) — teal line, lower-right vertical run; label left.
+  { id: 'hells-kitchen', x: 2290, y: 933, labelX: 2298, labelY: 940, align: 'end' },
+  // Swept Away (2024, dir Michael Mayer) — blue line; label left.
+  { id: 'swept-away', x: 1829, y: 1053, labelX: 1837, labelY: 1060, align: 'end' },
+  // Tammy Faye (2024, music Elton John) — gold line (horizontal); label above.
+  { id: 'tammy-faye', x: 2064, y: 1302, labelX: 2079, labelY: 1298, align: 'middle' },
+  // Boop! The Musical (2025, dir Jerry Mitchell) — joins the Pretty Woman /
+  // Legally Blonde / Kinky Boots cluster on his vertical run (x2243). The four are
+  // spread evenly: PW(~355), Legally Blonde(401, relocated), Boop(448), KB(494).
+  // Label right, stacked, like its neighbors.
+  { id: 'boop-the-musical', x: 2228, y: 444, labelX: 2252, labelY: 448, align: 'start', lines: ['Boop!', 'The Musical'] },
+  // Legally Blonde — RELOCATED up from its v1 spot (y431) to y401 so the four
+  // Mitchell stations are evenly spaced. (Its credit→Mitchell is added above so it
+  // anchors to his line; the isAdded flag suppresses its old label, redrawn here.)
+  { id: 'legally-blonde', x: 2228, y: 397, labelX: 2252, labelY: 401, align: 'start', lines: ['Legally', 'Blonde'] },
+  // Just in Time (2025, dir Alex Timbers) — periwinkle line (horizontal); label below.
+  { id: 'just-in-time', x: 2185, y: 849, labelX: 2200, labelY: 865, align: 'middle' },
+  // Real Women Have Curves (2025, dir Sergio Trujillo) — his horizontal segment at
+  // y836. User-chosen spot: to the LEFT of the Diana label, STACKED so it doesn't
+  // cover lines (above the line; the SERGIO TRUJILLO legend sits just below it).
+  { id: 'real-women-have-curves', x: 1965, y: 832, labelX: 1982, labelY: 816, align: 'end', lines: ['Real Women', 'Have Curves'] },
 ];
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
@@ -266,6 +293,10 @@ interface ShowAnchor {
   /** True if a v1 tick sits on this station — the static v1-ticks layer draws
    *  it, so the per-show group must NOT draw a computed tick. */
   coveredByV1Tick: boolean;
+  /** True for ADDED_SHOWS entries (incl. relocated v1 shows): the label is drawn
+   *  by the added-labels layer at the chosen spot, so ShowLabel must NOT draw it
+   *  (its v1 label is still held in `label` so the static orphan layer skips it). */
+  isAdded: boolean;
   primaryLineColor: string;
   label?: ExtractedLabel;
   /** Raw offset (v1 label position − station), tells which side the label is on. */
@@ -629,6 +660,7 @@ export default function MapV2() {
         v1Marker,
         coveredByV1Marker,
         coveredByV1Tick,
+        isAdded: !!_add,
         primaryLineColor: primaryColor,
         label,
         labelDx: ldx,
@@ -864,7 +896,7 @@ function MapSvg({
                     />
                   );
                 })()}
-                {a.label && <ShowLabel anchor={a} />}
+                {a.label && !a.isAdded && <ShowLabel anchor={a} />}
               </g>
             );
           })}

@@ -1,0 +1,12 @@
+import { SHOWS } from '@johnhowrey/broadway-data';
+import { readFileSync } from 'node:fs';
+import { mapShows } from '../src/data/mapShows';
+const svg=readFileSync('src/assets/map.svg','utf8');
+const labelText=[...svg.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)].map(m=>m[1].replace(/<[^>]+>/g,'')).join(' ').replace(/\s+/g,' ');
+const norm=(s:string)=>s.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const labelNorm=' '+norm(labelText)+' ';
+const mapIds=new Set(mapShows.map(s=>s.id));
+const onMap=(s:any)=>mapIds.has(s.id)||labelNorm.includes(' '+norm(s.title)+' ');
+const y2023=SHOWS.filter((s:any)=>s.year===2023).sort((a:any,b:any)=>a.title.localeCompare(b.title));
+console.log(`2023 shows in broadway-data: ${y2023.length}`);
+for(const s of y2023) console.log(`  ${onMap(s)?'ON ':'>>>'} ${onMap(s)?'   ':'MISSING'} ${s.title}  (${s.type})`);
