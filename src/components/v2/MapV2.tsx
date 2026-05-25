@@ -367,6 +367,45 @@ interface ShowAnchor {
   tickDy: number;
 }
 
+// Portable "map document" — the final computed model, serialized so BOTH the web
+// renderer and a future native (SwiftUI) renderer consume the SAME data. Regenerate
+// with `npm run export-map` after changing data/geometry → both stay in sync.
+type MapView = {
+  lines: ActiveLine[]; anchors: ShowAnchor[]; orphanLabels: ExtractedLabel[];
+  v1Stations: ExtractedStation[]; v1Ticks: ExtractedTick[]; addedLabels: AddedLabel[];
+  creatorOrder: Map<string, string[]>;
+};
+function buildMapDoc(v: MapView) {
+  const colorOf = new Map(v.lines.map(l => [l.creatorName, l.extracted.color]));
+  return {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    viewBox: { width: V1_SVG_WIDTH, height: V1_SVG_HEIGHT },
+    creators: [...v.creatorOrder.entries()].map(([name, showIds]) => ({
+      name, color: colorOf.get(name) || '#231F20', shows: showIds,
+    })),
+    lines: v.lines.map(l => ({
+      creator: l.creatorName, color: l.extracted.color, personIds: l.personIds,
+      paths: l.extracted.paths.map(p => ({ d: p.d, w: p.strokeWidth })),
+    })),
+    ticks: v.v1Ticks.map(t => ({ x1: t.x1, y1: t.y1, x2: t.x2, y2: t.y2, color: t.color, w: t.strokeWidth })),
+    markers: v.v1Stations.map(s => ({ cx: s.cx, cy: s.cy, r: s.r, pill: s.pillD, dot: s.dot, w: s.strokeWidth })),
+    // Stations carry the data linkage + how to draw a computed marker/tick when v1 has none.
+    stations: v.anchors.map(a => ({
+      id: a.id, title: a.title, x: a.stationX, y: a.stationY,
+      intersection: a.isIntersection, spread: a.bundleSpread, color: a.primaryLineColor,
+      creators: a.creatorNames, coveredMarker: a.coveredByV1Marker, coveredTick: a.coveredByV1Tick,
+      added: a.isAdded, tangent: [a.tangentX, a.tangentY], labelDelta: [a.labelDx, a.labelDy],
+      label: a.label ? a.label.lines.map(x => ({ text: x.text, transform: x.transform })) : null,
+    })),
+    addedLabels: v.addedLabels.map(a => ({ id: a.id, lines: a.lines, x: a.x, y: a.y, align: a.align, fontSize: a.fontSize, bold: a.bold })),
+    orphanLabels: v.orphanLabels.map(l => ({
+      lines: l.lines.map(x => ({ text: x.text, transform: x.transform })),
+      fontSize: l.fontSize, bold: l.bold, fill: l.fill,
+    })),
+  };
+}
+
 export default function MapV2() {
   const view = useMemo(() => {
     // 1. Active creators + their line geometry
@@ -795,6 +834,7 @@ export default function MapV2() {
   const measureMode = params.has('measure');
   const flagMode = params.has('flag');           // admin: ?flag=<secret> → note-to-issue
   const flagSecret = params.get('flag') || '';
+  const exportMode = params.has('export');        // dump the portable map-document JSON
 
   useEffect(() => {
     if (!measureMode) return;
@@ -916,6 +956,11 @@ export default function MapV2() {
         <MapSvg lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels} />
       </div>
     );
+  }
+
+  if (exportMode) {
+    const doc = buildMapDoc({ lines, anchors, orphanLabels, v1Stations, v1Ticks, addedLabels, creatorOrder });
+    return <pre id="map-doc" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{JSON.stringify(doc)}</pre>;
   }
 
   const dimCreator = sel?.type === 'creator' ? sel.name : null;

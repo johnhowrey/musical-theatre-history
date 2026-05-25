@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "export-map": "tsx scripts/export-map.ts"
   },
   "dependencies": {
     "@johnhowrey/broadway-data": "git+https://github.com/johnhowrey/broadway-data.git",
