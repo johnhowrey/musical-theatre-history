@@ -541,8 +541,10 @@ export default function MapV2() {
 
       // Search target: this show's assigned v1 marker (on the bundle), else
       // the label center. FORCE_ON_LINE shows ignore their (wrong) v1 marker
-      // and snap to the forced line via the label center.
-      const assigned = FORCE_ON_LINE.has(show.id) ? undefined : markerByShowId.get(show.id);
+      // and snap to the forced line via the label center. ADDED_SHOWS (incl.
+      // relocated v1 shows) likewise ignore any assigned marker so they snap to
+      // the synthetic (chosen) position, not the show's old v1 marker.
+      const assigned = (FORCE_ON_LINE.has(show.id) || _add) ? undefined : markerByShowId.get(show.id);
       const target = assigned
         ? { x: assigned.x, y: assigned.y }
         : { x: m.x + m.width / 2, y: m.y + m.height / 2 };
