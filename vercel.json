@@ -1,4 +1,7 @@
 {
   "framework": "vite",
-  "installCommand": "bash scripts/vercel-install.sh"
+  "installCommand": "bash scripts/vercel-install.sh",
+  "rewrites": [
+    { "source": "/privacy", "destination": "/privacy.html" }
+  ]
 }
