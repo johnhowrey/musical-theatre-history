@@ -1098,7 +1098,7 @@ export default function MapV2() {
 
   return (
     <div className="v2-shell">
-      {!appMode && <a href="/" className="v2-back">← v1</a>}
+      {!appMode && <a href="/" className="v2-back">← home</a>}
       <Canvas lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
         onShowClick={openShow} onCreatorClick={openCreator} dimCreator={dimCreator} selectedShowId={selShow?.id ?? null} transformRef={transformRef}
         spotMode={spotMode} onFlagAt={onFlagAt} flagPins={flagMode ? flagPins : undefined} />
