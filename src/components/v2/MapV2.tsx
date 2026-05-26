@@ -939,6 +939,7 @@ export default function MapV2() {
   const flagMode = params.has('flag');           // admin: ?flag=<secret> → note-to-issue
   const flagSecret = params.get('flag') || '';
   const exportMode = params.has('export');        // dump the portable map-document JSON
+  const appMode = params.has('app');              // native WKWebView shell — hide web-only chrome
 
   useEffect(() => {
     if (!measureMode) return;
@@ -1097,7 +1098,7 @@ export default function MapV2() {
 
   return (
     <div className="v2-shell">
-      <a href="/" className="v2-back">← v1</a>
+      {!appMode && <a href="/" className="v2-back">← v1</a>}
       <Canvas lines={lines} anchors={anchors} orphanLabels={orphanLabels} v1Stations={v1Stations} v1Ticks={v1Ticks} addedLabels={addedLabels}
         onShowClick={openShow} onCreatorClick={openCreator} dimCreator={dimCreator} selectedShowId={selShow?.id ?? null} transformRef={transformRef}
         spotMode={spotMode} onFlagAt={onFlagAt} flagPins={flagMode ? flagPins : undefined} />
