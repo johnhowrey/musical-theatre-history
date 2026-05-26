@@ -581,7 +581,6 @@ export default function MapV2() {
     const addedById = new Map(ADDED_SHOWS.map(a => [a.id, a]));
     const linesByPersonId = new Map<string, ActiveLine>();
     for (const l of lines) for (const id of l.personIds) linesByPersonId.set(id, l);
-    const activeIds = new Set(linesByPersonId.keys());
     const paletteCreatorIdSet = new Set<string>();
     for (const name of Object.keys(creatorLineColors)) {
       const p = PEOPLE.find(pp => pp.name.toUpperCase() === name);
@@ -690,7 +689,7 @@ export default function MapV2() {
       if (!mm) continue;
       const p = mm[1].split(/[\s,]+/).map(Number);
       if (p.length < 6 || p.some(v => !Number.isFinite(v))) continue;
-      const [, mb, mc, md, ex, fy] = p; // a, b, c, d, e, f
+      const [, , mc, md, ex, fy] = p; // a, b, c, d, e, f
       const A = { x: ex, y: fy };
       let bi = 0, bd = Infinity;
       for (let i = 0; i < ln.samplePoints.length; i++) {
@@ -946,7 +945,7 @@ export default function MapV2() {
     if (document.getElementById('measure-out')) return;
     const svg = document.querySelector('svg.v2-map') as SVGSVGElement | null;
     if (!svg) return;
-    const texts: Array<{ text: string; lk: string; layer: string; rot: boolean; a: number; b: number; x: number; y: number; w: number; h: number }> = [];
+    const texts: Array<{ text: string; lk: string; layer: string; rot: boolean; a: number; b: number; x: number; y: number; w: number; h: number; cn: number[][] }> = [];
     for (const t of Array.from(svg.querySelectorAll('text'))) {
       const el = t as SVGGraphicsElement;
       const b = el.getBBox();
