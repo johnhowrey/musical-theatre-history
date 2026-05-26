@@ -1,11 +1,18 @@
-# XcodeGen spec — run `xcodegen generate` in ios/ to produce MTMap.xcodeproj,
-# then open it in Xcode. (Or create a new iOS App in Xcode and add MTMap/*.swift
-# + Resources/map-document.json to the target.)
+# XcodeGen spec — run `xcodegen generate` in ios/ to produce MTMap.xcodeproj.
+# Distribution config mirrors the prowl/longway setup (team 243Q584XU7, automatic
+# signing). Build + upload to TestFlight via ios/scripts/upload-testflight.sh.
 name: MTMap
 options:
   bundleIdPrefix: com.johnhowrey
   deploymentTarget:
     iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: 1
+    DEVELOPMENT_TEAM: "243Q584XU7"
+    CODE_SIGN_STYLE: Automatic
 targets:
   MTMap:
     type: application
@@ -15,8 +22,9 @@ targets:
     settings:
       base:
         PRODUCT_NAME: MTMap
+        PRODUCT_BUNDLE_IDENTIFIER: com.johnhowrey.broadwaymap
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: Broadway Map
-        SWIFT_VERSION: "5.9"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
