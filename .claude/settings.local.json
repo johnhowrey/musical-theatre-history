@@ -15,7 +15,9 @@
       "Bash(for page in \"A_Chorus_Line\" \"The_Phantom_of_the_Opera_\\(1986_musical\\)\" \"West_Side_Story\" \"Sweeney_Todd_\\(musical\\)\")",
       "Bash(do echo \"===== $page =====\" curl -s -H \"User-Agent: MusicalTheatreResearch/1.0\" \"https://en.wikipedia.org/w/api.php?action=parse&page=$page&prop=wikitext&section=0&format=json\")",
       "Bash(echo:*)",
-      "Bash(perl -0777 -ne:*)"
+      "Bash(perl -0777 -ne:*)",
+      "Bash(rm -f tsconfig*.tsbuildinfo node_modules/.tmp/*)",
+      "Bash(npm run *)"
     ]
   }
 }

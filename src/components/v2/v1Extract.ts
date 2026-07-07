@@ -148,8 +148,11 @@ export function extractCreatorLine(creatorName: string): ExtractedLine | null {
   }
 
   // Some straight lines are authored as <line> (e.g. Stephen Schwartz), not
-  // <path>. Pick those up too — but EXCLUDE square-cap classes, which are the
-  // short station ticks, not the line itself.
+  // <path>. Pick those up too — but EXCLUDE square-cap classes (short station
+  // ticks) AND any <line> whose actual length is ≤6px, which is a tick regardless
+  // of what its CSS says. v1 authored some ticks in classes without an explicit
+  // stroke-linecap (e.g. Kurt Weill's st329 stub near Street Scene) — treating
+  // them as line segments made v2 draw a fat 5px stub where v1 rendered a hair.
   const lineTagRe = /<line\b([^>]*?)\/?>/g;
   let lm: RegExpExecArray | null;
   while ((lm = lineTagRe.exec(mapSvgRaw)) !== null) {
@@ -161,6 +164,8 @@ export function extractCreatorLine(creatorName: string): ExtractedLine | null {
     const x2 = /\bx2\s*=\s*"([\d.\-]+)"/.exec(attrs)?.[1];
     const y2 = /\by2\s*=\s*"([\d.\-]+)"/.exec(attrs)?.[1];
     if (x1 && y1 && x2 && y2) {
+      const len = Math.hypot(+x2 - +x1, +y2 - +y1);
+      if (len <= 6) continue; // tick stub — extractTicks() handles these
       paths.push({ d: `M${x1},${y1}L${x2},${y2}`, strokeWidth: widthByClass.get(cls) ?? 5 });
     }
   }
@@ -516,12 +521,17 @@ export function extractTicks(): ExtractedTick[] {
   let m: RegExpExecArray | null;
   while ((m = re.exec(mapSvgRaw)) !== null) {
     const meta = classMeta.get(m[1]);
-    if (!meta || !meta.tickStyle) continue;
+    if (!meta) continue;
     const tag = m[0];
     const x1 = +(/\bx1\s*=\s*"([\d.\-]+)"/.exec(tag)?.[1] ?? '0');
     const y1 = +(/\by1\s*=\s*"([\d.\-]+)"/.exec(tag)?.[1] ?? '0');
     const x2 = +(/\bx2\s*=\s*"([\d.\-]+)"/.exec(tag)?.[1] ?? '0');
     const y2 = +(/\by2\s*=\s*"([\d.\-]+)"/.exec(tag)?.[1] ?? '0');
+    const len = Math.hypot(x2 - x1, y2 - y1);
+    // A tick is either explicitly styled square-cap OR is just a short stub
+    // (≤6px) regardless of CSS — some v1 tick classes (e.g. st329 for Kurt Weill)
+    // omit stroke-linecap and would otherwise be picked up as a line segment.
+    if (!meta.tickStyle && len > 6) continue;
     out.push({ x1, y1, x2, y2, color: meta.color, strokeWidth: meta.width });
   }
   return out;
