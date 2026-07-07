@@ -220,6 +220,12 @@ const SUPPRESS_LABELS = ['boccaccio', 'julie arenal'].map(normLabelText);
 const SUPPRESS_MARKERS: Array<{ x: number; y: number }> = [
   { x: 1849, y: 474 }, // Hair's old MacDermot×Arenal intersection circle (now a tick)
   { x: 1660, y: 429 }, // The Frogs — off-center v1 circle; let the anchor recompute it centered
+  // This Is the Army: v1 orphan circle 35px below the label, on lines (Jack Cole
+  // et al.) that aren't Army's creators. Assigning it to Army via proximity meant
+  // the show got a circle marker far from its label + no tick — user flag #22
+  // "missing tick." Drop it; the anchor now draws a proper computed tick on Irving
+  // Berlin's line right by the label.
+  { x: 1733, y: 784.8 },
 ];
 // Creator "legend" labels we ADD (v1 omitted them). Rendered in the line color
 // (darkened for contrast), UPPERCASE, optionally rotated to follow the line.
