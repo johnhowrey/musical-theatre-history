@@ -281,6 +281,9 @@ const LABEL_NUDGES: Record<string, [number, number]> = {
   'Charlie and the Chocolate Factory@2004,404': [8, 40],
   // Left edge sat on the Jerry Zaks vertical line (x~2087); shift right (flag #19).
   'Little Shop of Horrors@2087,915': [10, 0],
+  // Top of the label sat right on the horizontal tick above it (flag #14). Nudge
+  // down so the tick has clear space above the ascenders.
+  'MJ The Musical@898,1570': [0, 8],
 };
 
 function shiftMatrix(transform: string, dx: number, dy: number): string {
