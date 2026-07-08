@@ -54,7 +54,6 @@ export const creatorLineColors: Record<string, string> = {
   "JACK COLE": "#B1C9EF",
   "JACK O'BRIEN": "#697CB7",
   "JAMES LAPINE": "#4ABFA1",
-  "JASON HOWLAND": "#B8763A",
   "JASON MOORE": "#7BA9BE",
   "JASON ROBERT BROWN": "#ED1984",
   "JEANINE TESORI": "#E7B00C",
