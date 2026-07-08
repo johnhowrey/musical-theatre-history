@@ -82,7 +82,7 @@ const ACTIVE_CREATORS = [
   'Donald Saddler', 'Gene Saks', 'George Balanchine', 'George C. Wolfe',
   'George Faison', 'Gillian Lynne', 'Glen Ballard', 'Graciela Daniele',
   'Hal Hackady', 'Helen Tamiris', 'Herbert Ross', 'Jack Cole', "Jack O'Brien",
-  'James Lapine', 'Jason Moore', 'Jeff Calhoun', 'Jerry Mitchell', 'Jerry Zaks', 'Joe Layton',
+  'James Lapine', 'Jason Howland', 'Jason Moore', 'Jeff Calhoun', 'Jerry Mitchell', 'Jerry Zaks', 'Joe Layton',
   'Joe Mantello', 'John Rando', 'Josh Prince', 'Julie Arenal', 'Kelly Devine', 'Larry Fuller',
   'Larry Grossman', 'Lionel Bart', 'Lorin Latarro', 'Marc Shaiman',
   'Matthew Sklar', 'Mel Brooks', 'Michael Greif', 'Michael Kidd', 'Michael Korie',
@@ -202,6 +202,15 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // Smash (2025) = Marc Shaiman × Susan Stroman — intersection at the junction
   // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
   { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
+  // --- Jason Howland cluster (his line runs horizontal at y=1615) ---
+  // Multi-line labels stack DOWNWARD from labelY; y=1596 puts line 1 at 1596
+  // and line 2 at ~1606 — both clear of the tick line at y=1615 (with the
+  // tick pointing UP from y=1613 to the label). Tick pointer flips depending
+  // on label vs station relative position, so a labelY above y=1615 makes the
+  // tick point up. Legend below the line to keep it out of the label lane.
+  { id: 'little-women', x: 2005, y: 1615, labelX: 2005, labelY: 1596, align: 'middle', lines: ['Little', 'Women'] },
+  { id: 'paradise-square', x: 2160, y: 1615, labelX: 2160, labelY: 1596, align: 'middle', lines: ['Paradise', 'Square'] },
+  { id: 'the-great-gatsby', x: 2320, y: 1615, labelX: 2320, labelY: 1596, align: 'middle', lines: ['The Great', 'Gatsby'] },
 ];
 
 // Static v1 ticks to DROP (by approx midpoint). Used when a v1 station is
@@ -233,6 +242,9 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // Jerry Mitchell's cyan line had no name (its line was added in #32 but v1 has
   // no legend label). Place it down the clear stretch of his vertical run.
   { text: 'JERRY MITCHELL', x: 2264, y: 700, angle: -90, color: '#00BEF3' },
+  // Jason Howland's new horizontal at y=1615: legend label BELOW the line in
+  // the open bottom margin (labels sit above the line for the shows themselves).
+  { text: 'JASON HOWLAND', x: 2080, y: 1637, angle: 0, color: '#B8763A' },
 ];
 
 // Extra perpendicular offset (px) for creator legend labels whose v1 rotation
@@ -257,6 +269,15 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // The line stopped ~15px short of the A Bronx Tale circle (2076,805); continue
   // it straight up into the circle so it reaches the station (flag #20).
   'JERRY ZAKS': ['M 2083 818 L 2079 805'],
+  // Jason Howland: v1 had no line for him. Both ends must land on another line
+  // (no floating ends). Jason Robert Brown's magenta runs horizontal at y=1608
+  // through x=1813-2133 then jogs UP at x=2142 and continues horizontal at
+  // y=1458 out to x=2233 where it turns UP again. Howland's line wraps that
+  // L-corner as an outer bracket: start on JRB @ (1965, 1608), drop down to
+  // y=1615, run right through Little Women (2005), Paradise Square (2160), and
+  // The Great Gatsby (2320), keep going to x=2360, turn UP to y=1458, run left
+  // to rejoin JRB @ (2233, 1458). Both ends terminate on JRB's line.
+  'JASON HOWLAND': ['M 1965 1608 L 1965 1615 L 2345 1615 Q 2360 1615 2360 1600 L 2360 1473 Q 2360 1458 2345 1458 L 2233 1458'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction

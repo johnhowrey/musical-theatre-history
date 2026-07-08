@@ -1,0 +1,165 @@
+
+=== SETUP ===
+  Shows on map:            742
+  Palette creators:        119
+  Resolved to person IDs:  1138
+  Unresolved palette names: 1 → AHRENS AND FLAHERTY
+  DB total original musicals: 725
+  DB total people:          3439
+
+
+=== A. MISSING MUSICALS (credited to on-map people, not on map) ===
+
+  Total missing musicals with ≥1 real on-map creator: 103
+
+  --- Top 103 highest-priority ---
+    1937 Hooray For What!                           — Harold Arlen, E. Y. Harburg, Howard Lindsay, Russel Crouse (+3)
+    1927 Hit The Deck!                              — Vincent Youmans, Clifford Grey, Leo Robin, Herbert Fields (+2)
+    1932 Take A Chance                              — Richard A. Whiting, Vincent Youmans, B. G. DeSylva, Laurence Schwab (+2)
+    1925 No, No, Nanette                            — Vincent Youmans, Irving Caesar, Otto Harbach, Frank Mandel (+1)
+    1951 A Tree Grows in Brooklyn “A New Musical”   — Arthur Schwartz, Dorothy Fields, George Abbott, Betty Smith (+1)
+    1952 Three Wishes for Jamie “A New Musical Play” — Ralph Blane, Abe Burrows, Herbert Ross, Eugene Loring (+1)
+    1954 By the Beautiful Sea “The New Musical”     — Arthur Schwartz, Dorothy Fields, Herbert Fields, Marshall Jamison (+1)
+    1955 All in One                                 — Leonard Bernstein, Abe Burrows, Jo Swerling, Onna White (+1)
+    1958 Say, Darling                               — Jule Styne, Betty Comden, Adolph Green, Abe Burrows (+1)
+    1987 Les Miserables                             — Herbert Kretzmer, Alain Boublil, Trevor Nunn, John Caird (+1)
+    1993 Kiss Of The Spider Woman-the Musical       — John Kander, Fred Ebb, Terrence McNally, Harold Prince (+1)
+    1915 The Blue Paradise                          — Sigmund Romberg, Herbert Reynolds, Edgar Smith, J.H. Benrimo
+    1926 Countess Maritza                           — Emmerich Kalman, Harry B. Smith, J. C. Huffman, Carl Randall
+    1927 Good News!                                 — B. G. DeSylva, Laurence Schwab, Edgar MacGregor, Bobby Connolly
+    1928 The Three Musketeers                       — Clifford Grey, Rudolf Friml, William Anthony McGuire, Albertina Rasch
+    1930 Flying High                                — B. G. DeSylva, John McGowan, George White, Bobby Connolly
+    1930 The New Yorkers                            — Cole Porter, Herbert Fields, Monty Woolley, George Hale
+    1944 Follow The Girls                           — Guy Bolton, Eddie Davis, Fred Thompson, Catherine Littlefield
+    1958 The Broken Date                            — Irving Berlin, Fred Ebb, David Rogers, Marshall Barer
+    2005 Monty Python’s Spamalot                    — John Du Prez, Eric Idle, Mike Nichols, Casey Nicholaw
+    1898 The Fortune Teller                         — Victor Herbert, Harry B. Smith, Julian Mitchell
+    1903 Babes in Toyland                           — Victor Herbert, Glen MacDonough, Julian Mitchell
+    1912 The Firefly                                — Rudolf Friml, Otto Harbach, Sammy Lee
+    1914 The Girl From Utah                         — Jerome Kern, Harry B. Smith, J. A. E. Malone
+    1917 Maytime                                    — Sigmund Romberg, Rida Johnson Young, Allan K. Foster
+    1918 Sinbad                                     — Sigmund Romberg, J. C. Huffman, Alexis Kosloff
+    1925 The Vagabond King                          — Rudolf Friml, Brian Hooker, Julian Alfred
+    1928 Hold Everything!                           — B. G. DeSylva, John McGowan, Jack Haskell
+    1928 Whoopee                                    — Gus Kahn, William Anthony McGuire, Seymour Felix
+    1931 The Cat And The Fiddle                     — Jerome Kern, Otto Harbach, Albertina Rasch
+    1946 Call Me Mister                             — Harold Rome, Arnold B. Horwitt, Robert H. Gordon
+    1951 Courtin’ Time                              — Don Walker, Jack Lawrence, George Balanchine
+    1952 Buttrio Square                             — Charlotte Jones, Joe Mantell, Eugene Loring
+    1953 Carnival in Flanders “A Musical Comedy”    — James  Van Heusen, Preston Sturges, Helen Tamiris
+    1955 The Vamp                                   — John Latouche, David Alexander, Robert Alton
+    1957 Performances: 15                           — Frederick Loewe, Alan Jay Lerner, Agnes de Mille
+    1958 Oh Captain!                                — Jay Livingston, Ray Evans, Jose Ferrer
+    1960 Vintage ’60                                — David Baker, Sheldon Harnick, Jerome Coopersmith
+    1993 The Who\                                   — Pete Townshend, Des McAnuff, Wayne Cilento
+    1993 Tommy                                      — Pete Townshend, Des McAnuff, Wayne Cilento
+    1997 Titanic                                    — Maury Yeston, Peter Stone, Lynne Taylor-Corbett
+    1999 You're a Good Man, Charlie Brown           — Clark Gesner, Michael Mayer, Jerry Mitchell
+    2001 Mamma Mia !                                — Benny Andersson, Bjorn Ulvaeus, Anthony Van Laast
+    2006 Mary Poppins                               — Richard M. Sherman, Robert B. Sherman, Julian Fellowes
+    2016 In Transit                                 — Kristen Anderson-Lopez, Kathleen Marshall, Larry Keigwin
+    2017 The Band Visit                             — David Yazbek, Itamar Moses, David Cromer
+    2022 Paradise Square                            — Nathan Tysen, Craig Lucas, Bill T. Jones
+    1879 The Mulligan Guard Ball                    — David Braham, Edward Harrigan
+    1905 Mlle. Modiste                              — Victor Herbert, Henry Blossom
+    1906 The Red Mill                               — Victor Herbert, Henry Blossom
+    1907 The Merry Widow                            — George Marion, George Balanchine
+    1911 The Pink Lady                              — Ivan Caryll, Julian Mitchell
+    1913 Sweethearts                                — Victor Herbert, Harry B. Smith
+    1921 Blossom Time                               — Sigmund Romberg, J. C. Huffman
+    1921 Shuffle Along                              — Eubie Blake, Noble Sissle
+    1923 Poppy                                      — Howard Dietz, Julian Alfred
+    1924 The Student Prince In Heidelberg           — Sigmund Romberg, J. C. Huffman
+    1928 Blackbirds Of 1928                         — Jimmy McHugh, Dorothy Fields
+    1937 Pins And Needles                           — Harold Rome, Charles Friedman
+    1938 The Cradle Will Rock                       — Marc Blitzstein, Orson Welles
+    1948 As The Girls Go                            — Jimmy McHugh, Harold Adamson
+    1950 Happy as Larry                             — Wesley Portnoff, Anna Sokolow
+    1951 Top Banana                                 — Johnny Mercer, Jack Donohue
+    1952 New Faces Of 1952                          — Burt Shevelove, John Murray Anderson
+    1954 The Golden Apple                           — John Latouche, Hanya Holm
+    1958 Portofino                                  — Sheldon Harnick, Charles Weidman
+    1964 What Makes Sammy Run?                      — Abe Burrows, Matt Mattox
+    1972 Gease                                      — Tom Moore, Patricia Birch
+    1972 Grease                                     — Tom Moore, Patricia Birch
+    1973 Raisin                                     — Joseph Stein, Donald McKayle
+    1983 The Tap Dance Kid                          — Henry Krieger, Danny Daniels
+    1991 The Secret Garden                          — Lucy Simon, Marsha Norman
+    1997 Side Show                                  — Henry Krieger, Joey Pizzi
+    2005 The Color Purple                           — Marsha Norman, Gary Griffin
+    2011 Spider-Man: Turn Off the Dark              — Julie Taymor, Chase Brock
+    2018 Harry Potter and the Cursed Child          — John Tiffany, Steven Hoggett
+    2019 Freestyle Love Supreme                     — Lin-Manuel Miranda, Thomas Kail
+    2024 Suffs                                      — Leigh Silverman, Raja Feather Kelly
+    2024 Water for Elephants                        — Rick Elice, Jessica Stone
+    2024 The Great Gatsby                           — Nathan Tysen, Marc Bruni
+    1891 Robin Hood                                 — Harry B. Smith
+    1903 The Wizard Of Oz                           — Julian Mitchell
+    1904 Little Johnny Jones                        — George M. Cohan
+    1906 Forty-five Minutes From Broadway           — George M. Cohan
+    1909 The Chocolate Soldier                      — Oscar Straus
+    1910 Madame Sherry                              — Otto Harbach
+    1919 Irene                                      — Edward Royce
+    1929 Bitter Sweet                               — Tilly Losch
+    1948 Make Mine Manhattan                        — Hassard Short
+    1950 The Consul                                 — John Butler
+    1950 The Liar                                   — Hanya Holm
+    1955 3 for Tonight                              — Gower Champion
+    1957 Simply Heavenly                            — Langston Hughes
+    1959 First Impressions                          — Abe Burrows
+    1981 Sophisticated Ladies                       — Donald McKayle
+    1982 Torch Song Trilogy                         — Harvey Fierstein
+    1986 Me And My Girl                             — Mike Ockrent
+    1988 Carrie                                     — Dean Pitchford
+    1989 Jerome Robbins’ Broadway                   — Jerome Robbins
+    2001 tick, tick... BOOM!                        — Jonathan Larson
+    2003 The Boy from Oz                            — Joey McKneely
+    2006 Tarzan                                     — David Henry Hwang
+    2008 A Tale Of Two Cities                       — Warren Carlyle
+
+  --- Per-person: top on-map creators with the most missing musicals ---
+    Abe Burrows                   5 missing: 1952 Three Wishes for Jamie “A New Musical Play”; 1955 All in One; 1958 Say, Darling; 1964 What Makes Sammy Run? (+1)
+    Sigmund Romberg               5 missing: 1915 The Blue Paradise; 1917 Maytime; 1918 Sinbad; 1921 Blossom Time (+1)
+    Harry B. Smith                5 missing: 1926 Countess Maritza; 1898 The Fortune Teller; 1914 The Girl From Utah; 1913 Sweethearts (+1)
+    Victor Herbert                5 missing: 1898 The Fortune Teller; 1903 Babes in Toyland; 1905 Mlle. Modiste; 1906 The Red Mill (+1)
+    B. G. DeSylva                 4 missing: 1932 Take A Chance; 1927 Good News!; 1930 Flying High; 1928 Hold Everything!
+    Otto Harbach                  4 missing: 1925 No, No, Nanette; 1912 The Firefly; 1931 The Cat And The Fiddle; 1910 Madame Sherry
+    J. C. Huffman                 4 missing: 1926 Countess Maritza; 1918 Sinbad; 1921 Blossom Time; 1924 The Student Prince In Heidelberg
+    Julian Mitchell               4 missing: 1898 The Fortune Teller; 1903 Babes in Toyland; 1911 The Pink Lady; 1903 The Wizard Of Oz
+    Vincent Youmans               3 missing: 1927 Hit The Deck!; 1932 Take A Chance; 1925 No, No, Nanette
+    Herbert Fields                3 missing: 1927 Hit The Deck!; 1954 By the Beautiful Sea “The New Musical”; 1930 The New Yorkers
+    Bobby Connolly                3 missing: 1932 Take A Chance; 1927 Good News!; 1930 Flying High
+    Dorothy Fields                3 missing: 1951 A Tree Grows in Brooklyn “A New Musical”; 1954 By the Beautiful Sea “The New Musical”; 1928 Blackbirds Of 1928
+    Rudolf Friml                  3 missing: 1928 The Three Musketeers; 1912 The Firefly; 1925 The Vagabond King
+    Agnes de Mille                2 missing: 1937 Hooray For What!; 1957 Performances: 15
+    Robert Alton                  2 missing: 1937 Hooray For What!; 1955 The Vamp
+    Clifford Grey                 2 missing: 1927 Hit The Deck!; 1928 The Three Musketeers
+    Seymour Felix                 2 missing: 1927 Hit The Deck!; 1928 Whoopee
+    Laurence Schwab               2 missing: 1932 Take A Chance; 1927 Good News!
+    Edgar MacGregor               2 missing: 1932 Take A Chance; 1927 Good News!
+    Sammy Lee                     2 missing: 1925 No, No, Nanette; 1912 The Firefly
+    Arthur Schwartz               2 missing: 1951 A Tree Grows in Brooklyn “A New Musical”; 1954 By the Beautiful Sea “The New Musical”
+    Herbert Ross                  2 missing: 1951 A Tree Grows in Brooklyn “A New Musical”; 1952 Three Wishes for Jamie “A New Musical Play”
+    Eugene Loring                 2 missing: 1952 Three Wishes for Jamie “A New Musical Play”; 1952 Buttrio Square
+    Helen Tamiris                 2 missing: 1954 By the Beautiful Sea “The New Musical”; 1953 Carnival in Flanders “A Musical Comedy”
+    Matt Mattox                   2 missing: 1958 Say, Darling; 1964 What Makes Sammy Run?
+
+
+=== B. PEOPLE TO ADD (not on map, worked with map creators on 2+ musicals) ===
+
+  Candidates (shared ≥2 with map, total ≥3 musicals): 5
+
+  --- Top 5 ---
+    Fred Latham                  shared= 4  total= 4  director                 shared: Mlle. Modiste, The Red Mill, The Firefly
+    Dorothy Donnelly             shared= 3  total= 3  lyricist/book-writer/director shared: Blossom Time, Poppy, The Student Prince In Heidelberg
+    Ray Henderson                shared= 3  total= 3  composer                 shared: Good News!, Hold Everything!, Flying High
+    Lew Brown                    shared= 3  total= 3  lyricist/book-writer     shared: Good News!, Hold Everything!, Flying High
+    Jason Howland                shared= 2  total= 3  composer                 shared: Paradise Square, The Great Gatsby
+
+
+=== C. RECENT MISSING (2020+) ===
+  Missing 2020+ musicals with an on-map creator: 4
+    2022 Paradise Square                          — Nathan Tysen, Craig Lucas, Bill T. Jones
+    2024 Suffs                                    — Leigh Silverman, Raja Feather Kelly
+    2024 Water for Elephants                      — Rick Elice, Jessica Stone
+    2024 The Great Gatsby                         — Nathan Tysen, Marc Bruni
