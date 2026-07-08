@@ -1,0 +1,309 @@
+
+=== SETUP ===
+  Shows on map:              742
+  Palette creators (lines):  131
+  DB total original musicals: 725
+
+
+=== PEOPLE TO ADD — with meaningful palette-line connections ===
+
+A candidate is meaningfully connectable iff:
+  a. They share ≥2 original musicals with palette-line people (real intersections)
+  b. They have ≥3 total original musicals (worth a line at all)
+  c. At least one shared show is ALREADY on the map (an anchor point)
+
+  Meaningfully-connectable candidates: 156
+
+
+  Lorenz Hart  (lyricist, book-writer)
+    Total musicals: 22   Shared with palette: 22   Already on map: 22
+      [ON MAP] 1925 Dearest Enemy  ← intersects: Richard Rodgers
+      [ON MAP] 1926 Peggy-Ann  ← intersects: Richard Rodgers
+      [ON MAP] 1927 A Connecticut Yankee  ← intersects: Richard Rodgers
+      [ON MAP] 1935 Jumbo  ← intersects: Richard Rodgers, George Abbott
+      [ON MAP] 1936 On Your Toes  ← intersects: Richard Rodgers, George Abbott, George Balanchine
+      [ON MAP] 1937 Babes in Arms  ← intersects: Richard Rodgers, George Balanchine
+      [ON MAP] 1937 I’d Rather Be Right  ← intersects: Richard Rodgers, Moss Hart
+      [ON MAP] 1938 I Married an Angel  ← intersects: Richard Rodgers, Joshua Logan, George Balanchine
+      [ON MAP] 1938 The Boys from Syracuse  ← intersects: Richard Rodgers, George Abbott, George Balanchine
+      [ON MAP] 1939 Too Many Girls  ← intersects: Richard Rodgers, George Abbott
+      [ON MAP] 1940 Pal Joey  ← intersects: Richard Rodgers, George Abbott
+      [ON MAP] 1942 By Jupiter  ← intersects: Richard Rodgers, Joshua Logan
+      [ON MAP] 1931 America's Sweetheart  ← intersects: Richard Rodgers
+      [ON MAP] 1926 Betsy  ← intersects: Richard Rodgers
+      [ON MAP] 1928 Chee-Chee  ← intersects: Richard Rodgers
+      [ON MAP] 1940 Higher and Higher  ← intersects: Richard Rodgers, Joshua Logan
+      [ON MAP] 1920 Poor Little Ritz Girl  ← intersects: Richard Rodgers
+      [ON MAP] 1928 Present Arms  ← intersects: Richard Rodgers
+      [ON MAP] 1928 She’s My Baby  ← intersects: Richard Rodgers
+      [ON MAP] 1930 Simple Simon  ← intersects: Richard Rodgers
+      [ON MAP] 1929 Spring Is Here  ← intersects: Richard Rodgers
+      [ON MAP] 1926 The Girl Friend  ← intersects: Richard Rodgers
+
+  Ira Gershwin  (lyricist, book-writer)
+    Total musicals: 19   Shared with palette: 19   Already on map: 19
+      [ON MAP] 1924 Lady, Be Good!  ← intersects: George Gershwin
+      [ON MAP] 1925 Tip-Toes  ← intersects: George Gershwin
+      [ON MAP] 1926 Oh, Kay!  ← intersects: George Gershwin
+      [ON MAP] 1927 Funny Face  ← intersects: George Gershwin
+      [ON MAP] 1928 Rosalie  ← intersects: George Gershwin
+      [ON MAP] 1930 Girl Crazy  ← intersects: George Gershwin
+      [ON MAP] 1930 Strike Up the Band  ← intersects: George Gershwin
+      [ON MAP] 1931 Of Thee I Sing  ← intersects: George Gershwin
+      [ON MAP] 1935 Porgy and Bess  ← intersects: George Gershwin, Rouben Mamoulian
+      [ON MAP] 1941 Lady in the Dark  ← intersects: Kurt Weill, Moss Hart, Hassard Short
+      [ON MAP] 1983 My One and Only  ← intersects: George Gershwin
+      [ON MAP] 1992 Crazy for You  ← intersects: George Gershwin, Susan Stroman
+      [ON MAP] 2012 Nice Work If You Can Get It  ← intersects: George Gershwin
+      [ON MAP] 2015 An American in Paris  ← intersects: George Gershwin, Christopher Wheeldon
+      [ON MAP] 1933 Let ‘Em Eat Cake  ← intersects: George Gershwin
+      [ON MAP] 1929 Show Girl  ← intersects: George Gershwin
+      [ON MAP] 1925 Tell Me More  ← intersects: George Gershwin
+      [ON MAP] 1945 The Firebrand of Florence  ← intersects: Kurt Weill
+      [ON MAP] 1928 Treasure Girl  ← intersects: George Gershwin
+
+  Guy Bolton  (book-writer)
+    Total musicals: 18   Shared with palette: 16   Already on map: 16
+      [ON MAP] 1917 Leave It to Jane  ← intersects: Jerome Kern
+      [ON MAP] 1917 Oh, Boy!  ← intersects: Jerome Kern
+      [ON MAP] 1918 Oh, Lady! Lady!  ← intersects: Jerome Kern
+      [ON MAP] 1920 Sally  ← intersects: Jerome Kern
+      [ON MAP] 1924 Lady, Be Good!  ← intersects: George Gershwin
+      [ON MAP] 1925 Tip-Toes  ← intersects: George Gershwin
+      [ON MAP] 1926 Oh, Kay!  ← intersects: George Gershwin
+      [ON MAP] 1928 Rosalie  ← intersects: George Gershwin
+      [ON MAP] 1930 Girl Crazy  ← intersects: George Gershwin
+      [ON MAP] 1934 Anything Goes  ← intersects: Cole Porter
+      [ON MAP] 1992 Crazy for You  ← intersects: George Gershwin, Susan Stroman
+      [ON MAP] 1965 Anya  ← intersects: Robert Wright, George Forrest, George Abbott
+      [ON MAP] 1922 Daffy Dill  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1930 Simple Simon  ← intersects: Richard Rodgers
+      [ON MAP] 1924 Sitting Pretty  ← intersects: Jerome Kern
+      [ON MAP] 1915 Very Good Eddie  ← intersects: Jerome Kern
+      Also: 1944 Follow The Girls, 1955 Ankles Aweigh
+
+  Herbert Fields  (book-writer, choreographer)
+    Total musicals: 18   Shared with palette: 17   Already on map: 15
+      [ON MAP] 1925 Dearest Enemy  ← intersects: Richard Rodgers
+      [ON MAP] 1926 Peggy-Ann  ← intersects: Richard Rodgers
+      [ON MAP] 1927 A Connecticut Yankee  ← intersects: Richard Rodgers
+      [ON MAP] 1929 Fifty Million Frenchmen  ← intersects: Cole Porter
+      [to add] 1930 The New Yorkers  ← intersects: Cole Porter
+      [ON MAP] 1940 Panama Hattie  ← intersects: Cole Porter
+      [ON MAP] 1946 Annie Get Your Gun  ← intersects: Irving Berlin, Dorothy Fields, Joshua Logan, Helen Tamiris
+      [ON MAP] 1950 Arms and the Girl  ← intersects: Dorothy Fields, Rouben Mamoulian
+      [to add] 1954 By the Beautiful Sea “The New Musical”  ← intersects: Arthur Schwartz, Dorothy Fields, Helen Tamiris
+      [ON MAP] 1931 America's Sweetheart  ← intersects: Richard Rodgers
+      [ON MAP] 1954 By the Beautiful Sea  ← intersects: Arthur Schwartz, Dorothy Fields, Helen Tamiris
+      [ON MAP] 1928 Chee-Chee  ← intersects: Richard Rodgers
+      [ON MAP] 1939 Du Barry Was a Lady  ← intersects: Cole Porter
+      [ON MAP] 1928 Hello, Daddy  ← intersects: Dorothy Fields
+      [ON MAP] 1928 Present Arms  ← intersects: Richard Rodgers
+      [ON MAP] 1943 Something for the Boys  ← intersects: Cole Porter, Dorothy Fields, Hassard Short, Jack Cole
+      [ON MAP] 1926 The Girl Friend  ← intersects: Richard Rodgers
+      Also: 1927 Hit The Deck!
+
+  Otto Harbach  (lyricist, book-writer)
+    Total musicals: 16   Shared with palette: 13   Already on map: 12
+      [ON MAP] 1924 Rose-Marie  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1925 Sunny  ← intersects: Jerome Kern, Oscar Hammerstein II, Hassard Short
+      [ON MAP] 1926 The Desert Song  ← intersects: Oscar Hammerstein II
+      [to add] 1931 The Cat And The Fiddle  ← intersects: Jerome Kern
+      [ON MAP] 1927 Golden Dawn  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1928 Good Boy  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1920 Jimmie  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1927 Lucky  ← intersects: Jerome Kern, Hassard Short
+      [ON MAP] 1933 Roberta  ← intersects: Jerome Kern, Hassard Short
+      [ON MAP] 1925 Song of the Flame  ← intersects: George Gershwin, Oscar Hammerstein II
+      [ON MAP] 1926 The Wild Rose  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1920 Tickle Me  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1923 Wildflower  ← intersects: Oscar Hammerstein II
+      Also: 1910 Madame Sherry, 1912 The Firefly, 1925 No, No, Nanette
+
+  Robert Alton  (choreographer, director)
+    Total musicals: 13   Shared with palette: 12   Already on map: 11
+      [ON MAP] 1934 Anything Goes  ← intersects: Cole Porter
+      [to add] 1937 Hooray For What!  ← intersects: Agnes de Mille
+      [ON MAP] 1938 Leave It to Me!  ← intersects: Cole Porter
+      [ON MAP] 1939 Too Many Girls  ← intersects: Richard Rodgers, George Abbott
+      [ON MAP] 1940 Pal Joey  ← intersects: Richard Rodgers, George Abbott
+      [ON MAP] 1940 Panama Hattie  ← intersects: Cole Porter
+      [ON MAP] 1942 By Jupiter  ← intersects: Richard Rodgers, Joshua Logan
+      [ON MAP] 1953 Me and Juliet  ← intersects: Richard Rodgers, Oscar Hammerstein II, George Abbott
+      [ON MAP] 1937 Between the Devil  ← intersects: Arthur Schwartz, Howard Dietz, Hassard Short
+      [ON MAP] 1939 Du Barry Was a Lady  ← intersects: Cole Porter
+      [ON MAP] 1953 Hazel Flagg  ← intersects: Jule Styne
+      [ON MAP] 1940 Higher and Higher  ← intersects: Richard Rodgers, Joshua Logan
+      Also: 1955 The Vamp
+
+  Albertina Rasch  (choreographer)
+    Total musicals: 12   Shared with palette: 11   Already on map: 10
+      [ON MAP] 1930 Three’s a Crowd  ← intersects: Arthur Schwartz, Howard Dietz, Hassard Short
+      [ON MAP] 1931 The Band Wagon  ← intersects: Arthur Schwartz, Howard Dietz, Hassard Short
+      [to add] 1931 The Cat And The Fiddle  ← intersects: Jerome Kern
+      [ON MAP] 1932 Face the Music  ← intersects: Irving Berlin, Moss Hart, Hassard Short
+      [ON MAP] 1932 Flying Colors  ← intersects: Arthur Schwartz, Howard Dietz
+      [ON MAP] 1935 Jubilee  ← intersects: Cole Porter, Moss Hart, Hassard Short
+      [ON MAP] 1941 Lady in the Dark  ← intersects: Kurt Weill, Moss Hart, Hassard Short
+      [ON MAP] 1927 Lucky  ← intersects: Jerome Kern, Hassard Short
+      [ON MAP] 1945 Marinka  ← intersects: Hassard Short
+      [ON MAP] 1929 Show Girl  ← intersects: George Gershwin
+      [ON MAP] 1939 Very Warm for May  ← intersects: Jerome Kern, Oscar Hammerstein II
+      Also: 1928 The Three Musketeers
+
+  Michael Stewart  (book-writer, lyricist)
+    Total musicals: 11   Shared with palette: 10   Already on map: 10
+      [ON MAP] 1960 Bye Bye Birdie  ← intersects: Charles Strouse, Gower Champion
+      [ON MAP] 1961 Carnival!  ← intersects: Bob Merrill, Gower Champion
+      [ON MAP] 1964 Hello, Dolly!  ← intersects: Jerry Herman, Gower Champion
+      [ON MAP] 1977 I Love My Wife  ← intersects: Cy Coleman, Gene Saks, Onna White
+      [ON MAP] 1980 42nd Street  ← intersects: Gower Champion
+      [ON MAP] 1980 Barnum  ← intersects: Cy Coleman, Joe Layton
+      [ON MAP] 1981 Bring Back Birdie  ← intersects: Charles Strouse, Joe Layton
+      [ON MAP] 1985 Harrigan ‘n Hart  ← intersects: Joe Layton
+      [ON MAP] 1974 Mack & Mabel  ← intersects: Jerry Herman, Gower Champion
+      [ON MAP] 1979 The Grand Tour  ← intersects: Jerry Herman, Donald Saddler
+      Also: 1968 George M!
+
+  Edgar MacGregor  (director)
+    Total musicals: 11   Shared with palette: 9   Already on map: 9
+      [ON MAP] 1927 Funny Face  ← intersects: George Gershwin
+      [ON MAP] 1928 The New Moon  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1940 Louisiana Purchase  ← intersects: Irving Berlin, George Balanchine
+      [ON MAP] 1940 Panama Hattie  ← intersects: Cole Porter
+      [ON MAP] 1941 Let’s Face It  ← intersects: Cole Porter, Dorothy Fields
+      [ON MAP] 1939 Du Barry Was a Lady  ← intersects: Cole Porter
+      [ON MAP] 1946 Gypsy Lady  ← intersects: George Forrest, Robert Wright, George Balanchine
+      [ON MAP] 1922 Queen O’ Hearts  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1924 Sweet Little Devil  ← intersects: George Gershwin
+      Also: 1927 Good News!, 1932 Take A Chance
+
+  Joseph Stein  (book-writer)
+    Total musicals: 10   Shared with palette: 9   Already on map: 9
+      [ON MAP] 1949 Gentlemen Prefer Blondes  ← intersects: Jule Styne, Agnes de Mille
+      [ON MAP] 1955 Plain And Fancy  ← intersects: Helen Tamiris
+      [ON MAP] 1959 Juno  ← intersects: Agnes de Mille
+      [ON MAP] 1959 Take Me Along  ← intersects: Bob Merrill, Onna White
+      [ON MAP] 1964 Fiddler on the Roof  ← intersects: Jerry Bock, Sheldon Harnick, Jerome Robbins
+      [ON MAP] 1968 Zorba  ← intersects: John Kander, Fred Ebb, Graciela Daniele
+      [ON MAP] 1986 Rags  ← intersects: Charles Strouse, Stephen Schwartz, Gene Saks, Ron Field
+      [ON MAP] 1979 Carmelina  ← intersects: Alan Jay Lerner, Peter Gennaro
+      [ON MAP] 1958 The Body Beautiful  ← intersects: Jerry Bock, Sheldon Harnick, Herbert Ross
+      Also: 1973 Raisin
+
+  Herbert Stothart  (composer)
+    Total musicals: 9   Shared with palette: 9   Already on map: 9
+      [ON MAP] 1924 Rose-Marie  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1922 Daffy Dill  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1927 Golden Dawn  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1928 Good Boy  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1920 Jimmie  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1923 Mary Jane McKane  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1925 Song of the Flame  ← intersects: George Gershwin, Oscar Hammerstein II
+      [ON MAP] 1920 Tickle Me  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1923 Wildflower  ← intersects: Oscar Hammerstein II
+
+  Thomas Meehan  (book-writer)
+    Total musicals: 9   Shared with palette: 9   Already on map: 9
+      [ON MAP] 1977 Annie  ← intersects: Charles Strouse, Peter Gennaro
+      [ON MAP] 2001 The Producers  ← intersects: Mel Brooks, Susan Stroman
+      [ON MAP] 2002 Hairspray  ← intersects: Marc Shaiman, Jack O'Brien, Jerry Mitchell
+      [ON MAP] 2007 Young Frankenstein  ← intersects: Mel Brooks, Susan Stroman
+      [ON MAP] 2014 Rocky  ← intersects: Stephen Flaherty, Lynn Ahrens, Alex Timbers, Kelly Devine, Steven Hoggett
+      [ON MAP] 1993 Ain't Broadway Grand  ← intersects: Mitch Leigh
+      [ON MAP] 2008 Cry-Baby  ← intersects: Rob Ashford
+      [ON MAP] 2010 Elf  ← intersects: Matthew Sklar, Casey Nicholaw
+      [ON MAP] 1979 I Remember Mama  ← intersects: Richard Rodgers
+
+  Peter Stone  (book-writer)
+    Total musicals: 9   Shared with palette: 8   Already on map: 8
+      [ON MAP] 1961 Kean  ← intersects: Robert Wright, George Forrest, Jack Cole
+      [ON MAP] 1965 Skyscraper  ← intersects: Michael Kidd
+      [ON MAP] 1969 1776  ← intersects: Onna White
+      [ON MAP] 1972 Sugar  ← intersects: Jule Styne, Bob Merrill, Gower Champion
+      [ON MAP] 1981 Woman of the Year  ← intersects: John Kander, Fred Ebb
+      [ON MAP] 1983 My One and Only  ← intersects: George Gershwin
+      [ON MAP] 1991 The Will Rogers Follies  ← intersects: Cy Coleman, Betty Comden, Adolph Green, Tommy Tune
+      [ON MAP] 1970 Two By Two  ← intersects: Richard Rodgers, Joe Layton
+      Also: 1997 Titanic
+
+  Arthur Laurents  (book-writer, director)
+    Total musicals: 8   Shared with palette: 8   Already on map: 8
+      [ON MAP] 1957 West Side Story  ← intersects: Leonard Bernstein, Stephen Sondheim, Jerome Robbins
+      [ON MAP] 1959 Gypsy  ← intersects: Jule Styne, Stephen Sondheim, Jerome Robbins
+      [ON MAP] 1965 Do I Hear A Waltz?  ← intersects: Richard Rodgers, Stephen Sondheim, Herbert Ross
+      [ON MAP] 1983 La Cage aux Folles  ← intersects: Jerry Herman
+      [ON MAP] 1964 Anyone Can Whistle  ← intersects: Stephen Sondheim, Herbert Ross
+      [ON MAP] 1967 Hallelujah, Baby!  ← intersects: Jule Styne, Betty Comden, Adolph Green
+      [ON MAP] 1962 I Can Get It For You Wholesale  ← intersects: Herbert Ross
+      [ON MAP] 1991 Nick & Nora  ← intersects: Charles Strouse
+
+  Lee Adams  (lyricist, book-writer)
+    Total musicals: 8   Shared with palette: 8   Already on map: 8
+      [ON MAP] 1960 Bye Bye Birdie  ← intersects: Charles Strouse, Gower Champion
+      [ON MAP] 1964 Golden Boy  ← intersects: Charles Strouse
+      [ON MAP] 1970 Applause  ← intersects: Charles Strouse, Betty Comden, Adolph Green, Ron Field
+      [ON MAP] 1978 A Broadway Musical  ← intersects: Charles Strouse, Gower Champion
+      [ON MAP] 1981 Bring Back Birdie  ← intersects: Charles Strouse, Joe Layton
+      [ON MAP] 1966 “It’s a Bird... It’s a Plane... It’s Superman”  ← intersects: Charles Strouse, Harold Prince
+      [ON MAP] 1993 Ain't Broadway Grand  ← intersects: Mitch Leigh
+      [ON MAP] 1962 All American  ← intersects: Charles Strouse, Mel Brooks, Joshua Logan
+
+  Frederick Loewe  (composer)
+    Total musicals: 8   Shared with palette: 8   Already on map: 7
+      [ON MAP] 1947 Brigadoon  ← intersects: Alan Jay Lerner, Agnes de Mille
+      [ON MAP] 1951 Paint Your Wagon  ← intersects: Alan Jay Lerner, Agnes de Mille
+      [ON MAP] 1956 My Fair Lady  ← intersects: Alan Jay Lerner, Moss Hart
+      [to add] 1957 Performances: 15  ← intersects: Alan Jay Lerner, Agnes de Mille
+      [ON MAP] 1960 Camelot  ← intersects: Alan Jay Lerner, Moss Hart
+      [ON MAP] 1973 Gigi  ← intersects: Alan Jay Lerner, Onna White
+      [ON MAP] 1945 The Day Before Spring  ← intersects: Alan Jay Lerner
+      [ON MAP] 1943 What’s Up?  ← intersects: Alan Jay Lerner, George Balanchine
+
+  Terrence McNally  (book-writer)
+    Total musicals: 8   Shared with palette: 8   Already on map: 7
+      [ON MAP] 1984 The Rink  ← intersects: John Kander, Fred Ebb, Graciela Daniele
+      [ON MAP] 1993 Kiss of the Spider Woman  ← intersects: John Kander, Fred Ebb, Harold Prince
+      [to add] 1993 Kiss Of The Spider Woman-the Musical  ← intersects: John Kander, Fred Ebb, Harold Prince
+      [ON MAP] 1998 Ragtime  ← intersects: Stephen Flaherty, Lynn Ahrens, Graciela Daniele
+      [ON MAP] 2000 The Full Monty  ← intersects: David Yazbek, Jack O'Brien, Jerry Mitchell
+      [ON MAP] 2011 Catch Me If You Can  ← intersects: Marc Shaiman, Jack O'Brien, Jerry Mitchell
+      [ON MAP] 2015 The Visit  ← intersects: John Kander, Fred Ebb, Graciela Daniele
+      [ON MAP] 2017 Anastasia  ← intersects: Stephen Flaherty, Lynn Ahrens
+
+  Sigmund Romberg  (composer)
+    Total musicals: 12   Shared with palette: 7   Already on map: 7
+      [ON MAP] 1926 The Desert Song  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1928 Rosalie  ← intersects: George Gershwin
+      [ON MAP] 1928 The New Moon  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1945 Up in Central Park  ← intersects: Dorothy Fields, Helen Tamiris
+      [ON MAP] 1954 The Girl in the Pink Tights  ← intersects: Agnes de Mille
+      [ON MAP] 1931 East Wind  ← intersects: Oscar Hammerstein II
+      [ON MAP] 1920 Poor Little Ritz Girl  ← intersects: Richard Rodgers
+      Also: 1915 The Blue Paradise, 1917 Maytime, 1918 Sinbad, 1921 Blossom Time, 1924 The Student Prince In Heidelberg
+
+  Edward Royce  (director, choreographer)
+    Total musicals: 9   Shared with palette: 7   Already on map: 7
+      [ON MAP] 1917 Leave It to Jane  ← intersects: Jerome Kern
+      [ON MAP] 1917 Oh, Boy!  ← intersects: Jerome Kern
+      [ON MAP] 1918 Oh, Lady! Lady!  ← intersects: Jerome Kern
+      [ON MAP] 1920 Sally  ← intersects: Jerome Kern
+      [ON MAP] 1918 Rock-a-Bye Baby  ← intersects: Jerome Kern
+      [ON MAP] 1919 She’s A Good Fellow  ← intersects: Jerome Kern
+      [ON MAP] 1928 She’s My Baby  ← intersects: Richard Rodgers
+      Also: 1919 Irene, 1918 The Canary
+
+  P. G. Wodehouse  (lyricist, book-writer)
+    Total musicals: 8   Shared with palette: 7   Already on map: 7
+      [ON MAP] 1917 Leave It to Jane  ← intersects: Jerome Kern
+      [ON MAP] 1917 Oh, Boy!  ← intersects: Jerome Kern
+      [ON MAP] 1918 Oh, Lady! Lady!  ← intersects: Jerome Kern
+      [ON MAP] 1926 Oh, Kay!  ← intersects: George Gershwin
+      [ON MAP] 1928 Rosalie  ← intersects: George Gershwin
+      [ON MAP] 1934 Anything Goes  ← intersects: Cole Porter
+      [ON MAP] 1924 Sitting Pretty  ← intersects: Jerome Kern
+      Also: 1918 The Canary
+
+
+=== SANITY: JASON HOWLAND ===
+  Jason Howland has NO shows shared with any palette-line creator → not meaningfully connectable.

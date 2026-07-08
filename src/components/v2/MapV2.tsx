@@ -88,7 +88,7 @@ const ACTIVE_CREATORS = [
   'Matthew Sklar', 'Mel Brooks', 'Michael Greif', 'Michael Kidd', 'Michael Korie',
   'Michael Mayer', 'Nicholas Hytner', 'Onna White', 'Patricia Birch', 'Patrick McCollum', 'Peter Coe',
   'Peter Darling', 'Peter Gennaro', 'Richard Adler', 'Rob Ashford', 'Ron Field',
-  'Rupert Holmes', 'Scott Ellis', 'Sergio Trujillo', 'Stephen Brackett',
+  'Rupert Holmes', 'Scott Ellis', 'Scott Wittman', 'Sergio Trujillo', 'Stephen Brackett',
   'Steven Hoggett', 'Susan Stroman', 'Tommy Tune', 'Trevor Nunn', 'Walter Bobbie',
   'Wayne Cilento', 'William Finn',
 ];
@@ -233,6 +233,11 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // Jerry Mitchell's cyan line had no name (its line was added in #32 but v1 has
   // no legend label). Place it down the clear stretch of his vertical run.
   { text: 'JERRY MITCHELL', x: 2264, y: 700, angle: -90, color: '#00BEF3' },
+  // Scott Wittman: horizontal segment is too tight (label collides with Hairspray
+  // and Catch Me If You Can). Route the legend along the vertical segment at
+  // x=2207.5 instead, rotated -90° so it reads upward, offset slightly right of
+  // the line into open cream space.
+  { text: 'SCOTT WITTMAN', x: 2214, y: 490, angle: -90, color: '#A85474' },
 ];
 
 // Extra perpendicular offset (px) for creator legend labels whose v1 rotation
@@ -257,6 +262,29 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // The line stopped ~15px short of the A Bronx Tale circle (2076,805); continue
   // it straight up into the circle so it reaches the station (flag #20).
   'JERRY ZAKS': ['M 2083 818 L 2079 805'],
+  // Scott Wittman — Marc Shaiman's lifelong lyric partner. Every one of his
+  // musicals is on Shaiman's line (Hairspray, Catch Me If You Can, Charlie/
+  // Chocolate Factory, Some Like It Hot, Smash), so his line runs flush-parallel
+  // to Shaiman's #E98DBB path across the whole boomerang, offset 5u perpendicular
+  // "outside" (edge-to-edge, no gap). Both endpoints land on Shaiman's line at
+  // shared shows: Smash on one end (junction with Susan Stroman), Some Like It
+  // Hot at the vertical's bottom on the other.
+  //
+  // Shaiman's shape: M 1855 427 (Smash) - h to (1989,427) - c to (2011,418) -
+  // 45° diagonal up-right to (2081,348) - c to (2093.7,342.7) - h to (2155.8,342.7)
+  // - c to (2168.5,348) - 45° diagonal down-right to (2197.2,376.7) - c to
+  // (2202.5,389.4) - v to (2202.5,565.9) [Some Like It Hot end].
+  //
+  // Wittman offset outside (above-left of horizontals, above-right for verticals):
+  // horizontal ⇒ y=422 (up 5); up-diagonal ⇒ shift (-3.54,-3.54); down-diagonal
+  // ⇒ shift (+3.54,-3.54); vertical ⇒ x=2207.5 (right 5). Corners fall out from
+  // the intersections of adjacent offset segments.
+  // Q curves at each corner match Shaiman's cubic curvature (one smooth bend, not
+  // two L-approximated stair-steps). Q control points sit at the intersection of
+  // the extended tangents of the adjacent segments — the geometric center of the
+  // corner. Corners: (2000,422) — H→45°up; (2084.3,337.7) — 45°up→H; (2165.2,337.7)
+  // — H→45°down; (2207.5,380) — 45°down→V.
+  'SCOTT WITTMAN': ['M 1855 422 L 1989 422 Q 2000 422 2007.5 414.5 L 2077.5 344.5 Q 2084.3 337.7 2093.7 337.7 L 2155.8 337.7 Q 2165.2 337.7 2172 344.5 L 2200.7 373.2 Q 2207.5 380 2207.5 389.4 L 2207.5 565.9'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
@@ -278,7 +306,10 @@ const LABEL_NUDGES: Record<string, [number, number]> = {
   // Smash line extensions cross these labels — nudge them clear of the new lines.
   // Shaiman's extension leaves Charlie's circle down-left; the pink line leaves it
   // down-right; so drop Charlie's label straight BELOW the circle into open space.
-  'Charlie and the Chocolate Factory@2004,404': [8, 40],
+  // +28 (not the older +40) so the 4-line label fits in the 33-unit clear band
+  // between the Shaiman/Wittman bundle bottom (y≈424.5) and the Christopher
+  // Gattelli navy line at y≈460.
+  'Charlie and the Chocolate Factory@2004,404': [8, 28],
   // Left edge sat on the Jerry Zaks vertical line (x~2087); shift right (flag #19).
   'Little Shop of Horrors@2087,915': [10, 0],
   // Top of the label sat right on the horizontal tick above it (flag #14). Nudge

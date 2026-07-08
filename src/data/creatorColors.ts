@@ -112,6 +112,7 @@ export const creatorLineColors: Record<string, string> = {
   "ROUBEN MAMOULIAN": "#575B8C",
   "RUPERT HOLMES": "#7C7447",
   "SCOTT ELLIS": "#009BB0",
+  "SCOTT WITTMAN": "#A85474",
   "SERGIO TRUJILLO": "#0093D7",
   "STEPHEN BRACKETT": "#436DB5",
   "STEPHEN SCHWARTZ": "#FFE000",
