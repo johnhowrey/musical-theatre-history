@@ -202,16 +202,17 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // Smash (2025) = Marc Shaiman × Susan Stroman — intersection at the junction
   // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
   { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
-  // --- Michael Arden loop (tiny pill 30w×14h in cream pocket) ---
-  // Pill from (1140, 909) left tip to (1170, 909) right tip; top y=902, bottom
-  // y=916. Anchor pipeline snaps to (x+15, y+4) → picked so each station lands
-  // at a UNIQUE pill point:
-  //   QoV  right tip (1170, 909) — Schwartz∩Arden intersection; label above pill
-  //   MHE  left tip  (1140, 909) — Arden-only; label to LEFT
-  //   Lost Boys bottom center (1155, 916) — Arden-only; label BELOW
-  { id: 'the-queen-of-versailles', x: 1155, y: 905, labelX: 1155, labelY: 886, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
-  { id: 'maybe-happy-ending', x: 1125, y: 905, labelX: 1137, labelY: 911, align: 'end', fontSize: 7.59 },
-  { id: 'the-lost-boys', x: 1140, y: 912, labelX: 1155, labelY: 925, align: 'middle', fontSize: 7.59 },
+  // --- Michael Arden loop (small circle hanging off Schwartz's pull from Wicked) ---
+  // Schwartz's line pulls UP from Wicked (1133, 977) and terminates at Queen of
+  // Versailles (1125, 916), where a small Arden circle hangs (center 1125, 924,
+  // radius 8). Fits cleanly between Herman's horizontal (y=884), Cabaret label
+  // (ends x=1107 y=946), Wicked label (ends x=1127), La Cage (starts x=1186).
+  // Stations: QoV at TOP of circle (Schwartz∩Arden shared); MHE at 10 o'clock;
+  // Lost Boys at 4 o'clock. Anchor pipeline snaps target=(entry.x+15, entry.y+4)
+  // to the nearest sample point on the shared line.
+  { id: 'the-queen-of-versailles', x: 1110, y: 912, labelX: 1125, labelY: 898, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
+  { id: 'maybe-happy-ending', x: 1103, y: 916, labelX: 1115, labelY: 922, align: 'end', fontSize: 7.59 },
+  { id: 'the-lost-boys', x: 1114, y: 927, labelX: 1132, labelY: 933, align: 'start', fontSize: 7.59 },
 ];
 
 // Static v1 ticks to DROP (by approx midpoint). Used when a v1 station is
@@ -248,9 +249,9 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // x=2207.5 instead, rotated -90° so it reads upward, offset slightly right of
   // the line into open cream space.
   { text: 'SCOTT WITTMAN', x: 2214, y: 490, angle: -90, color: '#A85474' },
-  // Michael Arden — legend below Lost Boys label, shifted LEFT so it clears
-  // La Cage aux Folles' 2-line label (x range ~1186-1235) to the right.
-  { text: 'MICHAEL ARDEN', x: 1128, y: 936, angle: 0, color: '#3E7B5C' },
+  // Michael Arden — legend in the pocket between Cabaret label (ends y=946) and
+  // Wicked label (starts y=957). East of both labels (they end at x=1107/1127).
+  { text: 'MICHAEL ARDEN', x: 1135, y: 941, angle: 0, color: '#3E7B5C' },
 ];
 
 // Extra perpendicular offset (px) for creator legend labels whose v1 rotation
@@ -298,15 +299,15 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // corner. Corners: (2000,422) — H→45°up; (2084.3,337.7) — 45°up→H; (2165.2,337.7)
   // — H→45°down; (2207.5,380) — 45°down→V.
   'SCOTT WITTMAN': ['M 1855 422 L 1989 422 Q 2000 422 2007.5 414.5 L 2077.5 344.5 Q 2084.3 337.7 2093.7 337.7 L 2155.8 337.7 Q 2165.2 337.7 2172 344.5 L 2200.7 373.2 Q 2207.5 380 2207.5 389.4 L 2207.5 565.9'],
-  // Extend Stephen Schwartz's line UP from Wicked area, swooping east of La Cage
-  // aux Folles (1186, 921), curving back left to end at Queen of Versailles
-  // (1155, 902) — the shared Schwartz×Arden anchor at the top of Arden's pill.
-  'STEPHEN SCHWARTZ': ['M 1225 976 C 1225 940 1195 909 1170 909'],
-  // Michael Arden — pill loop, 30w × 14h, centered at (1155, 909). Fits between
-  // High Spirits label (top, y~897) and La Cage aux Folles station (right, x=1186
-  // y=921). QoV at top center; MHE at left tip (1140, 909); Lost Boys at right
-  // tip (1170, 909). CCW trace.
-  'MICHAEL ARDEN': ['M 1155 902 h -8 a 7 7 0 0 0 -7 7 a 7 7 0 0 0 7 7 h 16 a 7 7 0 0 0 7 -7 a 7 7 0 0 0 -7 -7 h -8 Z'],
+  // Pull Stephen Schwartz's line UP from Wicked (1133, 977) — vertical stub
+  // (avoiding Wicked label x=1081-1127) then curving up-left to end at Queen of
+  // Versailles (1125, 916). QoV is the shared Schwartz×Arden anchor at the top
+  // of the Arden circle.
+  'STEPHEN SCHWARTZ': ['M 1133 977 v -25 c 0 -18 -8 -30 -8 -36'],
+  // Michael Arden — small circle, radius 8, centered at (1125, 924). QoV at top
+  // (1125, 916) where Schwartz's pull kisses the circle; MHE at 10 o'clock
+  // (~1118, 920); Lost Boys at 4 o'clock (~1129, 931). Full circle via 2 arcs.
+  'MICHAEL ARDEN': ['M 1125 916 A 8 8 0 0 1 1125 932 A 8 8 0 0 1 1125 916'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
