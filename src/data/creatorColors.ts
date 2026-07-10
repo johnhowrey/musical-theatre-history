@@ -90,6 +90,7 @@ export const creatorLineColors: Record<string, string> = {
   "MATTHEW SKLAR": "#BE3A26",
   "MEL BROOKS": "#946843",
   "MEREDITH WILLSON": "#FFAB52",
+  "MICHAEL ARDEN": "#3E7B5C",
   "MICHAEL BENNETT": "#6290E7",
   "MICHAEL GREIF": "#00AB92",
   "MICHAEL KIDD": "#60B1E7",
