@@ -202,16 +202,15 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // Smash (2025) = Marc Shaiman × Susan Stroman — intersection at the junction
   // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
   { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
-  // --- Michael Arden loop (moved FAR EAST into the big open pocket) ---
-  // Between Nine (x=1341) and Once on This Island (x=1423) is a large empty
-  // pocket. Schwartz extends EAST from its current terminus (1225, 976),
-  // horizontal, then curves up into the pocket. Loop hangs there with real
-  // breathing room.
-  // Oval center (1385, 925), rx=20, ry=10 → left tip (1365, 925) = QoV where
-  // Schwartz kisses; top (1385, 915) = MHE; right tip (1405, 925) = Lost Boys.
-  { id: 'the-queen-of-versailles', x: 1350, y: 921, labelX: 1363, labelY: 925, align: 'end', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
-  { id: 'maybe-happy-ending', x: 1370, y: 911, labelX: 1385, labelY: 894, align: 'middle', fontSize: 7.59, lines: ['Maybe Happy', 'Ending'] },
-  { id: 'the-lost-boys', x: 1390, y: 921, labelX: 1407, labelY: 925, align: 'start', fontSize: 7.59, lines: ['The Lost', 'Boys'] },
+  // --- Michael Arden loop (in the open pocket north of Sondheim/Prince loop) ---
+  // Between Curtains (y=1255 top) and Sweeney Todd/Edwin Drood (y=1332 bottom).
+  // Schwartz extends south from its east terminus (1225, 976), routed through
+  // the clear vertical corridor at x=1250 (between Shangri-La x=1234 and Hazel
+  // Flagg x=1258), then west to QoV at the top of the Arden ellipse.
+  // Ellipse rx=30 ry=12 centered (1160, 1310): top=QoV, left tip=MHE, right tip=LostBoys.
+  { id: 'the-queen-of-versailles', x: 1145, y: 1294, labelX: 1160, labelY: 1281, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
+  { id: 'maybe-happy-ending', x: 1115, y: 1306, labelX: 1128, labelY: 1310, align: 'end', fontSize: 7.59, lines: ['Maybe Happy', 'Ending'] },
+  { id: 'the-lost-boys', x: 1175, y: 1306, labelX: 1192, labelY: 1310, align: 'start', fontSize: 7.59, lines: ['The Lost', 'Boys'] },
 ];
 
 // Static v1 ticks to DROP (by approx midpoint). Used when a v1 station is
@@ -248,9 +247,8 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // x=2207.5 instead, rotated -90° so it reads upward, offset slightly right of
   // the line into open cream space.
   { text: 'SCOTT WITTMAN', x: 2214, y: 490, angle: -90, color: '#A85474' },
-  // Michael Arden — legend below the oval in the open pocket, clear of
-  // Once on This Island (x=1423+), Ragtime (x=1496+), Conquering Hero (y=980+).
-  { text: 'MICHAEL ARDEN', x: 1370, y: 950, angle: 0, color: '#3E7B5C' },
+  // Michael Arden — legend below the ellipse (y=1322), above Sweeney Todd (y=1332).
+  { text: 'MICHAEL ARDEN', x: 1130, y: 1330, angle: 0, color: '#3E7B5C' },
 ];
 
 // Extra perpendicular offset (px) for creator legend labels whose v1 rotation
@@ -261,6 +259,24 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
 const CREATOR_LABEL_EXTRA_OFFSET: Record<string, number> = {
   'RICHARDADLER': 9,
   'CLAUDEMICHELSCHOENBERG': 10,
+};
+// Line PATH REPLACEMENTS: replace v1 extracted path `d` strings with modified
+// versions. Used to narrow/reroute specific v1 loops or segments (deliberate
+// deviations from v1 fidelity) to make room for new content elsewhere. Matches
+// each extracted path.d by unique prefix; if it matches, swap in the replacement.
+const LINE_PATH_REPLACEMENTS: Record<string, Array<{ prefix: string; replacement: string }>> = {
+  // Narrow the small Sondheim/Prince loop (Sweeney Todd + Follies) from x=1213
+  // to x=1273 on the LEFT so Michael Arden's loop and Lost Boys label have
+  // room in the pocket north of it. Shrinks h-281.3 → h-221.3 (and matching
+  // return h281.3 → h221.3).
+  'STEPHEN SONDHEIM': [{
+    prefix: 'M1520.1,1333.2h-281.3',
+    replacement: 'M1520.1,1333.2h-221.3c-11.9,0-21.6,9.7-21.6,21.6v143.7c0,11.9,9.7,21.6,21.6,21.6h221.3c11.9,0,21.6-9.7,21.6-21.6v-143.7C1541.7,1342.9,1532,1333.2,1520.1,1333.2z'
+  }],
+  'HAROLD PRINCE': [{
+    prefix: 'M1520.7,1328.6h-282.2',
+    replacement: 'M1520.7,1328.6h-222.2c-14.3,0-25.9,11.6-25.9,25.9v144.6c0,14.2,11.5,25.8,25.8,25.8h221.8c14.5,0,26.2-11.7,26.2-26.2v-144.5C1546.3,1340.1,1534.8,1328.6,1520.7,1328.6z'
+  }],
 };
 // Line EXTENSIONS: extra path segments appended to a creator's line (rendered in
 // the line color + added to its sample points so new stations can anchor there).
@@ -298,15 +314,15 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // corner. Corners: (2000,422) — H→45°up; (2084.3,337.7) — 45°up→H; (2165.2,337.7)
   // — H→45°down; (2207.5,380) — 45°down→V.
   'SCOTT WITTMAN': ['M 1855 422 L 1989 422 Q 2000 422 2007.5 414.5 L 2077.5 344.5 Q 2084.3 337.7 2093.7 337.7 L 2155.8 337.7 Q 2165.2 337.7 2172 344.5 L 2200.7 373.2 Q 2207.5 380 2207.5 389.4 L 2207.5 565.9'],
-  // Extend Stephen Schwartz's line EAST from its terminus (1225, 976): horizontal
-  // to (1355, 976), rounded corner, vertical up to Queen of Versailles (1365,
-  // 925) — the LEFT tip of the Arden loop.
-  'STEPHEN SCHWARTZ': ['M 1225 976 h 130 c 5 0 10 -5 10 -10 v -41'],
-  // Michael Arden — horizontal ellipse, rx=20 ry=10, centered at (1385, 925).
-  // Left tip = QoV (1365, 925); top = MHE (1385, 915); right tip = Lost Boys
-  // (1405, 925). Fits inside the pocket between Nine (x_max=1341) and Once on
-  // This Island (x_min=1423).
-  'MICHAEL ARDEN': ['M 1365 925 A 20 10 0 0 1 1405 925 A 20 10 0 0 1 1365 925'],
+  // Extend Stephen Schwartz's line SOUTH from its east terminus (1225, 976):
+  // east 15 to the clear corridor at x=1240, rounded corner, vertical drop 302
+  // (past Shangri-La/Milk & Honey/City of Angels labels — all clear at x=1250),
+  // rounded corner, west 80 to QoV at TOP of Arden ellipse (1160, 1298).
+  'STEPHEN SCHWARTZ': ['M 1225 976 h 15 c 5 0 10 5 10 10 v 302 c 0 5 -5 10 -10 10 h -80'],
+  // Michael Arden — horizontal ellipse, rx=30 ry=12, centered at (1160, 1310).
+  // Top (1160, 1298) = QoV where Schwartz kisses; left tip (1130, 1310) = MHE;
+  // right tip (1190, 1310) = Lost Boys.
+  'MICHAEL ARDEN': ['M 1160 1298 A 30 12 0 0 1 1160 1322 A 30 12 0 0 1 1160 1298'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
@@ -613,6 +629,17 @@ export default function MapV2() {
         const person = PEOPLE.find(p => p.name.toUpperCase() === name.toUpperCase());
         if (!person) continue;
         personIds = [person.id];
+      }
+      // Path replacements: swap specific v1 paths for modified versions (see
+      // LINE_PATH_REPLACEMENTS). Used to narrow/reroute v1 lines when needed.
+      const reps = LINE_PATH_REPLACEMENTS[name.toUpperCase()];
+      if (reps) {
+        extracted.paths = extracted.paths.map(p => {
+          for (const { prefix, replacement } of reps) {
+            if (p.d.startsWith(prefix)) return { ...p, d: replacement };
+          }
+          return p;
+        });
       }
       const samplePoints: SampledPoint[] = [];
       for (const p of extracted.paths) samplePoints.push(...samplePathPoints(p.d));
