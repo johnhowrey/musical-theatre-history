@@ -202,17 +202,16 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // Smash (2025) = Marc Shaiman × Susan Stroman — intersection at the junction
   // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
   { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
-  // --- Michael Arden loop (HORIZONTAL OVAL, labels laid out first) ---
-  // Oval SHIFTED LEFT + smaller so Lost Boys label ends before Herman's arch
-  // cap curve enters the pocket. Herman cap goes from (1177, 919) up-left to
-  // (1143, 884); at x=1170 it's at y=898. So Lost Boys text right edge must
-  // stay < x=1168 (with margin).
-  // Oval center (1120, 920), rx=15, ry=8 → left tip (1105, 920) = MHE station,
-  // right tip (1135, 920) = Lost Boys station, bottom (1120, 928) = QoV where
-  // Schwartz pull kisses. Anchor pipeline snaps (entry.x+15, entry.y+4).
-  { id: 'the-queen-of-versailles', x: 1105, y: 924, labelX: 1120, labelY: 898, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
-  { id: 'maybe-happy-ending', x: 1090, y: 916, labelX: 1103, labelY: 916, align: 'end', fontSize: 7.59, lines: ['Maybe Happy', 'Ending'] },
-  { id: 'the-lost-boys', x: 1120, y: 916, labelX: 1137, labelY: 916, align: 'start', fontSize: 7.59, lines: ['The Lost', 'Boys'] },
+  // --- Michael Arden loop (moved FAR EAST into the big open pocket) ---
+  // Between Nine (x=1341) and Once on This Island (x=1423) is a large empty
+  // pocket. Schwartz extends EAST from its current terminus (1225, 976),
+  // horizontal, then curves up into the pocket. Loop hangs there with real
+  // breathing room.
+  // Oval center (1385, 925), rx=20, ry=10 → left tip (1365, 925) = QoV where
+  // Schwartz kisses; top (1385, 915) = MHE; right tip (1405, 925) = Lost Boys.
+  { id: 'the-queen-of-versailles', x: 1350, y: 921, labelX: 1363, labelY: 925, align: 'end', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
+  { id: 'maybe-happy-ending', x: 1370, y: 911, labelX: 1385, labelY: 894, align: 'middle', fontSize: 7.59, lines: ['Maybe Happy', 'Ending'] },
+  { id: 'the-lost-boys', x: 1390, y: 921, labelX: 1407, labelY: 925, align: 'start', fontSize: 7.59, lines: ['The Lost', 'Boys'] },
 ];
 
 // Static v1 ticks to DROP (by approx midpoint). Used when a v1 station is
@@ -249,9 +248,9 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // x=2207.5 instead, rotated -90° so it reads upward, offset slightly right of
   // the line into open cream space.
   { text: 'SCOTT WITTMAN', x: 2214, y: 490, angle: -90, color: '#A85474' },
-  // Michael Arden — legend just below the oval bottom (y=928), east of Cabaret
-  // label (x_max=1107). Renders at y≈935-944, clearing Ron Field's line (y=950).
-  { text: 'MICHAEL ARDEN', x: 1113, y: 946, angle: 0, color: '#3E7B5C' },
+  // Michael Arden — legend below the oval in the open pocket, clear of
+  // Once on This Island (x=1423+), Ragtime (x=1496+), Conquering Hero (y=980+).
+  { text: 'MICHAEL ARDEN', x: 1370, y: 950, angle: 0, color: '#3E7B5C' },
 ];
 
 // Extra perpendicular offset (px) for creator legend labels whose v1 rotation
@@ -299,14 +298,15 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // corner. Corners: (2000,422) — H→45°up; (2084.3,337.7) — 45°up→H; (2165.2,337.7)
   // — H→45°down; (2207.5,380) — 45°down→V.
   'SCOTT WITTMAN': ['M 1855 422 L 1989 422 Q 2000 422 2007.5 414.5 L 2077.5 344.5 Q 2084.3 337.7 2093.7 337.7 L 2155.8 337.7 Q 2165.2 337.7 2172 344.5 L 2200.7 373.2 Q 2207.5 380 2207.5 389.4 L 2207.5 565.9'],
-  // Pull Stephen Schwartz's line UP from Wicked (1133, 977) — curves up and
-  // slightly LEFT to terminate at Queen of Versailles (1120, 928), the BOTTOM
-  // CENTER of the Arden oval. Clears Wicked label (ends x=1127).
-  'STEPHEN SCHWARTZ': ['M 1133 977 C 1133 953 1120 953 1120 928'],
-  // Michael Arden — horizontal ellipse, rx=15 ry=8, centered at (1120, 920).
-  // Left tip = MHE (1105, 920); right tip = Lost Boys (1135, 920); bottom
-  // center (1120, 928) = QoV where Schwartz kisses.
-  'MICHAEL ARDEN': ['M 1105 920 A 15 8 0 0 1 1135 920 A 15 8 0 0 1 1105 920'],
+  // Extend Stephen Schwartz's line EAST from its terminus (1225, 976): horizontal
+  // to (1355, 976), rounded corner, vertical up to Queen of Versailles (1365,
+  // 925) — the LEFT tip of the Arden loop.
+  'STEPHEN SCHWARTZ': ['M 1225 976 h 130 c 5 0 10 -5 10 -10 v -41'],
+  // Michael Arden — horizontal ellipse, rx=20 ry=10, centered at (1385, 925).
+  // Left tip = QoV (1365, 925); top = MHE (1385, 915); right tip = Lost Boys
+  // (1405, 925). Fits inside the pocket between Nine (x_max=1341) and Once on
+  // This Island (x_min=1423).
+  'MICHAEL ARDEN': ['M 1365 925 A 20 10 0 0 1 1405 925 A 20 10 0 0 1 1365 925'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
