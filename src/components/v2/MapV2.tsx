@@ -203,14 +203,16 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
   { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
   // --- Michael Arden loop (in the open pocket north of Sondheim/Prince loop) ---
-  // Between Curtains (y=1255 top) and Sweeney Todd/Edwin Drood (y=1332 bottom).
-  // Schwartz extends south from its east terminus (1225, 976), routed through
-  // the clear vertical corridor at x=1250 (between Shangri-La x=1234 and Hazel
-  // Flagg x=1258), then west to QoV at the top of the Arden ellipse.
-  // Ellipse rx=30 ry=12 centered (1160, 1310): top=QoV, left tip=MHE, right tip=LostBoys.
-  { id: 'the-queen-of-versailles', x: 1145, y: 1294, labelX: 1160, labelY: 1281, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
-  { id: 'maybe-happy-ending', x: 1115, y: 1306, labelX: 1128, labelY: 1310, align: 'end', fontSize: 7.59, lines: ['Maybe Happy', 'Ending'] },
-  { id: 'the-lost-boys', x: 1175, y: 1306, labelX: 1192, labelY: 1310, align: 'start', fontSize: 7.59, lines: ['The Lost', 'Boys'] },
+  // BIGGER ellipse rx=40 ry=15 centered (1180, 1310): top=QoV, left tip=MHE,
+  // right tip=Lost Boys. Fits the circled pocket between Curtains and
+  // Sweeney Todd with breathing room around each label.
+  { id: 'the-queen-of-versailles', x: 1165, y: 1291, labelX: 1180, labelY: 1281, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
+  { id: 'maybe-happy-ending', x: 1125, y: 1306, labelX: 1138, labelY: 1310, align: 'end', fontSize: 7.59, lines: ['Maybe Happy', 'Ending'] },
+  { id: 'the-lost-boys', x: 1205, y: 1306, labelX: 1222, labelY: 1310, align: 'start', fontSize: 7.59, lines: ['The Lost', 'Boys'] },
+  // Follies — narrowed S/P loop shifted its left edge from x=1213 to x=1273,
+  // so Follies station moves with it (60 units east). Original marker+label
+  // suppressed via SUPPRESS_MARKERS / SUPPRESS_LABELS.
+  { id: 'follies', x: 1258, y: 1421, labelX: 1281, labelY: 1442, align: 'start', fontSize: 7.59, bold: true },
 ];
 
 // Static v1 ticks to DROP (by approx midpoint). Used when a v1 station is
@@ -223,7 +225,7 @@ const SUPPRESS_TICKS: Array<{ x: number; y: number }> = [
 // v1 labels to DROP entirely (normalized text match). Used to remove a show or a
 // now-defunct creator legend label.
 const normLabelText = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '');
-const SUPPRESS_LABELS = ['boccaccio', 'julie arenal'].map(normLabelText);
+const SUPPRESS_LABELS = ['boccaccio', 'julie arenal', 'follies'].map(normLabelText);
 // v1 station markers (circles/pills) to DROP (by approx rendered center). Used
 // when a show that v1 drew as an intersection circle is now a single-line tick.
 const SUPPRESS_MARKERS: Array<{ x: number; y: number }> = [
@@ -235,6 +237,9 @@ const SUPPRESS_MARKERS: Array<{ x: number; y: number }> = [
   // "missing tick." Drop it; the anchor now draws a proper computed tick on Irving
   // Berlin's line right by the label.
   { x: 1733, y: 784.8 },
+  // Follies — narrowed S/P loop moved its left edge east, so drop the old
+  // v1 marker at the pre-narrowing position (ADDED_SHOWS re-anchors it).
+  { x: 1215, y: 1426 },
 ];
 // Creator "legend" labels we ADD (v1 omitted them). Rendered in the line color
 // (darkened for contrast), UPPERCASE, optionally rotated to follow the line.
@@ -247,8 +252,10 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // x=2207.5 instead, rotated -90° so it reads upward, offset slightly right of
   // the line into open cream space.
   { text: 'SCOTT WITTMAN', x: 2214, y: 490, angle: -90, color: '#A85474' },
-  // Michael Arden — legend below the ellipse (y=1322), above Sweeney Todd (y=1332).
-  { text: 'MICHAEL ARDEN', x: 1130, y: 1330, angle: 0, color: '#3E7B5C' },
+  // Michael Arden — legend below the ellipse (bottom y=1325), just above Sweeney
+  // Todd label (y=1332). Text renders y=1329-1338; overlaps loop bottom edge
+  // slightly but reads clearly.
+  { text: 'MICHAEL ARDEN', x: 1150, y: 1340, angle: 0, color: '#3E7B5C' },
 ];
 
 // Extra perpendicular offset (px) for creator legend labels whose v1 rotation
@@ -314,15 +321,14 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // corner. Corners: (2000,422) — H→45°up; (2084.3,337.7) — 45°up→H; (2165.2,337.7)
   // — H→45°down; (2207.5,380) — 45°down→V.
   'SCOTT WITTMAN': ['M 1855 422 L 1989 422 Q 2000 422 2007.5 414.5 L 2077.5 344.5 Q 2084.3 337.7 2093.7 337.7 L 2155.8 337.7 Q 2165.2 337.7 2172 344.5 L 2200.7 373.2 Q 2207.5 380 2207.5 389.4 L 2207.5 565.9'],
-  // Extend Stephen Schwartz's line SOUTH from its east terminus (1225, 976):
-  // east 15 to the clear corridor at x=1240, rounded corner, vertical drop 302
-  // (past Shangri-La/Milk & Honey/City of Angels labels — all clear at x=1250),
-  // rounded corner, west 80 to QoV at TOP of Arden ellipse (1160, 1298).
-  'STEPHEN SCHWARTZ': ['M 1225 976 h 15 c 5 0 10 5 10 10 v 302 c 0 5 -5 10 -10 10 h -80'],
-  // Michael Arden — horizontal ellipse, rx=30 ry=12, centered at (1160, 1310).
-  // Top (1160, 1298) = QoV where Schwartz kisses; left tip (1130, 1310) = MHE;
-  // right tip (1190, 1310) = Lost Boys.
-  'MICHAEL ARDEN': ['M 1160 1298 A 30 12 0 0 1 1160 1322 A 30 12 0 0 1 1160 1298'],
+  // Extend Stephen Schwartz's line SOUTH from its east terminus (1225, 976)
+  // via clear corridor at x=1250, then west to QoV at TOP of Arden ellipse
+  // (1180, 1295).
+  'STEPHEN SCHWARTZ': ['M 1225 976 h 15 c 5 0 10 5 10 10 v 299 c 0 5 -5 10 -10 10 h -60'],
+  // Michael Arden — BIGGER horizontal ellipse, rx=40 ry=15, centered (1180, 1310).
+  // Top (1180, 1295) = QoV where Schwartz kisses; left tip (1140, 1310) = MHE;
+  // right tip (1220, 1310) = Lost Boys.
+  'MICHAEL ARDEN': ['M 1180 1295 A 40 15 0 0 1 1180 1325 A 40 15 0 0 1 1180 1295'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
