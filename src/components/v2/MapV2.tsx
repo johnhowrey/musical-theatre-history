@@ -202,14 +202,17 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // Smash (2025) = Marc Shaiman × Susan Stroman — intersection at the junction
   // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
   { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
-  // --- Michael Arden loop (BIG — fills the whole pocket) ---
-  // Ellipse rx=75 ry=30 centered (1180, 1295). Uses the ACTUAL empty space
-  // between Curtains (y=1255), Pickwick/Sweeney Todd (right), Mystery of
-  // Edwin Drood (bottom-left), and Sondheim/Prince loop top (y=1329).
-  // Bounds x=1105-1255 y=1265-1325 → 150w × 60h (previous was 110×34).
-  { id: 'the-queen-of-versailles', x: 1165, y: 1321, labelX: 1180, labelY: 1338, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
-  { id: 'maybe-happy-ending', x: 1090, y: 1291, labelX: 1103, labelY: 1295, align: 'end', fontSize: 7.59, lines: ['Maybe Happy', 'Ending'] },
-  { id: 'the-lost-boys', x: 1240, y: 1291, labelX: 1257, labelY: 1295, align: 'start', fontSize: 7.59, lines: ['The Lost', 'Boys'] },
+  // --- Michael Arden loop (MOVED DOWN into the genuinely clear pocket) ---
+  // The area north of S/P was crossed by JR and RH lines/legends. This spot,
+  // SOUTH of Mystery of Edwin Drood (y=1364) and West of the S/P left edge
+  // (x=1273), is genuinely clear — no lines crossing through, no legend text
+  // to compete with.
+  // Ellipse rx=60 ry=25 centered (1180, 1400). Bounds x=1120-1240 y=1375-1425.
+  // QoV at TOP (Schwartz enters from above). MHE label pushed BELOW station
+  // so it clears History of the American Film (y=1378-1398).
+  { id: 'the-queen-of-versailles', x: 1165, y: 1371, labelX: 1180, labelY: 1362, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
+  { id: 'maybe-happy-ending', x: 1105, y: 1396, labelX: 1118, labelY: 1410, align: 'end', fontSize: 7.59, lines: ['Maybe Happy', 'Ending'] },
+  { id: 'the-lost-boys', x: 1225, y: 1396, labelX: 1242, labelY: 1400, align: 'start', fontSize: 7.59, lines: ['The Lost', 'Boys'] },
   // Follies — narrowed S/P loop shifted its left edge from x=1213 to x=1273,
   // so Follies station moves with it (60 units east). Original marker+label
   // suppressed via SUPPRESS_MARKERS / SUPPRESS_LABELS.
@@ -253,8 +256,9 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // x=2207.5 instead, rotated -90° so it reads upward, offset slightly right of
   // the line into open cream space.
   { text: 'SCOTT WITTMAN', x: 2214, y: 490, angle: -90, color: '#A85474' },
-  // Michael Arden — legend ABOVE the ellipse (top y=1265), below Curtains (y=1255).
-  { text: 'MICHAEL ARDEN', x: 1150, y: 1263, angle: 0, color: '#3E7B5C' },
+  // Michael Arden — legend INSIDE the ellipse (interior cream), between the two
+  // stations at (1120, 1400) and (1240, 1400).
+  { text: 'MICHAEL ARDEN', x: 1152, y: 1405, angle: 0, color: '#3E7B5C' },
 ];
 
 // Extra perpendicular offset (px) for creator legend labels whose v1 rotation
@@ -321,13 +325,14 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // — H→45°down; (2207.5,380) — 45°down→V.
   'SCOTT WITTMAN': ['M 1855 422 L 1989 422 Q 2000 422 2007.5 414.5 L 2077.5 344.5 Q 2084.3 337.7 2093.7 337.7 L 2155.8 337.7 Q 2165.2 337.7 2172 344.5 L 2200.7 373.2 Q 2207.5 380 2207.5 389.4 L 2207.5 565.9'],
   // Extend Stephen Schwartz's line SOUTH from its east terminus (1225, 976)
-  // via clear corridor at x=1250 down to y=1325, then west 60 to enter the
-  // Arden ellipse at its BOTTOM (1180, 1325) = QoV.
-  'STEPHEN SCHWARTZ': ['M 1225 976 h 15 c 5 0 10 5 10 10 v 329 c 0 5 -5 10 -10 10 h -60'],
-  // Michael Arden — LARGE horizontal ellipse rx=75 ry=30, centered (1180, 1295).
-  // Bottom (1180, 1325) = QoV; left tip (1105, 1295) = MHE; right tip
-  // (1255, 1295) = Lost Boys.
-  'MICHAEL ARDEN': ['M 1105 1295 A 75 30 0 0 1 1255 1295 A 75 30 0 0 1 1105 1295'],
+  // via clear corridor at x=1245 down to y=1375 (well below JR, RH, Mystery,
+  // Sweeney Todd, etc.), then west 55 to enter the Arden ellipse at TOP
+  // (1180, 1375) = QoV.
+  'STEPHEN SCHWARTZ': ['M 1225 976 h 10 c 5 0 10 5 10 10 v 379 c 0 5 -5 10 -10 10 h -55'],
+  // Michael Arden — horizontal ellipse rx=60 ry=25, centered (1180, 1400).
+  // Bounds x=1120-1240 y=1375-1425. TOP (1180, 1375) = QoV where Schwartz
+  // kisses; LEFT tip (1120, 1400) = MHE; RIGHT tip (1240, 1400) = Lost Boys.
+  'MICHAEL ARDEN': ['M 1120 1400 A 60 25 0 0 1 1240 1400 A 60 25 0 0 1 1120 1400'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
