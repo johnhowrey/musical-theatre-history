@@ -202,14 +202,15 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // Smash (2025) = Marc Shaiman × Susan Stroman — intersection at the junction
   // where both extended lines meet (1855,427). Multi-line ⇒ bold 8.54. Label below.
   { id: 'smash-musical', x: 1840, y: 423, labelX: 1855, labelY: 442, align: 'middle', fontSize: 8.54, bold: true },
-  // --- Michael Arden loop (VERTICAL ROUNDED RECTANGLE, aligned with Curtains) ---
-  // Rectangle x=1135-1205 y=1370-1470 (70w × 100h, radius 15). Loop shifted
-  // LEFT so its top center aligns with Curtains (~x=1170) directly above.
-  // QoV at TOP center (1170, 1370); MHE tick on RIGHT edge (1205, 1400);
-  // Lost Boys tick on LEFT edge (1135, 1440). MHE label now 3 lines.
-  { id: 'the-queen-of-versailles', x: 1155, y: 1366, labelX: 1170, labelY: 1358, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
-  { id: 'maybe-happy-ending', x: 1190, y: 1396, labelX: 1170, labelY: 1388, align: 'middle', fontSize: 7.59, lines: ['Maybe', 'Happy', 'Ending'] },
-  { id: 'the-lost-boys', x: 1120, y: 1436, labelX: 1170, labelY: 1442, align: 'middle', fontSize: 7.59 },
+  // --- Michael Arden loop (VERTICAL ROUNDED RECTANGLE, raised above MB line) ---
+  // Rectangle x=1135-1205 y=1340-1420 (70w × 80h, radius 15). MOVED UP: prior
+  // y=1370-1470 had Michael Bennett's blue line (y=1426) passing THROUGH the
+  // loop interior. Loop bottom now y=1420 gives 6u gap to MB.
+  // QoV top center (1170, 1340); MHE right edge (1205, 1370); Lost Boys left
+  // edge (1135, 1400).
+  { id: 'the-queen-of-versailles', x: 1155, y: 1336, labelX: 1170, labelY: 1328, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
+  { id: 'maybe-happy-ending', x: 1190, y: 1366, labelX: 1170, labelY: 1358, align: 'middle', fontSize: 7.59, lines: ['Maybe', 'Happy', 'Ending'] },
+  { id: 'the-lost-boys', x: 1120, y: 1396, labelX: 1170, labelY: 1405, align: 'middle', fontSize: 7.59 },
   // Follies — narrowed S/P loop shifted its left edge from x=1213 to x=1273,
   // so Follies station moves with it (60 units east). Original marker+label
   // suppressed via SUPPRESS_MARKERS / SUPPRESS_LABELS.
@@ -254,8 +255,8 @@ const ADDED_CREATOR_LABELS: Array<{ text: string; x: number; y: number; angle: n
   // the line into open cream space.
   { text: 'SCOTT WITTMAN', x: 2214, y: 490, angle: -90, color: '#A85474' },
   // Michael Arden — legend VERTICAL along the LEFT edge of the rectangle
-  // (x=1135), reads bottom-to-top.
-  { text: 'MICHAEL ARDEN', x: 1130, y: 1465, angle: -90, color: '#3E7B5C' },
+  // (x=1135), reads bottom-to-top. Anchor at bottom of the loop's left edge.
+  { text: 'MICHAEL ARDEN', x: 1130, y: 1415, angle: -90, color: '#3E7B5C' },
 ];
 
 // Extra perpendicular offset (px) for creator legend labels whose v1 rotation
@@ -321,16 +322,15 @@ const LINE_EXTENSIONS: Record<string, string[]> = {
   // corner. Corners: (2000,422) — H→45°up; (2084.3,337.7) — 45°up→H; (2165.2,337.7)
   // — H→45°down; (2207.5,380) — 45°down→V.
   'SCOTT WITTMAN': ['M 1855 422 L 1989 422 Q 2000 422 2007.5 414.5 L 2077.5 344.5 Q 2084.3 337.7 2093.7 337.7 L 2155.8 337.7 Q 2165.2 337.7 2172 344.5 L 2200.7 373.2 Q 2207.5 380 2207.5 389.4 L 2207.5 565.9'],
-  // Extend Stephen Schwartz's line SOUTH in a STEP-DOWN pattern (per user's
-  // Illustrator sketch): east briefly → rounded corner down → vertical to
-  // y=1180 (past Milk & Honey / Hazel Flagg / City of Angels rows) → rounded
-  // corner west → horizontal 60 west (to align above Curtains) → rounded
-  // corner down → vertical to y=1370 (through Curtains at x=1170) → QoV.
-  'STEPHEN SCHWARTZ': ['M 1225 976 h 15 c 5 0 10 5 10 10 v 194 c 0 5 -5 10 -10 10 h -60 c -5 0 -10 5 -10 10 v 170'],
-  // Michael Arden — VERTICAL ROUNDED RECTANGLE. Corners at (1135, 1370)-
-  // (1205, 1470), 70w × 100h, radius 15. QoV on top edge center (1170, 1370);
-  // MHE tick right (1205, 1400); Lost Boys tick left (1135, 1440).
-  'MICHAEL ARDEN': ['M 1150 1370 h 40 a 15 15 0 0 1 15 15 v 70 a 15 15 0 0 1 -15 15 h -40 a 15 15 0 0 1 -15 -15 v -70 a 15 15 0 0 1 15 -15 Z'],
+  // Extend Stephen Schwartz's line SOUTH in a STEP-DOWN pattern: east briefly →
+  // rounded corner down → vertical to y=1180 (past Milk & Honey / Hazel Flagg
+  // / City of Angels rows) → rounded corner west → horizontal 60 west → rounded
+  // corner down → vertical to y=1340 (through Curtains at x=1170) → QoV.
+  'STEPHEN SCHWARTZ': ['M 1225 976 h 15 c 5 0 10 5 10 10 v 194 c 0 5 -5 10 -10 10 h -60 c -5 0 -10 5 -10 10 v 140'],
+  // Michael Arden — VERTICAL ROUNDED RECTANGLE, x=1135-1205 y=1340-1420
+  // (70w × 80h, radius 15). QoV on top edge center (1170, 1340); MHE tick
+  // right (1205, 1370); Lost Boys tick left (1135, 1400).
+  'MICHAEL ARDEN': ['M 1150 1340 h 40 a 15 15 0 0 1 15 15 v 50 a 15 15 0 0 1 -15 15 h -40 a 15 15 0 0 1 -15 -15 v -50 a 15 15 0 0 1 15 -15 Z'],
 };
 // Label nudges (task #31 — print polish). v1 hand-placed every label; in a few
 // spots a label clips a marker or another label. Per the user's direction
