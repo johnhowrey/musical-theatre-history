@@ -208,9 +208,15 @@ const ADDED_SHOWS: Array<{ id: string; x: number; y: number; labelX: number; lab
   // loop interior. Loop bottom now y=1420 gives 6u gap to MB.
   // QoV top center (1170, 1340); MHE right edge (1205, 1370); Lost Boys left
   // edge (1135, 1400).
-  { id: 'the-queen-of-versailles', x: 1155, y: 1336, labelX: 1170, labelY: 1328, align: 'middle', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
-  { id: 'maybe-happy-ending', x: 1190, y: 1366, labelX: 1170, labelY: 1358, align: 'middle', fontSize: 7.59, lines: ['Maybe', 'Happy', 'Ending'] },
-  { id: 'the-lost-boys', x: 1120, y: 1396, labelX: 1170, labelY: 1405, align: 'middle', fontSize: 7.59 },
+  // QoV: label LEFT-ALIGNED tucked into the corner ABOVE and to the RIGHT
+  // of the marker (marker at top edge center x=1170; label starts at x=1180).
+  { id: 'the-queen-of-versailles', x: 1155, y: 1336, labelX: 1180, labelY: 1327, align: 'start', fontSize: 8.54, bold: true, lines: ['The Queen', 'of Versailles'] },
+  // MHE: 3-line RIGHT-ALIGNED label anchored to a tick on the RIGHT edge
+  // (station at 1205, 1367 = middle-of-label y).
+  { id: 'maybe-happy-ending', x: 1190, y: 1363, labelX: 1200, labelY: 1358, align: 'end', fontSize: 7.59, lines: ['Maybe', 'Happy', 'Ending'] },
+  // Lost Boys: 1-line LEFT-ALIGNED label anchored to a tick on the LEFT edge
+  // (station at 1135, 1400 = label baseline y).
+  { id: 'the-lost-boys', x: 1120, y: 1396, labelX: 1140, labelY: 1400, align: 'start', fontSize: 7.59 },
   // Follies — narrowed S/P loop shifted its left edge from x=1213 to x=1273,
   // so Follies station moves with it (60 units east). Original marker+label
   // suppressed via SUPPRESS_MARKERS / SUPPRESS_LABELS.
