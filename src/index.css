@@ -105,3 +105,76 @@ html, body, #root {
   stroke-width: 3px;
   stroke-linejoin: round;
 }
+
+/* ---- /changelog ---- */
+.changelog-page {
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--v2-bg);
+  color: var(--v2-ink);
+  font-family: var(--v2-sans);
+}
+.changelog-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 8px;
+  border-bottom: 1px solid var(--v2-divider);
+}
+.changelog-header h1 {
+  margin: 8px 0 24px;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.changelog-back {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--v2-muted);
+  text-decoration: none;
+}
+.changelog-back:hover { color: var(--v2-ink); }
+.changelog-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 24px 96px;
+}
+.changelog-entry {
+  padding: 32px 0;
+  border-bottom: 1px solid var(--v2-divider);
+}
+.changelog-entry:last-child { border-bottom: none; }
+.changelog-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.changelog-meta time {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--v2-muted);
+  font-variant-numeric: tabular-nums;
+}
+.changelog-meta h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.changelog-entry ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+.changelog-entry li {
+  margin: 8px 0;
+  line-height: 1.55;
+  font-size: 15px;
+}
+.changelog-entry i { font-style: italic; }
+.changelog-entry b { font-weight: 700; }

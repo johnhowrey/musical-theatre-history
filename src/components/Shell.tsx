@@ -42,6 +42,7 @@ export default function Shell() {
           <div className={`header-nav-links${menuOpen ? ' open' : ''}`}>
             <button className="people-btn" onClick={() => { setModal('people'); setMenuOpen(false); }}>People</button>
             <button className="people-btn" onClick={() => { setModal('stats'); setMenuOpen(false); }}>Stats</button>
+            <a className="people-btn" href="/changelog" onClick={() => setMenuOpen(false)}>What's new</a>
             <button className="header-action-btn" onClick={onRandom}>Random Show</button>
           </div>
         </div>
